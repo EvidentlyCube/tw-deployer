@@ -1,6 +1,6 @@
 
 export async function apiFetch(endpoint, defReturn, options) {
-	const result = await fetch(`?api/${endpoint}`, options);
+	const result = await fetch(`?api=${endpoint}`, options);
 	const text = await result.text();
 	try {
 		const json = JSON.parse(text);

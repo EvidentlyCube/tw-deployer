@@ -11,7 +11,6 @@ export async function parseRequestBody(request) {
 		let chunksSize = 0;
 
 		request.on("data", function (chunk) {
-			console.log("chunk");
 			chunks.push(chunk);
 			chunksSize += chunk.length;
 
@@ -22,7 +21,6 @@ export async function parseRequestBody(request) {
 		});
 
 		request.on("end", function () {
-			console.log("End");
 			resolve(Buffer.concat(chunks));
 		});
 	});

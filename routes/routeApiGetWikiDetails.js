@@ -1,10 +1,12 @@
+import { resolve } from 'node:path';
+import { countFiles, getDirectorySize } from "../utils/FileUtils.js";
 import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 import { routeToRegexp } from "../utils/RouteUtils.js";
 import { getTiddlerText, getWikiPackageJson } from "../utils/TwUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/?api/wiki-details/:wikiPath"),
+	route: routeToRegexp("/?api=wiki-details/:wikiPath"),
 	action
 };
 
@@ -16,11 +18,19 @@ async function action(req, res) {
 	}
 
 	const wikiAbsolutePath = getWikiAbsolutePath(wikiPath);
-	const packageJson = await getWikiPackageJson(wikiAbsolutePath);
-	const wikiTitle = await getTiddlerText(wikiPath, "$__SiteTitle.tid");
+	const tiddlersAbsolutePath = resolve(wikiAbsolutePath, 'wiki', 'tiddlers');
+
+	const { port } = await getWikiPackageJson(wikiAbsolutePath);
+	const title = await getTiddlerText(wikiPath, "$__SiteTitle.tid");
+	const totalSize = await getDirectorySize(wikiAbsolutePath);
+	const tiddlersSize = await getDirectorySize(tiddlersAbsolutePath);
+	const tiddlersCount = await countFiles(tiddlersAbsolutePath);
 
 	return respondApiSuccess(res, {
-		port: packageJson.port,
-		title: wikiTitle,
+		port,
+		title,
+		tiddlersCount,
+		tiddlersSize,
+		totalSize,
 	});
 }

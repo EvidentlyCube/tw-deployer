@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import { resolve } from "node:path";
 import Config from "./config.js";
+import { isPortOpen } from "./utils/ExecUtils.js";
 import { canAccessFile, fileExists, isDirectory } from "./utils/FileUtils.js";
-import { isPortOpen } from "./utils/isPortOpen.js";
 
 export async function validateConfig() {
 	await validateLogPaths();

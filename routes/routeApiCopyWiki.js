@@ -9,7 +9,7 @@ import { assertPost, routeToRegexp } from "../utils/RouteUtils.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/?api/copy-wiki/:template/:wikiPath"),
+	route: routeToRegexp("/?api=copy-wiki/:template/:wikiPath"),
 	action
 };
 

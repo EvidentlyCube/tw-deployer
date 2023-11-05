@@ -1,4 +1,5 @@
 import * as fs from "node:fs/promises";
+import { execPromise } from "./ExecUtils.js";
 
 export async function fileExists(path) {
 	try {
@@ -31,6 +32,41 @@ export async function canAccessFile(path, access) {
 	} catch (e) {
 		return false;
 	}
-
 }
 
+export async function getDirectorySize(path) {
+	const { code, stdout, stderr } = await execPromise(`du -s --block-size=1 '${path}'`);
+
+	if (code) {
+		throw new Error(`Failed to get size of the directory '${path}': ${stderr}`);
+	}
+
+	const bits = stdout.split("\t");
+	const size = parseInt(bits[0]);
+
+	if (Number.isNaN(size)) {
+		throw new Error(`Failed to get size of the directory '${path}': received size ${size} is not a number`);
+	} else if (!Number.isFinite(size)) {
+		throw new Error(`Failed to get size of the directory '${path}': received size ${size} is infinite`);
+	}
+
+	return size;
+}
+
+export async function countFiles(path) {
+	const { code, stdout, stderr } = await execPromise(`find '${path}' -type f | wc -l`);
+
+	if (code) {
+		throw new Error(`Failed to get file count of the directory '${path}': ${stderr}`);
+	}
+
+	const fileCount = parseInt(stdout);
+
+	if (Number.isNaN(fileCount)) {
+		throw new Error(`Failed to get file count of the directory '${path}': response ${fileCount} is not a number`);
+	} else if (!Number.isFinite(fileCount)) {
+		throw new Error(`Failed to get file count of the directory '${path}': response ${fileCount} is infinite`);
+	}
+
+	return fileCount;
+}

@@ -18,3 +18,33 @@ export function formatTime(time) {
 		return "<1s";
 	}
 }
+
+export function formatSize(size) {
+	if (size < 1000) {
+		return `${size}B`;
+
+	} else if (size < 1000 ** 2) {
+		return `${toDigits(size / 1000)}KB`;
+
+	} else if (size < 1000 ** 3) {
+		return `${toDigits(size / 1000 / 1000)}MB`;
+
+	} else if (size < 1000 ** 4) {
+		return `${toDigits(size / 1000 / 1000 / 1000)}GB`;
+
+	} else {
+		return `${toDigits(size / 1000 / 1000 / 1000 / 1000)}TB`;
+	}
+}
+
+export function toDigits(number) {
+	if (number >= 1000) {
+		return number;
+	} else if (number >= 100) {
+		return number.toFixed(1);
+	} else if (number >= 10) {
+		return number.toFixed(2);
+	} else {
+		return number.toFixed(3);
+	}
+}

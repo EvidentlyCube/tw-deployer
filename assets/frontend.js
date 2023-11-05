@@ -2,7 +2,7 @@ import { loadPm2Status, loadWikiDetails } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
 import { createWiki } from "./frontend.createWiki.js";
 import { dm } from "./frontend.dm.js";
-import { getHtml as getWikiCardHtml } from "./frontend.getHtml.js";
+import { getHtml } from "./frontend.getHtml.js";
 
 ready(async () => {
 	const wikiPaths = await apiFetch("get-wikis");
@@ -13,12 +13,12 @@ ready(async () => {
 	wikiPaths.sort().forEach(async wikiPath => {
 		$templates.appendChild(dm("option", { value: wikiPath, text: `/${wikiPath}` }));
 
-		const $wikiCard = getWikiCardHtml(wikiPath);
+		const $wikiRow = getHtml(wikiPath);
 
-		document.querySelector("#wiki-cards").appendChild($wikiCard);
+		document.querySelector("#wiki-table tbody").appendChild($wikiRow);
 
-		await loadPm2Status(wikiPath, $wikiCard);
-		await loadWikiDetails(wikiPath, $wikiCard);
+		await loadPm2Status(wikiPath, $wikiRow);
+		await loadWikiDetails(wikiPath, $wikiRow);
 	});
 
 	$newTwForm.addEventListener("submit", e => {

@@ -14,7 +14,8 @@ export async function actionCreatePm2Config(wikiPath, port, log) {
 				name: `Tiddlywiki /${wikiPath}`,
 				cwd: getWikiAbsolutePath(wikiPath),
 				script: "npm",
-				args: "run start"
+				args: "run start",
+				pmx: false,
 			}
 		]
 	};

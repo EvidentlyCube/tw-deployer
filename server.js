@@ -18,7 +18,7 @@ export async function initServer() {
 					return;
 				}
 
-				if (req.url.startsWith("/?api/")) {
+				if (req.url.startsWith("/?api=")) {
 					const json = JSON.stringify({
 						error: "Endpoint not found",
 						body: null
@@ -74,8 +74,8 @@ function authenticate(req, res) {
 
 	if (
 		decodedBits.length !== 2
-        || decodedBits[0] !== Config.Username
-        || decodedBits[1] !== Config.Password
+		|| decodedBits[0] !== Config.Username
+		|| decodedBits[1] !== Config.Password
 	) {
 		return respondFailure();
 	}

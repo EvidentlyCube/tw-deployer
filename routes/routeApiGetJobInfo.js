@@ -3,7 +3,7 @@ import { routeToRegexp } from "../utils/RouteUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/?api/job/:jobId"),
+	route: routeToRegexp("/?api=job/:jobId"),
 	action
 };
 

@@ -3,7 +3,7 @@ import { routeToRegexp } from "../utils/RouteUtils.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/?api/csrf-token"),
+	route: routeToRegexp("/?api=csrf-token"),
 	action
 };
 

@@ -22,7 +22,7 @@ let lock = false;
 const logs = [];
 
 export default {
-	route: routeToRegexp("/?api/create/:template/:wikiPath"),
+	route: routeToRegexp("/?api=create/:template/:wikiPath"),
 	action
 };
 

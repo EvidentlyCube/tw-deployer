@@ -5,7 +5,7 @@ import { routeToRegexp } from "../utils/RouteUtils.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/?api/get-wikis"),
+	route: routeToRegexp("/?api=get-wikis"),
 	action
 };
 

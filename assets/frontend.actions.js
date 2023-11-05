@@ -1,41 +1,50 @@
 import { apiFetch } from "./frontend.api.js";
-import { formatTime } from "./frontend.utils.js";
+import { formatSize } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $tr) {
-	const $pidCell = $tr.querySelector(".cell-pid");
-	const $pm2IdCell = $tr.querySelector(".cell-pm2-id");
 	const $statusCell = $tr.querySelector(".cell-status");
-	const $uptimeCell = $tr.querySelector(".cell-uptime");
-
+	const $memoryCell = $tr.querySelector(".cell-memory");
 	const status = await apiFetch(`pm2-status/${wikiPath}`, false);
 
+	$tr.setAttribute("data-status", status.status);
+	$tr.setAttribute("data-memory-used", status.memoryUsed);
+	$tr.setAttribute("data-memory-used-percent", status.memoryUsedPercent);
+
 	if (status) {
-		$pidCell.innerText = status.pid;
-		$pm2IdCell.innerText = status.pmId;
-		$uptimeCell.innerText = formatTime(status.uptime);
-		$statusCell.innerText = status.pmId;
-		$statusCell.className = `cell-status status-${status.status}`;
+		$statusCell.innerText = status.status;
+		$memoryCell.querySelector(".primary").innerText = formatSize(status.memoryUsed);
+		$memoryCell.querySelector(".muted").innerText = `${status.memoryUsedPercent}%`;
+		$tr.setAttribute("data-status", status.status);
 	} else {
-		$pidCell.innerText = "???";
-		$pm2IdCell.innerText = "???";
-		$uptimeCell.innerText = "???";
-		$statusCell.innerText = "???";
-		$statusCell.className = "cell-status";
+		$statusCell.innerText = "Unknown";
+		$memoryCell.querySelector(".primary").innerText = "???B";
+		$memoryCell.querySelector(".muted").innerText = "??%";
+		$tr.setAttribute("data-status", status.unknown);
 	}
 }
 
 export async function loadWikiDetails(wikiPath, $tr) {
 	const details = await apiFetch(`wiki-details/${wikiPath}`, false);
 
-	const $title = $tr.querySelector("h2");
-	const $portCell = $tr.querySelector(".cell-port");
+	$tr.setAttribute("data-port", details.port);
+	$tr.setAttribute("data-title", details.title);
+	$tr.setAttribute("data-tiddlers-count", details.tiddlersCount);
+	$tr.setAttribute("data-tiddlers-size", details.tiddlersSize);
+	$tr.setAttribute("data-total-size", details.totalSize);
+
+	const $titleCell = $tr.querySelector(".cell-title a");
+	const $sizeCell = $tr.querySelector(".cell-size");
+	const $tiddlersCell = $tr.querySelector(".cell-tiddlers");
 
 	if (details) {
-		$title.innerText = details.title;
-		$portCell.innerText = details.port;
+		$titleCell.innerText = details.title;
+		$sizeCell.querySelector(".primary").innerText = formatSize(details.tiddlersSize);
+		$sizeCell.querySelector(".muted").innerText = formatSize(details.totalSize);
+		$tiddlersCell.innerText = details.tiddlersCount;
 	} else {
-		$title.innerText = "<failed to load>";
-		$portCell.innerText = "???";
+		$titleCell.innerText = "<failed to load>";
+		$sizeCell.querySelector(".primary").innerText = "???B";
+		$sizeCell.querySelector(".muted").innerText = "???B";
+		$tiddlersCell.innerText = "??";
 	}
-
 }
