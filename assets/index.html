@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>TiddlyWiki Deployer</title>
+		<link rel="stylesheet" href="$$assets/style.css" />
+		<script src="$$assets/frontend.js" type="module"></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<h2>Existing instances:</h2>
+			<div id="wiki-cards"></div>
+
+			<h2>Create new:</h2>
+			<form id="new-tw">
+				<div class="form-row">
+					<label for="template">Template</label>
+					<select id="template">
+						<option value="">None</option>
+					</select>
+				</div>
+
+				<div class="form-row">
+					<label for="path">Wiki Path</label>
+					<input
+						id="path"
+						placeholder="Input path here..."
+						pattern="^[a-z0-9-]+$"
+						required
+					/>
+				</div>
+
+				<div class="form-row">
+					<label for="name">Wiki Name</label>
+					<input
+						id="name"
+						placeholder="Input name here..."
+						required
+					/>
+				</div>
+
+				<input type="submit" value="Create Wiki" />
+			</form>
+		</div>
+	</body>
+</html>
