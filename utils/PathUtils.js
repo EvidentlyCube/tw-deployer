@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import Config from "../config.js";
 
-const allowedCharacters = /$[a-z0-9-]+^/;
+const allowedCharacters = /^[a-z0-9-]+$/;
 export async function isValidWikiPath(wikiPath) {
 	return allowedCharacters.test(wikiPath);
 }

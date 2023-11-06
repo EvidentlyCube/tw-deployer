@@ -8,6 +8,7 @@ export async function validateConfig() {
 	await validateLogPaths();
 	await validateWikisPath();
 	await validateNginxPath();
+	await validateBackupsPath();
 	await validatePort();
 	await validateUsername();
 	await validatePassword();
@@ -78,6 +79,23 @@ async function validateNginxPath() {
 
 	} catch (e) {
 		exit(`Config.Paths.NginxConfig=${JSON.stringify(configPath)} -> Invalid access -> ${e}`);
+	}
+}
+
+async function validateBackupsPath() {
+	const path = Config.Paths.Backups;
+
+	if (!await fileExists(path)) {
+		exit(`Config.Paths.Backups=${JSON.stringify(path)} -> Failed to stat`);
+
+	} else if (!await canAccessFile(path, fs.constants.R_OK)) {
+		exit(`Config.Paths.Backups=${JSON.stringify(path)} -> Path not readable`);
+
+	} else if (!await canAccessFile(path, fs.constants.W_OK)) {
+		exit(`Config.Paths.Backups=${JSON.stringify(path)} -> Path not writable`);
+
+	} else if (!await isDirectory(path)) {
+		exit(`Config.Paths.Backups=${JSON.stringify(path)} -> Not a directory`);
 	}
 }
 

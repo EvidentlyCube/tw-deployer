@@ -1,7 +1,7 @@
 import { initServer } from "./server.js";
 import { validateConfig } from "./validateConfig.js";
 
-bootstrap();
+bootstrap().catch(e => console.log(e));
 
 async function bootstrap() {
 	await validateConfig();
