@@ -1,0 +1,56 @@
+/* https://loading.io/css/ */
+.spinner {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+}
+
+.spinner:after {
+	content: " ";
+	display: block;
+	width: 24px;
+	height: 24px;
+	margin: 2px;
+	border-radius: 50%;
+	border: 3px solid #666;
+	border-color: #666 transparent #666 transparent;
+	animation: spinner 0.7s linear infinite;
+}
+
+
+
+.spinner.s-75 {
+	width: 24px;
+	height: 24px;
+}
+
+.spinner.s-75:after {
+	width: 18px;
+	height: 18px;
+	margin: 2px;
+	border-width: 2px;
+}
+
+
+
+.spinner.s-50 {
+	width: 16px;
+	height: 16px;
+}
+
+.spinner.s-50:after {
+	width: 12px;
+	height: 12px;
+	margin: 2px;
+	border-width: 1.5px;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}

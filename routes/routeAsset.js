@@ -1,21 +1,35 @@
 import * as fs from "node:fs";
 import { resolve } from "node:path";
-import { routeToRegexp } from "../utils/RouteUtils.js";
+import { fileExists } from "../utils/FileUtils.js";
 import { respond } from "./respond.js";
 
 export default {
-	route: routeToRegexp("/$$assets/:fileName"),
+	route: /^\/\$\$assets\/(?<fileName>.+)$/,
 	action
 };
 
 async function action(req, res) {
 	const fileName = req.pathParams.fileName;
 
-	if (!fileName || fileName.includes("/") || fileName.includes("\\") || fileName === "..") {
+	if (!fileName || fileName.includes("..")) {
 		return respond(res, 400, "Invalid or missing filename.");
 	}
 
 	const filePath = resolve(process.cwd(), "assets", fileName);
+
+	if (!await fileExists(filePath)) {
+		const response = "File not found";
+
+		res.writeHead(200, {
+			"Content-Type": guessMimetype(filePath),
+			"Content-Length": response.length,
+			"Cache-Control": "no-cache, no-store, must-revalidate",
+			Pragma: "no-cache",
+			Expires: 0
+		});
+		res.write(response);
+		return res.end();
+	}
 	const stat = await fs.promises.stat(filePath);
 
 	res.writeHead(200, {

@@ -23,7 +23,7 @@ export function getHtml(wikiPath) {
 				]
 			}),
 			dm("td", { class: "cell-tiddlers", child: dm("~spinner") }),
-			dm("td", dm("button", "Edit"))
+			dm("td", dm("button", { class: "action-show", text: "Show" }))
 		]
 	});
 }
