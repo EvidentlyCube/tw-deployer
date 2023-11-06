@@ -1,4 +1,4 @@
-import { loadPm2Status, loadWikiDetails } from "./frontend.actions.js";
+import { loadBackups, loadPm2Status, loadWikiDetails } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
 import { createWiki } from "./frontend.createWiki.js";
 import { dm } from "./frontend.dm.js";
@@ -50,6 +50,7 @@ async function initializeWikiPath(wikiPath) {
 
 	await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
 	await loadWikiDetails(wikiPath, $wikiRow, $wikiModal);
+	await loadBackups(wikiPath, $wikiModal);
 }
 
 function ready(fn) {

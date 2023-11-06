@@ -1,5 +1,7 @@
 import { apiFetch } from "./frontend.api.js";
-import { formatSize } from "./frontend.utils.js";
+import { dm } from "./frontend.dm.js";
+import { getModalRowHtml } from "./frontend.getModalHtml.js";
+import { formatDate, formatSize, removeElements } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $tr, $modal) {
 	const $statusCell = $tr.querySelector(".cell-status");
@@ -82,3 +84,35 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 		$modalSizeAll.innerText = "???B";
 	}
 }
+
+export async function loadBackups(wikiPath, $modal) {
+	const $backups = $modal.querySelector('.modal-backups');
+
+	removeElements($backups.querySelector('.modal-backup-row, .spinner'));
+	$backups.appendChild(dm('~spinner'));
+
+	const backups = await apiFetch(`wiki-backups/${wikiPath}`, []);
+	removeElements($backups.querySelector('.spinner'));
+
+	for (const backupFileName of backups) {
+		const timestamp = parseInt(backupFileName.split(".")[0]);
+
+		const $html = getModalRowHtml(backupFileName, timestamp);
+
+		$backups.appendChild($html);
+
+		$html.querySelector('.action-delete-backup').addEventListener('click', () => {
+			if (confirm(`Are you sure you want to delete backup from ${formatDate('YYYY-MM-DD hh:mm:ss', timestamp)}?`)) {
+
+			}
+		});
+
+		$html.querySelector('.action-restore-backup').addEventListener('click', () => {
+			if (confirm(`Are you sure you want to restore backup from ${formatDate('YYYY-MM-DD hh:mm:ss', timestamp)}? All current TW content will be removed, consider backing it up first.`)) {
+
+			}
+		});
+	}
+
+}
+

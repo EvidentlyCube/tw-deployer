@@ -1,19 +1,71 @@
+const matches = [
+	[/^DD/, date => date.getDate().toString().padStart(2, "0")],
+	[/^D/, date => date.getDate().toString()],
+	[/^MM/, date => (date.getMonth() + 1).toString().padStart(2, "0")],
+	[/^M/, date => (date.getMonth() + 1).toString()],
+	[/^YYYY/, date => date.getFullYear().toString()],
+	[/^hh/, date => date.getHours().toString().padStart(2, "0")],
+	[/^mm/, date => date.getMinutes().toString().padStart(2, "0")],
+	[/^ss/, date => date.getSeconds().toString().padStart(2, "0")],
+	[/^lll/, date => date.getMilliseconds().toString().padStart(3, "0")],
+];
 
+export function formatDate(format, date) {
+	date = date ? new Date(date) : new Date();
+
+	let formatted = "";
+	while (format.length > 0) {
+		let hadMatch = false;
+		for (const [regexp, callback] of matches) {
+			const match = format.match(regexp);
+
+			if (match) {
+				hadMatch = true;
+				formatted += callback(date);
+				format = format.substring(match[0].length || 1);
+				break;
+			}
+		}
+
+		if (!hadMatch) {
+			formatted += format.charAt(0);
+			format = format.substring(1);
+		}
+	}
+
+	return formatted;
+}
 
 export function formatTime(time) {
-	const seconds = (time / 1000 | 0) & 60;
+	const seconds = (time / 1000 | 0) % 60;
 	const minutes = (time / 1000 / 60 | 0) % 60;
 	const hours = (time / 1000 / 60 / 60 | 0) % 60;
 	const days = (time / 1000 / 60 / 60 / 24 | 0);
+	const weeks = (time / 1000 / 60 / 60 / 24 / 7 | 0);
+	const months = (time / 1000 / 60 / 60 / 24 / 30.437 | 0);
+	const years = (time / 1000 / 60 / 60 / 24 / 365.25 | 0);
 
-	if (days >= 1) {
+	if (years >= 1) {
+		return `${years}years`;
+
+	} else if (months >= 3) {
+		return `${months}months`;
+
+	} else if (weeks >= 1) {
+		return `${weeks}weeks ${days % 7}d`;
+
+	} else if (days >= 1) {
 		return `${days}d ${hours}h`;
+
 	} else if (hours >= 1) {
 		return `${hours}h ${minutes}m`;
+
 	} else if (minutes >= 1) {
 		return `${minutes}m ${seconds}s`;
+
 	} else if (seconds >= 1) {
 		return `${seconds}s`;
+
 	} else {
 		return "<1s";
 	}
@@ -46,5 +98,14 @@ export function toDigits(number) {
 		return number.toFixed(2);
 	} else {
 		return number.toFixed(3);
+	}
+}
+
+export function removeElements(elements) {
+	if (Array.isArray(elements)) {
+		elements.forEach(element => removeElements(element));
+
+	} else if (elements && elements.parentElement) {
+		elements.remove();
 	}
 }

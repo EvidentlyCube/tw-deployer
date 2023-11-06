@@ -1,16 +1,14 @@
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
-import Config from "../config.js";
-import { formatDate } from "../utils/DateUtils.js";
 import { ActionError } from "../utils/Errors.js";
 import { execPromiseLogged } from "../utils/ExecUtils.js";
 import { fileExists, isDirectory } from "../utils/FileUtils.js";
-import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
+import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 
 export async function actionBackupTiddlers(wikiPath, log) {
 	log(`[Action: backup tiddlers from wiki '${wikiPath}'`);
 
-	if (!await isValidWikiPath(wikiPath)) {
+	if (!isValidWikiPath(wikiPath)) {
 		throw new ActionError(`Invalid wiki path '${wikiPath}'`);
 	}
 
@@ -24,7 +22,7 @@ export async function actionBackupTiddlers(wikiPath, log) {
 		throw new ActionError(`Path to backup '${pathToBackup}' does not exist`);
 	}
 
-	const backupDir = resolve(Config.Paths.Backups, wikiPath);
+	const backupDir = getWikiBackupsAbsolutePath(wikiPath);
 
 	if (!await fileExists(backupDir)) {
 		await mkdir(backupDir);
@@ -34,13 +32,14 @@ export async function actionBackupTiddlers(wikiPath, log) {
 
 	const backupFilePath = resolve(
 		backupDir,
-		formatDate('YYYYMMDD-hhmmss-lll') + ".tar.gz"
+		`${Date.now()}.tar.gz`
 	);
+
 	if (await fileExists(backupFilePath)) {
 		throw new ActionError(`Backup already exists on path '${backupFilePath}'`);
 	}
 
-	const { code, stdout, stderr } = await execPromiseLogged(`tar -zcf '${backupFilePath}' '${pathToBackup}'`, log);
+	const { code, stderr } = await execPromiseLogged(`tar -zcf '${backupFilePath}' '${pathToBackup}'`, log);
 
 	if (code) {
 		throw new ActionError(`Wiki backup failed: ${stderr}`);

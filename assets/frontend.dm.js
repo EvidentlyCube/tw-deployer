@@ -37,6 +37,7 @@ export function dm(tag, options) {
 			case "href":
 			case "target":
 			case "value":
+			case "title":
 				element[key] = options[key];
 				break;
 			case "child":

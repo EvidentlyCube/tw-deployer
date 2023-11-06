@@ -40,6 +40,10 @@
 	z-index: 1;
 }
 
+.modal th {
+	text-align: left;
+}
+
 .modal.visible {
 	display: block;
 }
@@ -59,4 +63,20 @@
 
 .modal-close {
 	text-align: center;
+}
+
+.modal-containers {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.modal-backup-row {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin-bottom: 5px;
+}
+
+.modal-backup-row .backup-name {
+	font-family: monospace;
 }
