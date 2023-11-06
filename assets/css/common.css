@@ -9,6 +9,10 @@ body {
 	background: #CCC;
 }
 
+button:disabled {
+	cursor: not-allowed;
+}
+
 #content {
 	display: flex;
 	flex-direction: column;

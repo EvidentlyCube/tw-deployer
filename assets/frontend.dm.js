@@ -33,6 +33,7 @@ export function dm(tag, options) {
 			case "class":
 				element.className = options[key];
 				break;
+			case "disabled":
 			case "href":
 			case "target":
 			case "value":

@@ -18,16 +18,18 @@ export function getModalHtml(wikiPath) {
 			dm("div", {
 				class: "modal-actions",
 				child: [
-					dm('button', "Backup"),
-					dm('button', "Delete"),
-					dm('button', "Copy"),
+					dm('button', { text: "Backup", disabled: true }),
+					dm('button', { text: "Delete", disabled: true }),
+					dm('button', { text: "Copy", disabled: true }),
 				]
 			}),
 			dm("table", {
 				class: "properties",
 				child: [
-					getRow('Path', 'cell-path', wikiPath),
+					getRow('Path', 'cell-path', `/${wikiPath}`),
 					getRow('Port', 'cell-port'),
+					getRow('PID', 'cell-pid'),
+					getRow('PM ID', 'cell-pm2-id'),
 					getRow('Tiddlers', 'cell-tiddlers'),
 					getRow('Size (Tiddlers)', 'cell-size-tiddlers'),
 					getRow('Size (All)', 'cell-size-all'),
