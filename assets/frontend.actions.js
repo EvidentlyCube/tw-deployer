@@ -1,18 +1,18 @@
-import { apiFetch } from "./frontend.api.js";
+import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
 import { getModalRowHtml } from "./frontend.getModalHtml.js";
-import { formatDate, formatSize, removeElements } from "./frontend.utils.js";
+import { formatDate, formatSize, removeElements, setDisabled } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $tr, $modal) {
 	const $statusCell = $tr.querySelector(".cell-status");
 	const $memoryCell = $tr.querySelector(".cell-memory");
 
-	const $modalPID = $modal.querySelector('.cell-pid td')
-	const $modalPm2ID = $modal.querySelector('.cell-pm2-id td')
-	const $modalMemoryUsed = $modal.querySelector('.cell-memory-used td')
-	const $modalMemoryPercent = $modal.querySelector('.cell-memory-percent td')
+	const $modalPID = $modal.querySelector(".cell-pid td");
+	const $modalPm2ID = $modal.querySelector(".cell-pm2-id td");
+	const $modalMemoryUsed = $modal.querySelector(".cell-memory-used td");
+	const $modalMemoryPercent = $modal.querySelector(".cell-memory-percent td");
 
-	const status = await apiFetch(`pm2-status/${wikiPath}`, false);
+	const status = await apiFetch(`pm2-status/${wikiPath}`);
 
 	$tr.setAttribute("data-status", status.status);
 	$tr.setAttribute("data-memory-used", status.memoryUsed);
@@ -25,7 +25,7 @@ export async function loadPm2Status(wikiPath, $tr, $modal) {
 		$memoryCell.querySelector(".primary").innerText = formatSize(status.memoryUsed);
 		$memoryCell.querySelector(".muted").innerText = `${status.memoryUsedPercent}%`;
 		$modalPID.innerText = status.pid;
-		$modalPm2ID.innerText = status.pmId
+		$modalPm2ID.innerText = status.pmId;
 		$modalMemoryUsed.innerText = formatSize(status.memoryUsed);
 		$modalMemoryPercent.innerText = `${status.memoryUsedPercent}%`;
 	} else {
@@ -34,15 +34,15 @@ export async function loadPm2Status(wikiPath, $tr, $modal) {
 		$statusCell.innerText = "Unknown";
 		$memoryCell.querySelector(".primary").innerText = "???B";
 		$memoryCell.querySelector(".muted").innerText = "??%";
-		$modalPID.innerText = '??';
-		$modalPm2ID.innerText = '??';
-		$modalMemoryUsed.innerText = '???B';
-		$modalMemoryPercent.innerText = '??%';
+		$modalPID.innerText = "??";
+		$modalPm2ID.innerText = "??";
+		$modalMemoryUsed.innerText = "???B";
+		$modalMemoryPercent.innerText = "??%";
 	}
 }
 
 export async function loadWikiDetails(wikiPath, $tr, $modal) {
-	const details = await apiFetch(`wiki-details/${wikiPath}`, false);
+	const details = await apiFetch(`wiki-details/${wikiPath}`);
 
 	$tr.setAttribute("data-port", details.port);
 	$tr.setAttribute("data-title", details.title);
@@ -54,11 +54,11 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 	const $sizeCell = $tr.querySelector(".cell-size");
 	const $tiddlersCell = $tr.querySelector(".cell-tiddlers");
 
-	const $modalTitle = $modal.querySelector('header')
-	const $modalPort = $modal.querySelector('.cell-port td')
-	const $modalTiddlers = $modal.querySelector('.cell-tiddlers td')
-	const $modalSizeTiddlers = $modal.querySelector('.cell-size-tiddlers td')
-	const $modalSizeAll = $modal.querySelector('.cell-size-all td')
+	const $modalTitle = $modal.querySelector("header");
+	const $modalPort = $modal.querySelector(".cell-port td");
+	const $modalTiddlers = $modal.querySelector(".cell-tiddlers td");
+	const $modalSizeTiddlers = $modal.querySelector(".cell-size-tiddlers td");
+	const $modalSizeAll = $modal.querySelector(".cell-size-all td");
 
 	if (details) {
 		$titleCell.innerText = details.title;
@@ -86,13 +86,13 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 }
 
 export async function loadBackups(wikiPath, $modal) {
-	const $backups = $modal.querySelector('.modal-backups');
+	const backups = await apiFetch(`wiki-backups/${wikiPath}`) ?? [];
 
-	removeElements($backups.querySelector('.modal-backup-row, .spinner'));
-	$backups.appendChild(dm('~spinner'));
+	const $backups = $modal.querySelector(".modal-backups");
+	removeElements($backups.querySelector(".spinner"));
+	removeElements($backups.querySelectorAll(".modal-backup-row"));
 
-	const backups = await apiFetch(`wiki-backups/${wikiPath}`, []);
-	removeElements($backups.querySelector('.spinner'));
+	backups.sort((l, r) => r.localeCompare(l));
 
 	for (const backupFileName of backups) {
 		const timestamp = parseInt(backupFileName.split(".")[0]);
@@ -101,18 +101,43 @@ export async function loadBackups(wikiPath, $modal) {
 
 		$backups.appendChild($html);
 
-		$html.querySelector('.action-delete-backup').addEventListener('click', () => {
-			if (confirm(`Are you sure you want to delete backup from ${formatDate('YYYY-MM-DD hh:mm:ss', timestamp)}?`)) {
+		$html.querySelector(".action-delete-backup").addEventListener("click", () => {
+			if (confirm(`Are you sure you want to delete backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}?`)) {
 
 			}
 		});
 
-		$html.querySelector('.action-restore-backup').addEventListener('click', () => {
-			if (confirm(`Are you sure you want to restore backup from ${formatDate('YYYY-MM-DD hh:mm:ss', timestamp)}? All current TW content will be removed, consider backing it up first.`)) {
+		$html.querySelector(".action-restore-backup").addEventListener("click", () => {
+			if (confirm(`Are you sure you want to restore backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}? All current TW content will be removed, consider backing it up first.`)) {
 
 			}
 		});
 	}
-
 }
 
+export async function backupWiki(wikiPath, $modal) {
+	if (!confirm(`Are you sure you want to backup wiki ${wikiPath}?`)) {
+		return;
+	}
+
+	const $button = $modal.querySelector(".modal-action-backup");
+	const oldText = $button.innerText;
+	$button.innerText = "Backing up ";
+	$button.appendChild(dm("~spinner50"));
+
+	setDisabled($modal, [$button, "button"], true);
+
+	const csrf = await apiFetch("csrf-token");
+
+	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
+
+	if (getLastApiError()) {
+		alert(getLastApiError());
+
+	} else {
+		await loadBackups(wikiPath, $modal);
+	}
+
+	$button.innerText = oldText;
+	setDisabled($modal, [$button, "button"], false);
+}

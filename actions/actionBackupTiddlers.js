@@ -14,8 +14,8 @@ export async function actionBackupTiddlers(wikiPath, log) {
 
 	const pathToBackup = resolve(
 		getWikiAbsolutePath(wikiPath),
-		'wiki',
-		'tiddlers'
+		"wiki",
+		"tiddlers"
 	);
 
 	if (!await fileExists(pathToBackup)) {

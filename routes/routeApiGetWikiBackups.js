@@ -1,5 +1,5 @@
-import { readdir } from 'node:fs/promises';
-import { fileExists } from '../utils/FileUtils.js';
+import { readdir } from "node:fs/promises";
+import { fileExists } from "../utils/FileUtils.js";
 import { getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 import { routeToRegexp } from "../utils/RouteUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";

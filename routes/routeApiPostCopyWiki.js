@@ -15,8 +15,7 @@ export default {
 
 async function action(req, res) {
 	assertPost(req);
-
-	req.body = await extractBodyJson(req);
+	await parseRequestBodyJson(req, { csrf: "", title: "" });
 
 	const { template, wikiPath } = await validateParams(req);
 
@@ -60,13 +59,4 @@ async function validateParams(req) {
 	}
 
 	return { template, wikiPath };
-}
-
-async function extractBodyJson(req) {
-	const json = await parseRequestBodyJson(req);
-
-	return {
-		csrf: json.csrf ?? "",
-		title: json.title ?? ""
-	};
 }

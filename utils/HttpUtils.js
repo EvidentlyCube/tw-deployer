@@ -26,17 +26,23 @@ export async function parseRequestBody(request) {
 	});
 }
 
-export async function parseRequestBodyJson(request) {
+export async function parseRequestBodyJson(request, defaultObject) {
 	const body = await parseRequestBody(request);
 
 	try {
-		const result = JSON.parse(body);
+		const parsedBody = JSON.parse(body);
 
-		if (typeof result !== "object") {
+		if (typeof parsedBody !== "object") {
 			throw new ApiError(400, "Provided payload is not a valid JSON - not an object");
 		}
 
-		return result;
+		request.body = defaultObject;
+		for (const fieldName of Object.keys(defaultObject)) {
+			if (typeof parsedBody[fieldName] !== "undefined") {
+				request.body[fieldName] = parsedBody[fieldName];
+			}
+		}
+
 	} catch (e) {
 		throw new ApiError(400, `Provided payload is not a valid JSON - ${String(e)}`);
 	}

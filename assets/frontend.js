@@ -1,4 +1,4 @@
-import { loadBackups, loadPm2Status, loadWikiDetails } from "./frontend.actions.js";
+import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
 import { createWiki } from "./frontend.createWiki.js";
 import { dm } from "./frontend.dm.js";
@@ -18,10 +18,10 @@ ready(async () => {
 		createWiki();
 	});
 
-	document.addEventListener('keydown', e => {
-		if (e.key === 'Escape') {
-			document.querySelector('#modals').classList.remove('visible');
-			document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('visible'));
+	document.addEventListener("keydown", e => {
+		if (e.key === "Escape") {
+			document.querySelector("#modals").classList.remove("visible");
+			document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("visible"));
 		}
 	});
 });
@@ -38,19 +38,25 @@ async function initializeWikiPath(wikiPath) {
 	document.querySelector("#wiki-table tbody").appendChild($wikiRow);
 	document.querySelector("#modals").appendChild($wikiModal);
 
-	$wikiRow.querySelector('.action-show').addEventListener('click', () => {
-		$modals.classList.add('visible');
-		$wikiModal.classList.add('visible');
+	$wikiRow.querySelector(".action-show").addEventListener("click", () => {
+		$modals.classList.add("visible");
+		$wikiModal.classList.add("visible");
 	});
 
-	$wikiModal.querySelector('.action-close').addEventListener('click', () => {
-		$modals.classList.remove('visible');
-		$wikiModal.classList.remove('visible');
+	$wikiModal.querySelector(".action-close").addEventListener("click", () => {
+		$modals.classList.remove("visible");
+		$wikiModal.classList.remove("visible");
+	});
+
+	$wikiModal.querySelector(".modal-action-backup").addEventListener("click", () => {
+		backupWiki(wikiPath, $wikiModal);
 	});
 
 	await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
 	await loadWikiDetails(wikiPath, $wikiRow, $wikiModal);
 	await loadBackups(wikiPath, $wikiModal);
+
+	$wikiModal.querySelectorAll("button").forEach(button => button.disabled = false);
 }
 
 function ready(fn) {

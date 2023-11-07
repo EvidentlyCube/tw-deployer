@@ -102,10 +102,26 @@ export function toDigits(number) {
 }
 
 export function removeElements(elements) {
-	if (Array.isArray(elements)) {
+	if (Array.isArray(elements) || elements instanceof NodeList) {
 		elements.forEach(element => removeElements(element));
 
 	} else if (elements && elements.parentElement) {
 		elements.remove();
 	}
+}
+
+export function setDisabled(source, query, value = undefined) {
+	if (Array.isArray(query)) {
+		query.forEach(subQuery => setDisabled(source, subQuery, value));
+
+	} else if (query instanceof HTMLElement) {
+		query.disabled = value;
+
+	} else if (!source) {
+		throw new Error("Expected source to be set");
+
+	} else {
+		source.querySelectorAll(query).forEach(element => element.disabled = value);
+	}
+
 }

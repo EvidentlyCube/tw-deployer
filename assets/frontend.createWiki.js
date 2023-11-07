@@ -1,4 +1,4 @@
-import { apiFetch } from "./frontend.api.js";
+import { apiFetch, apiFetchPost } from "./frontend.api.js";
 
 export async function createWiki() {
 	const $form = document.querySelector("#new-tw");
@@ -11,13 +11,7 @@ export async function createWiki() {
 	const title = $form.querySelector("#name").value;
 	const csrf = await apiFetch("csrf-token");
 
-	const response = await apiFetch(`copy-wiki/${template}/${wikiPath}`, undefined, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ csrf, title })
-	});
+	const response = await apiFetchPost(`copy-wiki/${template}/${wikiPath}`, { csrf, title });
 
 	if (response.error) {
 		$elements.forEach(element => element.disabled = false);
