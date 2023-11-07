@@ -97,17 +97,17 @@ export async function loadBackups(wikiPath, $modal) {
 	for (const backupFileName of backups) {
 		const timestamp = parseInt(backupFileName.split(".")[0]);
 
-		const $html = getModalRowHtml(backupFileName, timestamp);
+		const $backup = getModalRowHtml(backupFileName, timestamp);
 
-		$backups.appendChild($html);
+		$backups.appendChild($backup);
 
-		$html.querySelector(".action-delete-backup").addEventListener("click", () => {
+		$backup.querySelector(".action-delete-backup").addEventListener("click", () => {
 			if (confirm(`Are you sure you want to delete backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}?`)) {
-
+				deleteBackup(wikiPath, backupFileName, $modal, $backup);
 			}
 		});
 
-		$html.querySelector(".action-restore-backup").addEventListener("click", () => {
+		$backup.querySelector(".action-restore-backup").addEventListener("click", () => {
 			if (confirm(`Are you sure you want to restore backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}? All current TW content will be removed, consider backing it up first.`)) {
 
 			}
@@ -128,7 +128,6 @@ export async function backupWiki(wikiPath, $modal) {
 	setDisabled($modal, [$button, "button"], true);
 
 	const csrf = await apiFetch("csrf-token");
-
 	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
@@ -140,4 +139,26 @@ export async function backupWiki(wikiPath, $modal) {
 
 	$button.innerText = oldText;
 	setDisabled($modal, [$button, "button"], false);
+}
+
+export async function deleteBackup(wikiPath, backup, $modal, $backup) {
+	const $button = $backup.querySelector(".action-delete-backup");
+	const oldText = $button.innerText;
+	$button.innerText = "Deleting ";
+	$button.appendChild(dm("~spinner50"));
+
+	setDisabled($modal, ["button"], true);
+
+	const csrf = await apiFetch("csrf-token");
+	await apiFetchPost(`delete-wiki-backup/${wikiPath}/${backup}`, { csrf });
+
+	if (getLastApiError()) {
+		$button.innerText = oldText;
+		alert(getLastApiError());
+
+	} else {
+		$backup.remove();
+	}
+
+	setDisabled($modal, ["button"], false);
 }

@@ -7,20 +7,22 @@ import ActionApiGetWikiDetails from "./routeApiGetWikiDetails.js";
 import ActionApiGetWikis from "./routeApiGetWikis.js";
 import ActionApiPostBackupWiki from "./routeApiPostBackupWiki.js";
 import ActionApiPostCopyWiki from "./routeApiPostCopyWiki.js";
+import ActionApiPostDeleteWikiBackup from "./routeApiPostDeleteWikiBackup.js";
 import ActionAsset from "./routeAsset.js";
 import ActionRoot from "./routeRoot.js";
 
 export function getRoutes() {
 	return [
-		ActionApiPostCopyWiki,
 		ActionApiPostBackupWiki,
-		ActionApiGetWikis,
+		ActionApiPostCopyWiki,
+		ActionApiPostDeleteWikiBackup,
+		ActionApiGetCsrfToken,
+		ActionApiGetJobInfo,
 		ActionApiGetMemoryDetails,
 		ActionApiGetPm2Status,
 		ActionApiGetWikiBackups,
 		ActionApiGetWikiDetails,
-		ActionApiGetCsrfToken,
-		ActionApiGetJobInfo,
+		ActionApiGetWikis,
 		ActionRoot,
 		ActionAsset
 	];

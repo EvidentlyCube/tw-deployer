@@ -6,6 +6,10 @@ export function isValidWikiPath(wikiPath) {
 	return allowedCharacters.test(wikiPath);
 }
 
+export function isSafePath(path) {
+	return !path.includes("\\") && !path.includes("/") && !path.includes("..");
+}
+
 export function getWikiAbsolutePath(wikiPath) {
 	return resolve(process.cwd(), Config.Paths.Wikis, wikiPath);
 }

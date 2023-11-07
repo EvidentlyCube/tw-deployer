@@ -57,20 +57,23 @@ function getPropsTable(wikiPath) {
 		});
 	};
 
-	return dm("table", {
-		class: "properties",
-		child: [
-			getRow("Path", "cell-path", `/${wikiPath}`),
-			getRow("Port", "cell-port"),
-			getRow("PID", "cell-pid"),
-			getRow("PM ID", "cell-pm2-id"),
-			getRow("Tiddlers", "cell-tiddlers"),
-			getRow("Size (Tiddlers)", "cell-size-tiddlers"),
-			getRow("Size (All)", "cell-size-all"),
-			getRow("Memory Used", "cell-memory-used"),
-			getRow("Memory Used %", "cell-memory-percent"),
-		]
-	});
+	return dm("div", [
+		dm("h3", "Properties:"),
+		dm("table", {
+			class: "properties",
+			child: [
+				getRow("Path", "cell-path", `/${wikiPath}`),
+				getRow("Port", "cell-port"),
+				getRow("PID", "cell-pid"),
+				getRow("PM ID", "cell-pm2-id"),
+				getRow("Tiddlers", "cell-tiddlers"),
+				getRow("Size (Tiddlers)", "cell-size-tiddlers"),
+				getRow("Size (All)", "cell-size-all"),
+				getRow("Memory Used", "cell-memory-used"),
+				getRow("Memory Used %", "cell-memory-percent"),
+			]
+		})
+	]);
 }
 
 function getBackupsContainer() {

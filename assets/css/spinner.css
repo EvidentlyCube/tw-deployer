@@ -17,7 +17,9 @@
 	animation: spinner 0.7s linear infinite;
 }
 
-
+button .spinner:after {
+	border-color: #FFF transparent #FFF transparent;
+}
 
 .spinner.s-75 {
 	width: 24px;
