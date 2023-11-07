@@ -8,6 +8,7 @@ import ActionApiGetWikis from "./routeApiGetWikis.js";
 import ActionApiPostBackupWiki from "./routeApiPostBackupWiki.js";
 import ActionApiPostCopyWiki from "./routeApiPostCopyWiki.js";
 import ActionApiPostDeleteWikiBackup from "./routeApiPostDeleteWikiBackup.js";
+import ActionApiPostStopWiki from "./routeApiPostStopWiki.js";
 import ActionAsset from "./routeAsset.js";
 import ActionRoot from "./routeRoot.js";
 
@@ -16,6 +17,7 @@ export function getRoutes() {
 		ActionApiPostBackupWiki,
 		ActionApiPostCopyWiki,
 		ActionApiPostDeleteWikiBackup,
+		ActionApiPostStopWiki,
 		ActionApiGetCsrfToken,
 		ActionApiGetJobInfo,
 		ActionApiGetMemoryDetails,

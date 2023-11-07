@@ -72,6 +72,10 @@ button:disabled {
 	background: #CFC;
 }
 
+#wiki-table tr[data-status="offline"] td {
+	background: #FAA;
+}
+
 #wiki-table tr:not(:last-child) td {
 	border-bottom: 1px solid #888;
 }
@@ -98,7 +102,12 @@ button:disabled {
 	display: inline-block;
 }
 
-.muted {
+.muted,
+.secondary {
 	opacity: 0.6;
 	font-size: 75%;
+}
+
+.hide {
+	display: none !important;
 }

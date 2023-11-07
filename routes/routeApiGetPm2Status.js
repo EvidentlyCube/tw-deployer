@@ -16,20 +16,20 @@ async function action(req, res) {
 		return respondApiError(res, 400, "Invalid wiki name given");
 	}
 
-	const record = await getPm2DetailsForWiki(wikiName);
+	const details = await getPm2DetailsForWiki(wikiName);
 
-	if (!record) {
+	if (!details) {
 		return respondApiError(res, 404, `Failed to find process for /${wikiName}`);
 	}
 
 	return respondApiSuccess(res, {
-		name: record.name,
-		pid: record.pid,
-		pmId: record.pm2_env.pm_id,
-		status: record.pm2_env.status,
-		memoryUsed: getMemoryUsed(record.pm2_env.axm_monitor["Heap Size"]),
-		memoryUsedPercent: await getMemoryPercentUsed(record.pid),
-		uptime: Date.now() - record.pm2_env.pm_uptime
+		name: details.name,
+		pid: details.pid,
+		pmId: details.pm2_env.pm_id,
+		status: details.pm2_env.status,
+		memoryUsed: getMemoryUsed(details.pm2_env.axm_monitor["Heap Size"]),
+		memoryUsedPercent: await getMemoryPercentUsed(details.pid),
+		uptime: Date.now() - details.pm2_env.pm_uptime
 	});
 }
 

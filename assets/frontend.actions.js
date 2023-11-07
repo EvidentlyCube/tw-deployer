@@ -18,26 +18,38 @@ export async function loadPm2Status(wikiPath, $tr, $modal) {
 	$tr.setAttribute("data-memory-used", status.memoryUsed);
 	$tr.setAttribute("data-memory-used-percent", status.memoryUsedPercent);
 
+	$modal.querySelector(".modal-action-stop").classList.remove("hide");
+	$modal.querySelector(".modal-action-start").classList.remove("hide");
+	$modal.querySelector(".modal-action-delete").classList.remove("hide");
+
 	if (status) {
 		$tr.setAttribute("data-status", status.status);
 
 		$statusCell.innerText = status.status;
 		$memoryCell.querySelector(".primary").innerText = formatSize(status.memoryUsed);
-		$memoryCell.querySelector(".muted").innerText = `${status.memoryUsedPercent}%`;
+		$memoryCell.querySelector(".secondary").innerText = `${status.memoryUsedPercent}%`;
 		$modalPID.innerText = status.pid;
 		$modalPm2ID.innerText = status.pmId;
 		$modalMemoryUsed.innerText = formatSize(status.memoryUsed);
 		$modalMemoryPercent.innerText = `${status.memoryUsedPercent}%`;
-	} else {
-		$tr.setAttribute("data-status", "unknown");
 
-		$statusCell.innerText = "Unknown";
-		$memoryCell.querySelector(".primary").innerText = "???B";
-		$memoryCell.querySelector(".muted").innerText = "??%";
-		$modalPID.innerText = "??";
-		$modalPm2ID.innerText = "??";
-		$modalMemoryUsed.innerText = "???B";
-		$modalMemoryPercent.innerText = "??%";
+		if (status.status === "online") {
+			$modal.querySelector(".modal-action-start").classList.add("hide");
+			$modal.querySelector(".modal-action-delete").classList.add("hide");
+		}
+
+	} else {
+		$tr.setAttribute("data-status", "offline");
+
+		$statusCell.innerText = "offline";
+		$memoryCell.querySelector(".primary").innerHTML = '<span class="muted">n/a</span>';
+		$memoryCell.querySelector(".secondary").innerHTML = '<span class="muted">n/a</span>';
+		$modalPID.innerHTML = '<span class="muted">n/a</span>';
+		$modalPm2ID.innerHTML = '<span class="muted">n/a</span>';
+		$modalMemoryUsed.innerHTML = '<span class="muted">n/a</span>';
+		$modalMemoryPercent.innerHTML = '<span class="muted">n/a</span>';
+
+		$modal.querySelector(".modal-action-stop").classList.add("hide");
 	}
 }
 
@@ -63,7 +75,7 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 	if (details) {
 		$titleCell.innerText = details.title;
 		$sizeCell.querySelector(".primary").innerText = formatSize(details.tiddlersSize);
-		$sizeCell.querySelector(".muted").innerText = formatSize(details.totalSize);
+		$sizeCell.querySelector(".secondary").innerText = formatSize(details.totalSize);
 		$tiddlersCell.innerText = details.tiddlersCount;
 
 		$modalTitle.innerText = details.title;
@@ -74,7 +86,7 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 	} else {
 		$titleCell.innerText = "<failed to load>";
 		$sizeCell.querySelector(".primary").innerText = "???B";
-		$sizeCell.querySelector(".muted").innerText = "???B";
+		$sizeCell.querySelector(".secondary").innerText = "???B";
 
 		$modalTitle.innerText = "<failed to load>";
 		$modalPort.innerText = "????";
@@ -139,6 +151,22 @@ export async function backupWiki(wikiPath, $modal) {
 
 	$button.innerText = oldText;
 	setDisabled($modal, [$button, "button"], false);
+}
+
+export async function stopWiki(wikiPath, $tr, $modal) {
+	setDisabled($modal, ["button"], true);
+
+	const csrf = await apiFetch("csrf-token");
+	await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
+
+	if (getLastApiError()) {
+		alert(getLastApiError());
+
+	} else {
+		await loadPm2Status(wikiPath, $tr, $modal);
+	}
+
+	setDisabled($modal, ["button"], false);
 }
 
 export async function deleteBackup(wikiPath, backup, $modal, $backup) {

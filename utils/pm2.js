@@ -6,7 +6,11 @@ export async function pm2JsonList() {
 	return stdout;
 }
 
-export async function getPm2DetailsForWiki(wikiName) {
+export async function getPm2DetailsForWiki(wikiPath) {
 	const records = JSON.parse(await pm2JsonList());
-	return records.find(record => record.name === `Tiddlywiki /${wikiName}`);
+	return records.find(record => record.name === getPm2WikiName(wikiPath));
+}
+
+export function getPm2WikiName(wikiPath) {
+	return `Tiddlywiki /${wikiPath}`;
 }

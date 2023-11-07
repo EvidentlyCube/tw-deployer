@@ -3,8 +3,10 @@ import { actionAddWikiToNginx } from "../actions/actionAddWikiToNginx.js";
 import { actionCopyWiki } from "../actions/actionCopyWiki.js";
 import { actionCreatePm2Config } from "../actions/actionCreatePm2Config.js";
 import { actionDetermineWikiPort } from "../actions/actionDetermineWikiPort.js";
+import { actionPm2Delete } from "../actions/actionPm2Delete.js";
+import { actionPm2Save } from "../actions/actionPm2Save.js";
+import { actionPm2Start } from "../actions/actionPm2Start.js";
 import { actionPreparePackageJson } from "../actions/actionPreparePackageJson.js";
-import { actionRegisterWikiInPm2 } from "../actions/actionRegisterWikiInPm2.js";
 import { actionRestartNginx } from "../actions/actionRestartNginx.js";
 import { actionTwPrepare } from "../actions/actionTwPrepare.js";
 import { actionTwUpdateTitle } from "../actions/actionTwUpdateTitle.js";
@@ -49,7 +51,9 @@ async function runJob(log, title, template, wikiPath) {
 
 	await actionPreparePackageJson(wikiPath, port, log);
 	await actionCreatePm2Config(wikiPath, port, log);
-	await actionRegisterWikiInPm2(wikiPath, log);
+	await actionPm2Delete(wikiPath, log);
+	await actionPm2Start(wikiPath, log);
+	await actionPm2Save(log);
 	await actionAddWikiToNginx(wikiPath, port, log);
 	await actionRestartNginx(log);
 

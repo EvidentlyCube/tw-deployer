@@ -12,14 +12,14 @@ export function getHtml(wikiPath) {
 				class: "cell-size", child: [
 					dm("span", { class: "primary", child: dm("~spinner") }),
 					" ",
-					dm("span", { class: "muted", child: dm("~spinner") }),
+					dm("span", { class: "secondary", child: dm("~spinner") }),
 				]
 			}),
 			dm("td", {
 				class: "cell-memory", child: [
 					dm("span", { class: "primary", child: dm("~spinner") }),
 					" ",
-					dm("span", { class: "muted", child: dm("~spinner") }),
+					dm("span", { class: "secondary", child: dm("~spinner") }),
 				]
 			}),
 			dm("td", { class: "cell-tiddlers", child: dm("~spinner") }),
