@@ -2,7 +2,7 @@ import { ActionError } from "../utils/Errors.js";
 import { execPromiseLogged } from "../utils/ExecUtils.js";
 import { getWikiAbsolutePath } from "../utils/PathUtils.js";
 
-export async function actionCopyWiki(source, target, log) {
+export async function actionWikiCopy(source, target, log) {
 	log(`[Action: copy wiki (From=${source}, To=${target})]`);
 
 	const sourceAbsPath = getWikiAbsolutePath(source);

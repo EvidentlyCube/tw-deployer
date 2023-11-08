@@ -3,7 +3,7 @@ import Config from "../config.js";
 import { getTiddlerAbsolutePath } from "../utils/PathUtils.js";
 import { createTiddlerContent } from "../utils/TwUtils.js";
 
-export async function actionUpdateHostTiddler(wikiPath, log) {
+export async function actionTiddlerUpdateHost(wikiPath, log) {
 	log("[Action: update $:/config/tiddlyweb/host]");
 
 	const newFile = createTiddlerContent({

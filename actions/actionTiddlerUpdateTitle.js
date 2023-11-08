@@ -1,6 +1,6 @@
 import { writeTiddler } from "../utils/TwUtils.js";
 
-export async function actionTwUpdateTitle(wikiPath, title, log) {
+export async function actionTiddlerUpdateTitle(wikiPath, title, log) {
 	log(`[Action: update ${wikiPath} => $:/SiteTitle]`);
 
 	await writeTiddler(wikiPath, "$__SiteTitle.tid", {

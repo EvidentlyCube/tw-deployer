@@ -1,19 +1,19 @@
 import * as fs from "node:fs";
-import { actionAddWikiToNginx } from "../actions/actionAddWikiToNginx.js";
-import { actionCopyWiki } from "../actions/actionCopyWiki.js";
 import { actionCreatePm2Config } from "../actions/actionCreatePm2Config.js";
 import { actionDetermineWikiPort } from "../actions/actionDetermineWikiPort.js";
+import { actionNginxAddWiki } from "../actions/actionNginxAddWiki.js";
+import { actionNginxRestart } from "../actions/actionNginxRestart.js";
 import { actionPm2Delete } from "../actions/actionPm2Delete.js";
 import { actionPm2Save } from "../actions/actionPm2Save.js";
 import { actionPm2Start } from "../actions/actionPm2Start.js";
 import { actionPreparePackageJson } from "../actions/actionPreparePackageJson.js";
-import { actionRestartNginx } from "../actions/actionRestartNginx.js";
-import { actionTwPrepare } from "../actions/actionTwPrepare.js";
-import { actionTwUpdateTitle } from "../actions/actionTwUpdateTitle.js";
-import { actionUpdateHostTiddler } from "../actions/actionUpdateHostTiddler.js";
+import { actionTiddlerUpdateHost } from "../actions/actionTiddlerUpdateHost.js";
+import { actionTiddlerUpdateTitle } from "../actions/actionTiddlerUpdateTitle.js";
+import { actionWikiCleanup } from "../actions/actionWikiCleanup.js";
+import { actionWikiCopy } from "../actions/actionWikiCopy.js";
 import { canAccessFile, fileExists, isDirectory } from "../utils/FileUtils.js";
 import { startJob } from "../utils/JobRunner.js";
-import { LockTypeWikiCreation, acquireLock, releaseLock } from "../utils/LockUtils.js";
+import { LockTypeWikiAction, acquireLock, releaseLock } from "../utils/LockUtils.js";
 import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 
 export async function startJobCopyWiki(
@@ -21,7 +21,7 @@ export async function startJobCopyWiki(
 	template,
 	wikiPath
 ) {
-	if (!acquireLock(LockTypeWikiCreation)) {
+	if (!acquireLock(LockTypeWikiAction)) {
 		throw Error("Server is busy processing wiki creation, please wait for the operation to finish.");
 	}
 
@@ -32,7 +32,7 @@ export async function startJobCopyWiki(
 		);
 
 	} finally {
-		releaseLock(LockTypeWikiCreation);
+		releaseLock(LockTypeWikiAction);
 	}
 }
 
@@ -42,10 +42,10 @@ async function runJob(log, title, template, wikiPath) {
 
 	await validateParams(title, template, wikiPath);
 
-	await actionCopyWiki(template, wikiPath, log);
-	await actionUpdateHostTiddler(wikiPath, log);
-	await actionTwUpdateTitle(wikiPath, title, log);
-	await actionTwPrepare(wikiPath, log);
+	await actionWikiCopy(template, wikiPath, log);
+	await actionTiddlerUpdateHost(wikiPath, log);
+	await actionTiddlerUpdateTitle(wikiPath, title, log);
+	await actionWikiCleanup(wikiPath, log);
 
 	const port = await actionDetermineWikiPort(wikiPath, log);
 
@@ -54,8 +54,8 @@ async function runJob(log, title, template, wikiPath) {
 	await actionPm2Delete(wikiPath, log);
 	await actionPm2Start(wikiPath, log);
 	await actionPm2Save(log);
-	await actionAddWikiToNginx(wikiPath, port, log);
-	await actionRestartNginx(log);
+	await actionNginxAddWiki(wikiPath, port, log);
+	await actionNginxRestart(log);
 
 	log("Job finished");
 }

@@ -1,7 +1,7 @@
 import { ActionError } from "../utils/Errors.js";
 import { execPromiseLogged } from "../utils/ExecUtils.js";
 
-export async function actionRestartNginx(log) {
+export async function actionNginxRestart(log) {
 	log("[Action: restart nginx]");
 
 	const { code } = await execPromiseLogged("sudo service nginx reload", log);

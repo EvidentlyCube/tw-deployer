@@ -4,8 +4,8 @@ import { ActionError } from "../utils/Errors.js";
 import { fileExists } from "../utils/FileUtils.js";
 import { getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 
-export async function actionDeleteBackup(wikiPath, backup, log) {
-	log(`[Action: delete backup '${wikiPath}/${backup}'`);
+export async function actionBackupDelete(wikiPath, backup, log) {
+	log(`[Action: delete a single backup '${wikiPath}/${backup}'`);
 
 	if (!isValidWikiPath(wikiPath)) {
 		throw new ActionError(`Invalid wiki path '${wikiPath}'`);

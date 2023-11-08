@@ -34,6 +34,10 @@ async function action(req, res) {
 }
 
 function getMemoryUsed(heapSize) {
+	if (!heapSize) {
+		return 0;
+	}
+
 	const value = parseFloat(heapSize.value);
 
 	switch (heapSize.unit) {
@@ -51,6 +55,10 @@ function getMemoryUsed(heapSize) {
 }
 
 async function getMemoryPercentUsed(processId) {
+	if (!processId) {
+		return 0;
+	}
+
 	const { stdout } = await execPromise(`ps -ax -o pid,%mem | awk '$1 == ${processId}'`);
 
 	if (!stdout) {

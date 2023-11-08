@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { actionDeleteBackup } from "../actions/actionDeleteBackup.js";
+import { actionBackupDelete } from "../actions/actionBackupDelete.js";
 import { validateCsrfToken } from "../utils/Csrf.js";
 import { ApiError } from "../utils/Errors.js";
 import { fileExists } from "../utils/FileUtils.js";
@@ -20,7 +20,7 @@ async function action(req, res) {
 	const { wikiPath, backup } = await validateParams(req);
 
 	try {
-		actionDeleteBackup(wikiPath, backup, () => { });
+		actionBackupDelete(wikiPath, backup, () => { });
 		respondApiSuccess(res, true);
 	} catch (error) {
 		respondApiError(res, 500, error.message);

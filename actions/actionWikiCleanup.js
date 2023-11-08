@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { getWikiAbsolutePath } from "../utils/PathUtils.js";
 import { rmTiddler, writeTiddler } from "../utils/TwUtils.js";
 
-export async function actionTwPrepare(wikiPath, log) {
+export async function actionWikiCleanup(wikiPath, log) {
 	log(`[Action: cleanup TW story tiddlers and such ${wikiPath}`);
 
 	const absWikiPath = getWikiAbsolutePath(wikiPath);

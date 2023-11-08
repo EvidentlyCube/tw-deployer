@@ -1,4 +1,4 @@
-import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, stopWiki } from "./frontend.actions.js";
+import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
 import { createWiki } from "./frontend.createWiki.js";
 import { dm } from "./frontend.dm.js";
@@ -54,6 +54,10 @@ async function initializeWikiPath(wikiPath) {
 
 	$wikiModal.querySelector(".modal-action-stop").addEventListener("click", () => {
 		stopWiki(wikiPath, $wikiRow, $wikiModal);
+	});
+
+	$wikiModal.querySelector(".modal-action-start").addEventListener("click", () => {
+		startWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
 	await loadPm2Status(wikiPath, $wikiRow, $wikiModal);

@@ -1,5 +1,5 @@
 
-export const LockTypeWikiCreation = "wiki-creation";
+export const LockTypeWikiAction = "wiki-creation";
 const locks = new Set();
 
 export function acquireLock(lockType) {

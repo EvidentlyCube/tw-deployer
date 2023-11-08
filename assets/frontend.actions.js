@@ -156,6 +156,11 @@ export async function backupWiki(wikiPath, $modal) {
 export async function stopWiki(wikiPath, $tr, $modal) {
 	setDisabled($modal, ["button"], true);
 
+	const $button = $modal.querySelector(".modal-action-stop");
+	const oldText = $button.innerText;
+	$button.innerText = "Stopping ";
+	$button.appendChild(dm("~spinner50"));
+
 	const csrf = await apiFetch("csrf-token");
 	await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
 
@@ -166,6 +171,29 @@ export async function stopWiki(wikiPath, $tr, $modal) {
 		await loadPm2Status(wikiPath, $tr, $modal);
 	}
 
+	$button.innerText = oldText;
+	setDisabled($modal, ["button"], false);
+}
+
+export async function startWiki(wikiPath, $tr, $modal) {
+	setDisabled($modal, ["button"], true);
+
+	const $button = $modal.querySelector(".modal-action-start");
+	const oldText = $button.innerText;
+	$button.innerText = "Starting ";
+	$button.appendChild(dm("~spinner50"));
+
+	const csrf = await apiFetch("csrf-token");
+	await apiFetchPost(`start-wiki/${wikiPath}`, { csrf });
+
+	if (getLastApiError()) {
+		alert(getLastApiError());
+
+	} else {
+		await loadPm2Status(wikiPath, $tr, $modal);
+	}
+
+	$button.innerText = oldText;
 	setDisabled($modal, ["button"], false);
 }
 

@@ -42,6 +42,8 @@ export async function initServer() {
 			}
 		})
 		.listen(Config.Port);
+
+	console.log(`Server listening on ${Config.Port}`);
 }
 
 function authenticate(req, res) {
