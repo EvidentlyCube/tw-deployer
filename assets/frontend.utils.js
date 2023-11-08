@@ -126,3 +126,9 @@ export function setDisabled(source, query, value = undefined) {
 	}
 
 }
+
+export async function sleep(duration) {
+	return new Promise(resolve => {
+		setTimeout(resolve, duration);
+	});
+}

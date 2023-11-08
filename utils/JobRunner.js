@@ -19,7 +19,7 @@ export async function startJob(name, callback) {
 	jobs.set(jobId, jobInfo);
 
 	const onLog = message => {
-		jobInfo.logs.push(message);
+		jobInfo.logs.push({ on: Date.now(), log: message });
 	};
 
 	const logger = createLogger(`jobs/${jobId}.log`, { onLog });

@@ -1,6 +1,7 @@
 import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
 import { createWiki } from "./frontend.createWiki.js";
+import { deleteWiki } from "./frontend.deleteWiki.js";
 import { dm } from "./frontend.dm.js";
 import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
@@ -58,6 +59,19 @@ async function initializeWikiPath(wikiPath) {
 
 	$wikiModal.querySelector(".modal-action-start").addEventListener("click", () => {
 		startWiki(wikiPath, $wikiRow, $wikiModal);
+	});
+
+	$wikiModal.querySelector(".modal-action-delete").addEventListener("click", () => {
+		alert("Please consider downloading a backup before deleting the wiki.");
+
+		if (!confirm(`Are you sure you want to delete wiki ${wikiPath}? This operation cannot be undone`)) {
+			return;
+		}
+		if (!confirm(`Final confirmation. Delete /${wikiPath}?`)) {
+			return;
+		}
+
+		deleteWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
 	await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
