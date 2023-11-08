@@ -1,11 +1,11 @@
 import { getJobInfo } from "../utils/JobRunner.js";
-import { routeToRegexp } from "../utils/RouteUtils.js";
+import { getRouteData } from "../utils/RouteUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
-export default {
-	route: routeToRegexp("/?api=job/:jobId"),
+export default getRouteData(
+	"/?api=job/:jobId",
 	action
-};
+);
 
 async function action(req, res) {
 	const jobInfo = getJobInfo(req.pathParams.jobId);

@@ -1,12 +1,12 @@
 import * as fs from "node:fs/promises";
 import { resolve } from "node:path";
+import { getRouteData } from "../utils/RouteUtils.js";
 import { respond } from "./respond.js";
-import { routeToRegexp } from "../utils/RouteUtils.js";
 
-export default {
-	route: routeToRegexp("/"),
+export default getRouteData(
+	"/",
 	action
-};
+);
 
 async function action(req, res) {
 	const html = await fs.readFile(

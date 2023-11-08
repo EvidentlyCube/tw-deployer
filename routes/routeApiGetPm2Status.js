@@ -1,13 +1,13 @@
 import { execPromise } from "../utils/ExecUtils.js";
 import { isValidWikiPath } from "../utils/PathUtils.js";
-import { routeToRegexp } from "../utils/RouteUtils.js";
+import { getRouteData } from "../utils/RouteUtils.js";
 import { getPm2DetailsForWiki } from "../utils/pm2.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
-export default {
-	route: routeToRegexp("/?api=pm2-status/:wikiName"),
+export default getRouteData(
+	"/?api=pm2-status/:wikiName",
 	action
-};
+);
 
 async function action(req, res) {
 	const wikiName = req.pathParams.wikiName;

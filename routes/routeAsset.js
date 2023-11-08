@@ -1,12 +1,13 @@
 import * as fs from "node:fs";
 import { resolve } from "node:path";
 import { fileExists } from "../utils/FileUtils.js";
+import { getRouteData } from "../utils/RouteUtils.js";
 import { respond } from "./respond.js";
 
-export default {
-	route: /^\/\$\$assets\/(?<fileName>.+)$/,
+export default getRouteData(
+	"/$$assets/:rest:fileName",
 	action
-};
+);
 
 async function action(req, res) {
 	const fileName = req.pathParams.fileName;

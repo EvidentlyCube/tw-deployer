@@ -1,13 +1,13 @@
 import { readdir } from "node:fs/promises";
 import { fileExists } from "../utils/FileUtils.js";
 import { getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { routeToRegexp } from "../utils/RouteUtils.js";
+import { getRouteData } from "../utils/RouteUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
-export default {
-	route: routeToRegexp("/?api=wiki-backups/:wikiPath"),
+export default getRouteData(
+	"/?api=wiki-backups/:wikiPath",
 	action
-};
+);
 
 async function action(req, res) {
 	const wikiPath = req.pathParams.wikiPath;
