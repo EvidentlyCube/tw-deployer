@@ -19,7 +19,6 @@ async function action(req, res) {
 
 	const { title, template, wikiPath } = await validateParams(req);
 
-	// const jobId = await startJobTest(1500, true);
 	const jobId = await startJobCopyWiki(title, template, wikiPath);
 	respondApiSuccess(res, jobId);
 }

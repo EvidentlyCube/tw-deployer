@@ -27,6 +27,11 @@ export async function pm2JsonList() {
 	return lastPm2Request;
 }
 
+export async function flushPm2Cache() {
+	lastPm2RequestPromise = null;
+	lastPm2Request = null;
+}
+
 export async function getPm2DetailsForWiki(wikiPath) {
 	const records = JSON.parse(await pm2JsonList());
 	return records.find(record => record.name === getPm2WikiName(wikiPath));

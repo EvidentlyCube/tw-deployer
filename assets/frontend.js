@@ -4,6 +4,7 @@ import { deleteWiki } from "./frontend.deleteWiki.js";
 import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
+import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { setDisabled } from "./frontend.utils.js";
 
 ready(async () => {
@@ -26,6 +27,8 @@ ready(async () => {
 
 	setDisabled(document, "#wiki-table button", false);
 	setDisabled(document, "#modals button", false);
+
+	document.qOn("#action-create-wiki", "click", () => handleCreateWikiModal());
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {
