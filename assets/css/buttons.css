@@ -17,6 +17,10 @@ button:not(:disabled):hover {
 	background: #749dc7;
 }
 
+button.small {
+	width: auto;
+}
+
 button:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;

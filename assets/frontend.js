@@ -6,21 +6,37 @@ import { deleteWiki } from "./frontend.deleteWiki.js";
 import { dm } from "./frontend.dm.js";
 import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
+import { setDisabled } from "./frontend.utils.js";
 
 ready(async () => {
-	const wikiPaths = await apiFetch("get-wikis");
+	Document.prototype.q = Document.prototype.querySelector;
+	Document.prototype.qA = Document.prototype.querySelectorAll;
+	Document.prototype.on = Document.prototype.addEventListener;
+	Document.prototype.qOn = function (query, event, listener, options) {
+		this.qA(query).forEach(element => element.addEventListener(event, listener, options));
+	};
+	Element.prototype.q = Element.prototype.querySelector;
+	Element.prototype.qA = Element.prototype.querySelectorAll;
+	Element.prototype.on = Element.prototype.addEventListener;
+	Element.prototype.qOn = function (query, event, listener, options) {
+		this.qA(query).forEach(element => element.addEventListener(event, listener, options));
+	};
 
+	const wikiPaths = await apiFetch("get-wikis");
 	const $newTwForm = document.querySelector("#new-tw");
 
-	wikiPaths.sort().forEach(wikiPath => initializeWikiPath(wikiPath));
+	await Promise.all(wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath)));
 
-	$newTwForm.addEventListener("submit", e => {
+	setDisabled(document, "#wiki-table button", false);
+	setDisabled(document, "#modals button", false);
+
+	$newTwForm.on("submit", e => {
 		e.preventDefault();
 
 		createWiki();
 	});
 
-	document.addEventListener("keydown", e => {
+	document.on("keydown", e => {
 		if (e.key === "Escape") {
 			document.querySelector("#modals").classList.remove("visible");
 			document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("visible"));
@@ -30,6 +46,7 @@ ready(async () => {
 
 async function initializeWikiPath(wikiPath) {
 	const $templates = document.querySelector("#template");
+	const $tableRows = document.q("#wiki-table tbody");
 	const $modals = document.querySelector("#modals");
 
 	$templates.appendChild(dm("option", { value: wikiPath, text: `/${wikiPath}` }));
@@ -37,37 +54,57 @@ async function initializeWikiPath(wikiPath) {
 	const $wikiRow = getHtml(wikiPath);
 	const $wikiModal = getModalHtml(wikiPath);
 
-	document.querySelector("#wiki-table tbody").appendChild($wikiRow);
-	document.querySelector("#modals").appendChild($wikiModal);
+	const loadAll = async () => {
+		return Promise.all([
+			await loadPm2Status(wikiPath, $wikiRow, $wikiModal),
+			await loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
+			await loadBackups(wikiPath, $wikiModal),
+		]);
+	};
 
-	$wikiRow.querySelector(".action-show").addEventListener("click", () => {
+	$tableRows.appendChild($wikiRow);
+	$modals.appendChild($wikiModal);
+
+	$wikiRow.qOn(".action-show", "click", () => {
 		$modals.classList.add("visible");
 		$wikiModal.classList.add("visible");
 	});
 
-	$wikiModal.querySelector(".action-close").addEventListener("click", () => {
+	$wikiRow.qOn(".action-refresh", "click", async () => {
+		const $icon = $wikiRow.q(".action-refresh span");
+
+		setDisabled($tableRows, "button", true);
+		$icon.classList.add("animated");
+
+		await loadAll();
+
+		$icon.classList.remove("animated");
+		setDisabled($tableRows, "button", false);
+	});
+
+	$wikiModal.qOn(".action-close", "click", () => {
 		$modals.classList.remove("visible");
 		$wikiModal.classList.remove("visible");
 	});
 
-	$wikiModal.querySelector(".modal-action-backup").addEventListener("click", () => {
+	$wikiModal.qOn(".modal-action-backup", "click", () => {
 		backupWiki(wikiPath, $wikiModal);
 	});
 
-	$wikiModal.querySelector(".modal-action-stop").addEventListener("click", () => {
+	$wikiModal.qOn(".modal-action-stop", "click", () => {
 		stopWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
-	$wikiModal.querySelector(".modal-action-start").addEventListener("click", () => {
+	$wikiModal.qOn(".modal-action-start", "click", () => {
 		startWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
-	$wikiModal.querySelector(".modal-action-copy").addEventListener("click", () => {
+	$wikiModal.qOn(".modal-action-copy", "click", () => {
 		$wikiModal.classList.remove("visible");
 		handleCopyWikiModal(wikiPath);
 	});
 
-	$wikiModal.querySelector(".modal-action-delete").addEventListener("click", () => {
+	$wikiModal.qOn(".modal-action-delete", "click", () => {
 		alert("Please consider downloading a backup before deleting the wiki.");
 
 		if (!confirm(`Are you sure you want to delete wiki ${wikiPath}? This operation cannot be undone`)) {
@@ -80,11 +117,7 @@ async function initializeWikiPath(wikiPath) {
 		deleteWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
-	await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
-	await loadWikiDetails(wikiPath, $wikiRow, $wikiModal);
-	await loadBackups(wikiPath, $wikiModal);
-
-	$wikiModal.querySelectorAll("button").forEach(button => button.disabled = false);
+	await loadAll();
 }
 
 function ready(fn) {

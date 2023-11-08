@@ -23,7 +23,12 @@ export function getHtml(wikiPath) {
 				]
 			}),
 			dm("td", { class: "cell-tiddlers", child: dm("~spinner") }),
-			dm("td", dm("button", { class: "action-show", text: "Show" }))
+			dm("td", {
+				class: "cell-actions", child: dm("div", [
+					dm("button", { class: "action-show", text: "Show" }),
+					dm("button", { class: "action-refresh small", child: dm("span", { class: "gg-sync" }) }),
+				])
+			})
 		]
 	});
 }

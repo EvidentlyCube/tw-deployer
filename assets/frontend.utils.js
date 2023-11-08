@@ -121,7 +121,6 @@ export function setDisabled(source, query, value = undefined) {
 		throw new Error("Expected source to be set");
 
 	} else {
-		console.log(query);
 		source.querySelectorAll(query).forEach(element => element.disabled = value);
 	}
 
