@@ -1,4 +1,4 @@
-import { startJobTest } from "../jobs/jobTest.js";
+import { startJobDeleteWiki } from "../jobs/jobDeleteWiki.js";
 import { validateCsrfToken } from "../utils/Csrf.js";
 import { ApiError } from "../utils/Errors.js";
 import { fileExists } from "../utils/FileUtils.js";
@@ -18,7 +18,7 @@ async function action(req, res) {
 
 	const { wikiPath } = await validateParams(req);
 
-	const jobId = await startJobTest(5000);
+	const jobId = await startJobDeleteWiki(wikiPath);
 	respondApiSuccess(res, jobId);
 }
 

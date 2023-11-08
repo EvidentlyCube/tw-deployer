@@ -89,9 +89,36 @@
 	background: white;
 	padding: 5px;
 	margin-bottom: 20px;
-	font-family: monospace;
 	height: 60vh;
 	overflow-y: scroll;
 	border: 1px solid #888;
+}
+
+.log-container p,
+.log-container header,
+.log-container span,
+.log-container strong,
+.log-container pre {
+	font-family: monospace;
+	margin: 0;
+}
+
+.log-container header {
+	font-size: 1.2em;
 	line-height: 1.2em;
+	margin-bottom: 20px;
+}
+
+.log-container header.success {
+	background: #88FF88;
+	padding: 20px;
+}
+
+.log-container header.error {
+	background: #FF8888;
+	padding: 20px;
+}
+
+.log-container hr {
+	margin: 20px 0;
 }

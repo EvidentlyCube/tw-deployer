@@ -10,12 +10,15 @@ export function dm(tag, options) {
 
 	if (typeof options === "string") {
 		options = { text: options };
+
 	} else if (options instanceof HTMLElement) {
 		options = { child: options };
+
 	} else if (Array.isArray(options)) {
 		if (options[0] instanceof HTMLElement) {
 			options = { child: options };
 		}
+
 	} else {
 		options = options || {};
 	}

@@ -8,7 +8,7 @@ import { startJob } from "../utils/JobRunner.js";
 import { LockTypeWikiAction, acquireLock, releaseLock } from "../utils/LockUtils.js";
 import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 
-export async function startJobCopyWiki(
+export async function startJobDeleteWiki(
 	wikiPath
 ) {
 	if (!acquireLock(LockTypeWikiAction)) {
@@ -33,8 +33,8 @@ async function runJob(log, wikiPath) {
 	await validateParams(wikiPath);
 
 	await actionNginxRemoveWiki(wikiPath, log);
-	await actionBackupDeleteAll(wikiPath, log);
 	await actionPm2Delete(wikiPath, log);
+	await actionBackupDeleteAll(wikiPath, log);
 	await actionWikiDelete(wikiPath, log);
 
 	await actionNginxRestart(log);

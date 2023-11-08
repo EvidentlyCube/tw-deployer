@@ -1,4 +1,5 @@
 import { apiFetch } from "./frontend.api.js";
+import { dm } from "./frontend.dm.js";
 import { formatDate, sleep } from "./frontend.utils.js";
 
 const MaxDuration = 30 * 1000;
@@ -19,14 +20,22 @@ export async function trackJob(jobId, title) {
 	let lastLogs = 0;
 	let lastNewLog = Date.now();
 	let callsWithoutLogs = 0;
+	let indent = 1;
 
 	while (lastNewLog + MaxDuration) {
 		const result = await apiFetch(`job/${jobId}`);
 
 		if (result.logs.length > lastLogs) {
 			for (const log of result.logs.slice(lastLogs)) {
-				$logContainerModal.appendChild(document.createTextNode(`[${formatDate("hh:mm:ss.lll", log.on)}] ${log.log}`));
-				$logContainerModal.appendChild(document.createElement("br"));
+				if (log.log.toLowerCase().startsWith("[/action")) {
+					indent--;
+				}
+
+				$logContainerModal.appendChild(formatLog(log, indent));
+
+				if (log.log.toLowerCase().startsWith("[action")) {
+					indent++;
+				}
 			}
 
 			lastLogs = result.logs.length;
@@ -37,14 +46,20 @@ export async function trackJob(jobId, title) {
 			callsWithoutLogs++;
 		}
 
-		if (result.isFinished) {
-			$logContainerModal.appendChild(document.createElement("br"));
-			$logContainerModal.appendChild(document.createElement("br"));
-			$logContainerModal.appendChild(document.createTextNode(`Job Finished at ${formatDate("hh:mm:ss.lll", result.finishedTimestamp)}`));
+		if (result.isError) {
+			$logContainerModal.appendChild(document.createElement("hr"));
+			$logContainerModal.appendChild(dm("header", { class: "error", text: `Job Failed at ${formatDate("hh:mm:ss.lll", result.finishedTimestamp)}` }));
+			$logContainerModal.appendChild(dm("p", result.error.message));
+			$logContainerModal.appendChild(dm("pre", result.error.stack));
+			break;
+
+		} else if (result.isFinished) {
+			$logContainerModal.appendChild(document.createElement("hr"));
+			$logContainerModal.appendChild(dm("header", { class: "success", text: `Job Finished at ${formatDate("hh:mm:ss.lll", result.finishedTimestamp)}` }));
 			break;
 		}
 
-		await sleep(100 + 300 * callsWithoutLogs);
+		await sleep(100 + callsWithoutLogs * 300);
 	}
 
 	$logContainerModal.scrollTop = $logContainerModal.scrollHeight;
@@ -61,4 +76,19 @@ export async function trackJob(jobId, title) {
 
 		$closeButton.addEventListener("click", onClose);
 	});
+}
+
+function formatLog(log, indent) {
+	const row = document.createElement("p");
+
+	row.appendChild(dm("span", { class: "muted", text: formatDate("hh:mm:ss.lll", log.on) }));
+	row.appendChild(dm("span", { html: "&nbsp;".repeat(indent * 4) }));
+
+	const logHtml = log.log
+		.replace(/^(\S+[=:])/, "<strong>$1</strong>")
+		.replace(/`([^`]+)`/g, "<strong>$1</strong>");
+
+	row.appendChild(dm("span", { html: logHtml }));
+
+	return row;
 }
