@@ -9,6 +9,15 @@ body {
 	background: #CCC;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 100;
+}
+
 button {
 	width: 200px;
 	background: #5b89b8;
@@ -43,6 +52,12 @@ button:disabled {
 	padding: 32px;
 
 	background: #F8F8F8;
+}
+
+#global-actions {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
 }
 
 .form-row {

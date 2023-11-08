@@ -1,11 +1,9 @@
 import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
-import { handleCopyWikiModal } from "./frontend.copyWikiModal.js";
-import { createWiki } from "./frontend.createWiki.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
-import { dm } from "./frontend.dm.js";
 import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
+import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { setDisabled } from "./frontend.utils.js";
 
 ready(async () => {
@@ -23,18 +21,11 @@ ready(async () => {
 	};
 
 	const wikiPaths = await apiFetch("get-wikis");
-	const $newTwForm = document.querySelector("#new-tw");
 
 	await Promise.all(wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath)));
 
 	setDisabled(document, "#wiki-table button", false);
 	setDisabled(document, "#modals button", false);
-
-	$newTwForm.on("submit", e => {
-		e.preventDefault();
-
-		createWiki();
-	});
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {
@@ -45,11 +36,8 @@ ready(async () => {
 });
 
 async function initializeWikiPath(wikiPath) {
-	const $templates = document.querySelector("#template");
 	const $tableRows = document.q("#wiki-table tbody");
 	const $modals = document.querySelector("#modals");
-
-	$templates.appendChild(dm("option", { value: wikiPath, text: `/${wikiPath}` }));
 
 	const $wikiRow = getHtml(wikiPath);
 	const $wikiModal = getModalHtml(wikiPath);

@@ -12,7 +12,6 @@ export async function handleCopyWikiModal(template) {
 	$editModal.querySelectorAll("input").forEach(input => input.value = "");
 	setDisabled($editModal, "button", false);
 
-
 	const onSubmit = async e => {
 		if (e.type === "keydown" && e.key !== "Enter") {
 			return;

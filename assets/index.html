@@ -24,36 +24,10 @@
 				<tbody></tbody>
 			</table>
 
-			<h2>Create new:</h2>
-			<form id="new-tw">
-				<div class="form-row">
-					<label for="template">Template</label>
-					<select id="template">
-						<option value="">None</option>
-					</select>
-				</div>
-
-				<div class="form-row">
-					<label for="path">Wiki Path</label>
-					<input
-						id="path"
-						placeholder="Input path here..."
-						pattern="^[a-z0-9-]+$"
-						required
-					/>
-				</div>
-
-				<div class="form-row">
-					<label for="name">Wiki Name</label>
-					<input
-						id="name"
-						placeholder="Input name here..."
-						required
-					/>
-				</div>
-
-				<input type="submit" value="Create Wiki" />
-			</form>
+			<h2>Actions:</h2>
+			<div id="global-actions">
+				<button id="action-create-wiki">Create Wiki</button>
+			</div>
 		</div>
 
 		<div id="modals">
