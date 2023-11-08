@@ -59,10 +59,45 @@
 		<div id="modals">
 			<div id="modal-background"></div>
 			<div id="job-modal" class="modal">
-				<header>Deleting wiki:</header>
+				<header></header>
 				<div class="log-container"></div>
 				<div class="modal-close">
 					<button class="action-close" disabled>Close</button>
+				</div>
+			</div>
+			<div id="new-wiki-modal" class="modal">
+				<header></header>
+
+				<form>
+					<div class="form-row">
+						<label for="path">Wiki Path</label>
+						<input
+							name="path"
+							placeholder="Input path here..."
+							pattern="^[a-z0-9\-]+$"
+							onblur="reportValidity()"
+							required
+						/>
+						<p class="muted">
+							Allowed character are lowercase letters and dash
+						</p>
+					</div>
+
+					<div class="form-row">
+						<label for="name">Wiki Name</label>
+						<input
+							name="name"
+							placeholder="Input name here..."
+							onblur="reportValidity()"
+							required
+						/>
+						<p class="muted">Must not be empty</p>
+					</div>
+				</form>
+
+				<div class="modal-close">
+					<button class="action-create">Create</button>
+					<button class="action-close info">Close</button>
 				</div>
 			</div>
 		</div>

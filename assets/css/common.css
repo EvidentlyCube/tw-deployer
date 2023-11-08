@@ -102,6 +102,10 @@ button:disabled {
 	display: inline-block;
 }
 
+.form-row .muted {
+	margin-top: 0;
+}
+
 .muted,
 .secondary {
 	opacity: 0.6;

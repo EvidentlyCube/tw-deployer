@@ -10,6 +10,7 @@ export async function trackJob(jobId, title) {
 	const $logContainerModal = $jobModal.querySelector(".log-container");
 	const $closeButton = $jobModal.querySelector(".action-close");
 
+	$logContainerModal.innerHTML = "";
 	$jobModal.querySelector("header").innerText = title;
 
 	$closeButton.disabled = true;

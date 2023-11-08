@@ -1,5 +1,6 @@
 import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
 import { apiFetch } from "./frontend.api.js";
+import { handleCopyWikiModal } from "./frontend.copyWikiModal.js";
 import { createWiki } from "./frontend.createWiki.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
 import { dm } from "./frontend.dm.js";
@@ -59,6 +60,11 @@ async function initializeWikiPath(wikiPath) {
 
 	$wikiModal.querySelector(".modal-action-start").addEventListener("click", () => {
 		startWiki(wikiPath, $wikiRow, $wikiModal);
+	});
+
+	$wikiModal.querySelector(".modal-action-copy").addEventListener("click", () => {
+		$wikiModal.classList.remove("visible");
+		handleCopyWikiModal(wikiPath);
 	});
 
 	$wikiModal.querySelector(".modal-action-delete").addEventListener("click", () => {

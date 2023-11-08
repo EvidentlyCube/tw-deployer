@@ -1,10 +1,9 @@
-
 export function respond(res, statusCode, body, contentType, additionalHeaders) {
 	body = body ?? "";
 	additionalHeaders = additionalHeaders ?? {};
 
 	const headers = {
-		"Content-Length": body.length,
+		"Content-Length": (new Blob([body])).size,
 		"Cache-Control": "no-cache, no-store, must-revalidate",
 		Pragma: "no-cache",
 		Expires: 0,

@@ -9,28 +9,31 @@ import { assertPost, getRouteData } from "../utils/RouteUtils.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default getRouteData(
-	"/?api=copy-wiki/:template/:wikiPath",
+	"/?api=wiki/copy/:template",
 	action
 );
 
 async function action(req, res) {
 	assertPost(req);
-	await parseRequestBodyJson(req, { csrf: "", title: "" });
+	await parseRequestBodyJson(req, { csrf: "", wikiPath: "", title: "" });
 
-	const { template, wikiPath } = await validateParams(req);
+	const { title, template, wikiPath } = await validateParams(req);
 
-	const jobId = await startJobCopyWiki(req.body.title, template, wikiPath);
-	respondApiSuccess(res, { jobId });
+	// const jobId = await startJobTest(1500, true);
+	const jobId = await startJobCopyWiki(title, template, wikiPath);
+	respondApiSuccess(res, jobId);
 }
 
 async function validateParams(req) {
-	await validateCsrfToken(req.body.csrf);
+	const { csrf, wikiPath, title } = req.body;
+	const { template } = req.pathParams;
 
-	if (!req.body.title) {
+	await validateCsrfToken(csrf);
+
+	if (!title) {
 		throw new ApiError(400, "Payload is missing `title`");
 	}
 
-	const { template, wikiPath } = req.pathParams;
 	if (!isValidWikiPath(template)) {
 		throw Error("Invalid template name");
 
@@ -58,5 +61,5 @@ async function validateParams(req) {
 		throw new ApiError(400, "Template wiki is not a directory!");
 	}
 
-	return { template, wikiPath };
+	return { title, template, wikiPath };
 }

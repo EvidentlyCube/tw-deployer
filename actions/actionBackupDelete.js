@@ -9,6 +9,7 @@ export async function actionBackupDelete(wikiPath, backup, log) {
 
 	if (!isValidWikiPath(wikiPath)) {
 		throw new ActionError(`Invalid wiki path '${wikiPath}'`);
+
 	} else if (backup.includes("/") || backup.includes("\\") || backup.includes("..")) {
 		throw new ActionError(`Invalid backup name '${backup}'`);
 	}

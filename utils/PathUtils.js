@@ -1,9 +1,12 @@
 import { resolve } from "node:path";
 import Config from "../config.js";
 
-const allowedCharacters = /^[a-z0-9-]+$/;
+const MaxAllowedWikiPath = 64;
+const AllowedCharacters = /^[a-z0-9-]+$/;
+
 export function isValidWikiPath(wikiPath) {
-	return allowedCharacters.test(wikiPath);
+	return wikiPath.length > MaxAllowedWikiPath
+		|| AllowedCharacters.test(wikiPath);
 }
 
 export function isSafePath(path) {
