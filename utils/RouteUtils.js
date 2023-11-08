@@ -7,6 +7,7 @@ export function getRouteData(routePath, action) {
 		pathArgumentCount: routePath.split(":").length - 1,
 		strippedRouteLength: routeStripped.length,
 		route: routeToRegexp(routePath),
+		rawRoute: routePath,
 		action
 	};
 }

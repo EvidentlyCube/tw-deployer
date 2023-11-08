@@ -2,9 +2,7 @@ import * as http from "node:http";
 import Config from "./config.js";
 
 import { routeErrorHandler, routeRequest } from "./router.js";
-import { getRoutes } from "./routes/routes.js";
-
-const routesData = getRoutes();
+import { Routes } from "./routes/routes.js";
 
 export async function initServer() {
 	http
@@ -14,7 +12,7 @@ export async function initServer() {
 					return;
 				}
 
-				if (await routeRequest(routesData, req, res)) {
+				if (await routeRequest(Routes, req, res)) {
 					return;
 				}
 
