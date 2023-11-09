@@ -19,6 +19,7 @@ export async function startJob(name, callback) {
 	jobs.set(jobId, jobInfo);
 
 	const onLog = message => {
+		console.log(message);
 		jobInfo.logs.push({ on: Date.now(), log: message });
 	};
 
@@ -28,6 +29,8 @@ export async function startJob(name, callback) {
 		jobInfo.finishedTimestamp = Date.now();
 		jobInfo.isFinished = true;
 	}).catch(error => {
+		console.log(error);
+
 		jobInfo.finishedTimestamp = Date.now();
 		jobInfo.error = {
 			message: error.message,
