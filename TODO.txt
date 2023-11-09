@@ -4,7 +4,6 @@ BACKUPS:
  - Restoring backups
  - Nightly backups
  - Backup to Google Drive
- - Download current state of the wiki without having to backup it first
 
 FUNCTIONALITY:
  - Modify `users.csv`

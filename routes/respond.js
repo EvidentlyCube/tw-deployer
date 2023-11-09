@@ -21,6 +21,10 @@ export function respond(res, statusCode, body, contentType, additionalHeaders) {
 	res.end();
 }
 
+export function respondError(res, statusCode, error) {
+	respond(res, statusCode, error, "text/plain");
+}
+
 export function respondApiSuccess(res, body) {
 	respond(res, 200, JSON.stringify({ error: null, body }), "application/json", {});
 }

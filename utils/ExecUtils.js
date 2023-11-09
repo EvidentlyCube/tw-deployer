@@ -1,4 +1,6 @@
 import { exec } from "node:child_process";
+import { basename, dirname } from "node:path";
+import { doNull } from "./MiscUtils.js";
 
 export async function execPromise(command) {
 	return new Promise(resolve => {
@@ -17,6 +19,10 @@ export async function execPromiseLogged(command, log) {
 	log(`STDERR=${stderr}`);
 
 	return { code, stdout, stderr };
+}
+
+export async function tarGzPath(source, target, log = null) {
+	return execPromiseLogged(`tar -C '${dirname(source)}' -zcf '${target}' '${basename(source)}'`, log ?? doNull);
 }
 
 export async function isPortOpen(port) {

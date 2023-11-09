@@ -4,6 +4,7 @@ import { validateCsrfToken } from "../utils/Csrf.js";
 import { ApiError } from "../utils/Errors.js";
 import { fileExists } from "../utils/FileUtils.js";
 import { parseRequestBodyJson } from "../utils/HttpUtils.js";
+import { doNull } from "../utils/MiscUtils.js";
 import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../utils/PathUtils.js";
 import { assertPost, getRouteData } from "../utils/RouteUtils.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
@@ -20,7 +21,7 @@ async function action(req, res) {
 	const { wikiPath, backup } = await validateParams(req);
 
 	try {
-		actionBackupDelete(wikiPath, backup, () => { });
+		actionBackupDelete(wikiPath, backup, doNull);
 		respondApiSuccess(res, true);
 	} catch (error) {
 		respondApiError(res, 500, error.message);

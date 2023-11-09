@@ -1,7 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { ActionError } from "../utils/Errors.js";
-import { execPromiseLogged } from "../utils/ExecUtils.js";
+import { tarGzPath } from "../utils/ExecUtils.js";
 import { fileExists, isDirectory } from "../utils/FileUtils.js";
 import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
 
@@ -39,7 +39,7 @@ export async function actionBackupTiddlers(wikiPath, log) {
 		throw new ActionError(`Backup already exists on path '${backupFilePath}'`);
 	}
 
-	const { code, stderr } = await execPromiseLogged(`tar -zcf '${backupFilePath}' '${pathToBackup}'`, log);
+	const { code, stderr } = await tarGzPath(pathToBackup, backupFilePath, log);
 
 	if (code) {
 		throw new ActionError(`Wiki backup failed: ${stderr}`);

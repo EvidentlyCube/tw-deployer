@@ -14,6 +14,12 @@ export function getModalHtml(wikiPath) {
 					dm("button", { class: "modal-action-start hide", text: "Start", disabled: true }),
 					dm("button", { class: "modal-action-delete hide danger", text: "Delete", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
+					dm("a", {
+						href: `?api=wiki/download/${wikiPath}`,
+						title: "Download this wiki's files",
+						class: "small button",
+						child: dm("span", { class: "gg-software-download" })
+					})
 				]
 			}),
 			dm("div", {

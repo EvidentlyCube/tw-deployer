@@ -17,6 +17,12 @@ export class CsrfError {
 	}
 }
 
+export class OneTimeCodeError {
+	constructor(message) {
+		this.message = message;
+	}
+}
+
 export class NotFoundError {
 	constructor() { }
 }
