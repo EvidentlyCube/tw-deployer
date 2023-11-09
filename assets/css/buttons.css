@@ -1,5 +1,6 @@
-button {
-	width: 200px;
+:is(button, .button) {
+	width: 180px;
+	height: 37px;
 	background: #5b89b8;
 	border: none;
 	text-transform: uppercase;
@@ -13,24 +14,24 @@ button {
 	gap: 10px;
 }
 
-button:not(:disabled):hover {
+:is(button, .button):not(:disabled):hover {
 	background: #749dc7;
 }
 
-button.small {
-	width: auto;
+:is(button, .button).small {
+	width: 37px;
 }
 
-button:disabled {
+:is(button, .button):disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
-button.info {
+:is(button, .button).info {
 	background: #F0F0F0;
 	color: black;
 }
 
-button.info:hover {
+:is(button, .button).info:hover {
 	background: #E8E8E8;
 }

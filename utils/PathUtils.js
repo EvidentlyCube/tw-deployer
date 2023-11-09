@@ -5,8 +5,9 @@ const MaxAllowedWikiPath = 64;
 const AllowedCharacters = /^[a-z0-9-]+$/;
 
 export function isValidWikiPath(wikiPath) {
-	return wikiPath.length > MaxAllowedWikiPath
-		|| AllowedCharacters.test(wikiPath);
+	return wikiPath.length > 0
+		&& wikiPath.length <= MaxAllowedWikiPath
+		&& AllowedCharacters.test(wikiPath);
 }
 
 export function isSafePath(path) {

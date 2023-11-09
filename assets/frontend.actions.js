@@ -1,6 +1,6 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
-import { getModalRowHtml } from "./frontend.getModalHtml.js";
+import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { formatDate, formatSize, removeElements, setDisabled } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $tr, $modal) {
@@ -109,7 +109,7 @@ export async function loadBackups(wikiPath, $modal) {
 	for (const backupFileName of backups) {
 		const timestamp = parseInt(backupFileName.split(".")[0]);
 
-		const $backup = getModalRowHtml(backupFileName, timestamp);
+		const $backup = createBackupRowHtml(wikiPath, backupFileName, timestamp);
 
 		$backups.appendChild($backup);
 

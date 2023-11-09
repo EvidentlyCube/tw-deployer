@@ -32,7 +32,7 @@ export function getModalHtml(wikiPath) {
 	});
 }
 
-export function getModalRowHtml(backupFilename, backupTimestamp) {
+export function createBackupRowHtml(wikiPath, backupFilename, backupTimestamp) {
 	return dm("div", {
 		class: "modal-backup-row",
 		"data-filename": backupFilename,
@@ -44,6 +44,11 @@ export function getModalRowHtml(backupFilename, backupTimestamp) {
 			}),
 			dm("button", { class: "action-delete-backup", text: "Delete" }),
 			dm("button", { class: "action-restore-backup", text: "Restore" }),
+			dm("a", {
+				href: `?api=wiki/backup/${wikiPath}/${backupFilename}`,
+				class: "action-download-backup button small",
+				child: dm("span", { class: "gg-software-download" })
+			}),
 		]
 	});
 }

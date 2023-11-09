@@ -18,30 +18,6 @@ h6 {
 	font-weight: 100;
 }
 
-button {
-	width: 200px;
-	background: #5b89b8;
-	border: none;
-	text-transform: uppercase;
-	padding: 10px;
-	border-radius: 2px;
-	color: white;
-	cursor: pointer;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 10px;
-}
-
-button:not(:disabled):hover {
-	background: #749dc7;
-}
-
-button:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
 #content {
 	display: flex;
 	flex-direction: column;
