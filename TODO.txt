@@ -1,7 +1,6 @@
 Some ideas of things I want to implement:
 
 BACKUPS:
- - Downloading backups
  - Restoring backups
  - Nightly backups
  - Backup to Google Drive

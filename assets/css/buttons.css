@@ -1,17 +1,22 @@
 :is(button, .button) {
-	width: 180px;
+	position: relative;
+
 	height: 37px;
-	background: #5b89b8;
+	padding: 0 30px;
 	border: none;
-	text-transform: uppercase;
-	padding: 10px;
 	border-radius: 2px;
-	color: white;
-	cursor: pointer;
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
+
+	background: #5b89b8;
+	text-transform: uppercase;
+	color: white;
+	cursor: pointer;
+
+	transition: background-color 0.25s ease;
 }
 
 :is(button, .button):not(:disabled):hover {
@@ -20,10 +25,11 @@
 
 :is(button, .button).small {
 	width: 37px;
+	padding: 0;
 }
 
 :is(button, .button):disabled {
-	opacity: 0.5;
+	background: #5b89b888;
 	cursor: not-allowed;
 }
 
@@ -32,6 +38,23 @@
 	color: black;
 }
 
+:is(button, .button):disabled.info {
+	background: #F0F0F088;
+	color: black;
+}
+
 :is(button, .button).info:hover {
 	background: #E8E8E8;
+}
+
+:is(button, .button).danger {
+	background: #FF0000;
+}
+
+:is(button, .button):disabled.danger {
+	background: #FF000088;
+}
+
+:is(button, .button).danger:hover {
+	background: #FF6060;
 }

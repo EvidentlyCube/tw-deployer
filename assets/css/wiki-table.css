@@ -33,18 +33,6 @@
 	border-bottom: 1px solid #888;
 }
 
-#wiki-table .spinner {
-	width: 16px;
-	height: 16px;
-}
-
-#wiki-table .spinner:after {
-	width: 16px;
-	height: 16px;
-	margin: 2px;
-	border-width: 1.5px;
-}
-
 #wiki-table .cell-actions>div {
 	display: flex;
 	gap: 5px;

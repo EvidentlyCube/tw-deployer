@@ -1,7 +1,6 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
-import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
-import { formatDate, formatSize, removeElements, setDisabled } from "./frontend.utils.js";
+import { addSpinner, formatDate, formatSize, removeElements, removeSpinner, setDisabled } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $tr, $modal) {
 	const $statusCell = $tr.querySelector(".cell-status");
@@ -133,9 +132,7 @@ export async function backupWiki(wikiPath, $modal) {
 	}
 
 	const $button = $modal.querySelector(".modal-action-backup");
-	const oldText = $button.innerText;
-	$button.innerText = "Backing up ";
-	$button.appendChild(dm("~spinner50"));
+	addSpinner($button);
 
 	setDisabled($modal, [$button, "button"], true);
 
@@ -149,7 +146,7 @@ export async function backupWiki(wikiPath, $modal) {
 		await loadBackups(wikiPath, $modal);
 	}
 
-	$button.innerText = oldText;
+	removeSpinner($button);
 	setDisabled($modal, [$button, "button"], false);
 }
 
@@ -157,9 +154,7 @@ export async function stopWiki(wikiPath, $tr, $modal) {
 	setDisabled($modal, ["button"], true);
 
 	const $button = $modal.querySelector(".modal-action-stop");
-	const oldText = $button.innerText;
-	$button.innerText = "Stopping ";
-	$button.appendChild(dm("~spinner50"));
+	addSpinner($button);
 
 	const csrf = await apiFetch("csrf-token");
 	await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
@@ -171,7 +166,7 @@ export async function stopWiki(wikiPath, $tr, $modal) {
 		await loadPm2Status(wikiPath, $tr, $modal);
 	}
 
-	$button.innerText = oldText;
+	removeSpinner($button);
 	setDisabled($modal, ["button"], false);
 }
 
@@ -179,9 +174,7 @@ export async function startWiki(wikiPath, $tr, $modal) {
 	setDisabled($modal, ["button"], true);
 
 	const $button = $modal.querySelector(".modal-action-start");
-	const oldText = $button.innerText;
-	$button.innerText = "Starting ";
-	$button.appendChild(dm("~spinner50"));
+	addSpinner($button);
 
 	const csrf = await apiFetch("csrf-token");
 	await apiFetchPost(`start-wiki/${wikiPath}`, { csrf });
@@ -193,15 +186,13 @@ export async function startWiki(wikiPath, $tr, $modal) {
 		await loadPm2Status(wikiPath, $tr, $modal);
 	}
 
-	$button.innerText = oldText;
+	removeSpinner($button);
 	setDisabled($modal, ["button"], false);
 }
 
 export async function deleteBackup(wikiPath, backup, $modal, $backup) {
 	const $button = $backup.querySelector(".action-delete-backup");
-	const oldText = $button.innerText;
-	$button.innerText = "Deleting ";
-	$button.appendChild(dm("~spinner50"));
+	addSpinner($button);
 
 	setDisabled($modal, ["button"], true);
 
@@ -209,8 +200,8 @@ export async function deleteBackup(wikiPath, backup, $modal, $backup) {
 	await apiFetchPost(`delete-wiki-backup/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {
-		$button.innerText = oldText;
 		alert(getLastApiError());
+		removeSpinner($button);
 
 	} else {
 		$backup.remove();

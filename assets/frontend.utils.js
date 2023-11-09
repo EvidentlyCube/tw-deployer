@@ -1,3 +1,5 @@
+import { dm } from "./frontend.dm.js";
+
 const matches = [
 	[/^DD/, date => date.getDate().toString().padStart(2, "0")],
 	[/^D/, date => date.getDate().toString()],
@@ -130,4 +132,32 @@ export async function sleep(duration) {
 	return new Promise(resolve => {
 		setTimeout(resolve, duration);
 	});
+}
+
+export function addSpinner($to) {
+	const $spinner = $to.q(".spinner") || dm("~spinner");
+
+	const timeoutId = $spinner.getAttribute("data-timeout");
+
+	if (timeoutId) {
+		clearTimeout(timeoutId);
+		$spinner.removeAttribute("data-timeout");
+		$spinner.classList.remove("hiding");
+	}
+
+	if ($spinner.parentElement !== $to) {
+		$to.appendChild($spinner);
+	}
+}
+export function removeSpinner($from) {
+	const $spinner = $from.q(".spinner");
+
+	if (!$spinner || $spinner.getAttribute("data-timeout")) {
+		return;
+	}
+
+	$spinner.classList.add("hiding");
+	$spinner.setAttribute("data-timeout", setTimeout(() => {
+		$spinner.remove();
+	}, 250));
 }

@@ -3,6 +3,12 @@
 	display: inline-block;
 	width: 32px;
 	height: 32px;
+	transition: opacity 0.25s ease;
+	animation: spinner-fade-in 0.25s;
+}
+
+.spinner.hiding {
+	opacity: 0;
 }
 
 .spinner:after {
@@ -19,6 +25,13 @@
 
 button .spinner:after {
 	border-color: #FFF transparent #FFF transparent;
+}
+
+:is(button, .button) .spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .spinner.s-75 {
@@ -54,5 +67,15 @@ button .spinner:after {
 
 	100% {
 		transform: rotate(360deg);
+	}
+}
+
+@keyframes spinner-fade-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
 	}
 }

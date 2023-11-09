@@ -12,7 +12,7 @@ export function getModalHtml(wikiPath) {
 					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
 					dm("button", { class: "modal-action-stop hide", text: "Stop", disabled: true }),
 					dm("button", { class: "modal-action-start hide", text: "Start", disabled: true }),
-					dm("button", { class: "modal-action-delete hide", text: "Delete", disabled: true }),
+					dm("button", { class: "modal-action-delete hide danger", text: "Delete", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
 				]
 			}),
@@ -42,7 +42,7 @@ export function createBackupRowHtml(wikiPath, backupFilename, backupTimestamp) {
 				class: "backup-name",
 				text: formatDate("YYYY-MM-DD hh:mm:ss", backupTimestamp),
 			}),
-			dm("button", { class: "action-delete-backup", text: "Delete" }),
+			dm("button", { class: "action-delete-backup danger", text: "Delete" }),
 			dm("button", { class: "action-restore-backup", text: "Restore" }),
 			dm("a", {
 				href: `?api=wiki/backup/${wikiPath}/${backupFilename}`,
