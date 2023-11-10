@@ -73,25 +73,31 @@ export function formatTime(time) {
 	}
 }
 
-export function formatSize(size) {
+export function formatSize(size, decimals = null, spaces = 0) {
+	const infix = " ".repeat(spaces);
+
 	if (size < 1000) {
-		return `${size}B`;
+		return `${toDigits(size, decimals)}${infix}B`;
 
 	} else if (size < 1000 ** 2) {
-		return `${toDigits(size / 1000)}KB`;
+		return `${toDigits(size / 1000, decimals)}${infix}KB`;
 
 	} else if (size < 1000 ** 3) {
-		return `${toDigits(size / 1000 / 1000)}MB`;
+		return `${toDigits(size / 1000 / 1000, decimals)}${infix}MB`;
 
 	} else if (size < 1000 ** 4) {
-		return `${toDigits(size / 1000 / 1000 / 1000)}GB`;
+		return `${toDigits(size / 1000 / 1000 / 1000, decimals)}${infix}GB`;
 
 	} else {
-		return `${toDigits(size / 1000 / 1000 / 1000 / 1000)}TB`;
+		return `${toDigits(size / 1000 / 1000 / 1000 / 1000, decimals)}${infix}TB`;
 	}
 }
 
-export function toDigits(number) {
+export function toDigits(number, decimals = null) {
+	if (decimals !== null) {
+		return number.toFixed(decimals);
+	}
+
 	if (number >= 1000) {
 		return number;
 	} else if (number >= 100) {

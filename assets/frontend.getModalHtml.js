@@ -10,7 +10,7 @@ export function getModalHtml(wikiPath) {
 				class: "modal-actions",
 				child: [
 					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
-					dm("button", { class: "modal-action-stop hide", text: "Stop", disabled: true }),
+					dm("button", { class: "modal-action-stop hide danger", text: "Stop", disabled: true }),
 					dm("button", { class: "modal-action-start hide", text: "Start", disabled: true }),
 					dm("button", { class: "modal-action-delete hide danger", text: "Delete", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
@@ -32,7 +32,7 @@ export function getModalHtml(wikiPath) {
 			,
 			dm("div", {
 				class: "modal-close",
-				child: dm("button", { class: "action-close", child: "Close" })
+				child: dm("button", { class: "action-close info", child: "Close" })
 			})
 		]
 	});
@@ -73,7 +73,7 @@ function getPropsTable(wikiPath) {
 	return dm("div", [
 		dm("h3", "Properties:"),
 		dm("table", {
-			class: "properties",
+			class: "wiki-properties",
 			child: [
 				getRow("Path", "cell-path", `/${wikiPath}`),
 				getRow("Port", "cell-port"),

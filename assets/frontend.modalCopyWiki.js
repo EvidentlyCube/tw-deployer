@@ -2,7 +2,7 @@ import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
 import { setDisabled } from "./frontend.utils.js";
 
-export async function handleCopyWikiModal(template) {
+export async function handleCopyWikiModal(template, $oldModal) {
 	const $modals = document.querySelector("#modals");
 	const $editModal = document.querySelector("#new-wiki-modal");
 
@@ -50,6 +50,9 @@ export async function handleCopyWikiModal(template) {
 
 	const onClose = () => {
 		teardown();
+
+		$modals.classList.add("visible");
+		$oldModal.classList.add("visible");
 	};
 
 	const teardown = () => {

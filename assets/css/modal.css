@@ -40,6 +40,18 @@
 	z-index: 1;
 }
 
+.wiki-properties :is(.cell-port,
+	.cell-pid,
+	.cell-pm2-id,
+	.cell-tiddlers,
+	.cell-size-tiddlers,
+	.cell-size-all,
+	.cell-memory-used,
+	.cell-memory-percent) td {
+	text-align: right;
+	font-family: monospace;
+}
+
 .modal th {
 	text-align: left;
 }

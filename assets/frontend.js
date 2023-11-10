@@ -47,9 +47,9 @@ async function initializeWikiPath(wikiPath) {
 
 	const loadAll = async () => {
 		return Promise.all([
-			await loadPm2Status(wikiPath, $wikiRow, $wikiModal),
-			await loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
-			await loadBackups(wikiPath, $wikiModal),
+			loadPm2Status(wikiPath, $wikiRow, $wikiModal),
+			loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
+			loadBackups(wikiPath, $wikiRow, $wikiModal),
 		]);
 	};
 
@@ -79,7 +79,7 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	$wikiModal.qOn(".modal-action-backup", "click", () => {
-		backupWiki(wikiPath, $wikiModal);
+		backupWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-stop", "click", () => {
@@ -92,7 +92,7 @@ async function initializeWikiPath(wikiPath) {
 
 	$wikiModal.qOn(".modal-action-copy", "click", () => {
 		$wikiModal.classList.remove("visible");
-		handleCopyWikiModal(wikiPath);
+		handleCopyWikiModal(wikiPath, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-delete", "click", () => {
