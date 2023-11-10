@@ -9,6 +9,10 @@ body {
 	background: #CCC;
 }
 
+.no-transition * {
+	transition: none !important;
+}
+
 h1,
 h2,
 h3,
@@ -33,7 +37,10 @@ h6 {
 #global-actions {
 	display: flex;
 	justify-content: center;
-	gap: 20px;
+}
+
+#global-actions>* {
+	margin: 0 10px 20px;
 }
 
 .form-row {

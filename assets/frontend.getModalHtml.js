@@ -10,9 +10,9 @@ export function getModalHtml(wikiPath) {
 				class: "modal-actions",
 				child: [
 					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
-					dm("button", { class: "modal-action-stop hide danger", text: "Stop", disabled: true }),
-					dm("button", { class: "modal-action-start hide", text: "Start", disabled: true }),
-					dm("button", { class: "modal-action-delete hide danger", text: "Delete", disabled: true }),
+					dm("button", { class: "modal-action-stop danger", text: "Stop", disabled: true }),
+					dm("button", { class: "modal-action-start", text: "Start", disabled: true }),
+					dm("button", { class: "modal-action-delete danger", text: "Delete", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
 					dm("a", {
 						href: `?api=wiki/download/${wikiPath}`,

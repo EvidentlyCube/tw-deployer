@@ -1,7 +1,7 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { trackJob } from "./frontend.jobs.js";
-import { addSpinner, formatDate, formatSize, removeElements, removeSpinner, setDisabled } from "./frontend.utils.js";
+import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setDisabled, showButton } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	const $statusCell = $wikiRow.querySelector(".cell-status");
@@ -18,9 +18,9 @@ export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	$wikiRow.setAttribute("data-memory-used", status.memoryUsed);
 	$wikiRow.setAttribute("data-memory-used-percent", status.memoryUsedPercent);
 
-	$wikiModal.querySelector(".modal-action-stop").classList.remove("hide");
-	$wikiModal.querySelector(".modal-action-start").classList.remove("hide");
-	$wikiModal.querySelector(".modal-action-delete").classList.remove("hide");
+	showButton($wikiModal.q(".modal-action-stop"));
+	showButton($wikiModal.q(".modal-action-start"));
+	showButton($wikiModal.q(".modal-action-delete"));
 
 	if (status) {
 		$wikiRow.setAttribute("data-status", status.status);
@@ -34,8 +34,8 @@ export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 		$modalMemoryPercent.innerText = `${status.memoryUsedPercent}%`;
 
 		if (status.status === "online") {
-			$wikiModal.querySelector(".modal-action-start").classList.add("hide");
-			$wikiModal.querySelector(".modal-action-delete").classList.add("hide");
+			hideButton($wikiModal.q(".modal-action-start"));
+			hideButton($wikiModal.q(".modal-action-delete"));
 		}
 
 	} else {
@@ -49,7 +49,7 @@ export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 		$modalMemoryUsed.innerHTML = '<span class="muted">n/a</span>';
 		$modalMemoryPercent.innerHTML = '<span class="muted">n/a</span>';
 
-		$wikiModal.querySelector(".modal-action-stop").classList.add("hide");
+		hideButton($wikiModal.q(".modal-action-stop"));
 	}
 }
 

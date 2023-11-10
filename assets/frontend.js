@@ -5,7 +5,7 @@ import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
-import { setDisabled } from "./frontend.utils.js";
+import { hideButton, setDisabled, showButton } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -28,6 +28,10 @@ ready(async () => {
 	setDisabled(document, "#wiki-table button", false);
 	setDisabled(document, "#modals button", false);
 
+	setTimeout(() => {
+		document.body.classList.remove("no-transition");
+	}, 200);
+
 	document.qOn("#action-create-wiki", "click", () => handleCreateWikiModal());
 
 	document.on("keydown", e => {
@@ -36,6 +40,18 @@ ready(async () => {
 			document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("visible"));
 		}
 	});
+
+	document.qOn("#action-test-1", "click", () => {
+		const a2 = document.q("#action-test-2");
+
+		if (a2.classList.contains("hiding") || a2.classList.contains("hide")) {
+			debugger;
+			showButton(a2);
+		} else {
+			hideButton(a2);
+		}
+	});
+
 });
 
 async function initializeWikiPath(wikiPath) {

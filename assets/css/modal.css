@@ -69,9 +69,12 @@
 
 .modal-actions {
 	display: flex;
-	gap: 10px;
 	justify-content: center;
 	margin-bottom: 20px;
+}
+
+.modal-actions>* {
+	margin: 0 10px 20px;
 }
 
 .modal-close {

@@ -167,3 +167,72 @@ export function removeSpinner($from) {
 		$spinner.remove();
 	}, 250));
 }
+
+export function showButton($button) {
+	if ($button.classList.contains("hide")) {
+		$button.classList.remove("hide");
+
+		if ($button.offsetWidth === 0) {
+			return;
+		}
+
+		const buttonWidth = $button.offsetWidth;
+		$button.setAttribute("data-full-width", buttonWidth);
+		$button.style.transition = "none";
+		$button.style.width = 0;
+		$button.style.padding = 0;
+		$button.style.margin = 0;
+		$button.classList.add("hiding");
+		reflow($button);
+		$button.style.transition = "";
+		$button.style.width = "";
+		$button.style.padding = "";
+		$button.style.margin = "";
+		reflow($button);
+		$button.style.width = `${buttonWidth}px`;
+		$button.classList.remove("hiding");
+	} else {
+		const buttonWidth = $button.getAttribute("data-full-width");
+		$button.style.width = `${buttonWidth}px`;
+		$button.classList.remove("hiding");
+	}
+
+	const timeoutId = setTimeout(() => {
+		$button.removeAttribute("data-timeout");
+		$button.style.width = "";
+	}, 500);
+
+	$button.setAttribute("data-timeout", timeoutId);
+}
+
+export function hideButton($button) {
+	if (!$button.hasAttribute("data-full-width") && !$button.offsetWidth) {
+		$button.classList.add("hide");
+		return;
+	}
+
+	const timeoutId = $button.getAttribute("data-timeout");
+	if (timeoutId) {
+		clearTimeout(timeoutId);
+		$button.removeAttribute("data-timeout");
+	}
+
+	if (!$button.hasAttribute("data-full-width")) {
+		$button.setAttribute("data-full-width", $button.offsetWidth);
+	}
+
+	const buttonWidth = $button.getAttribute("data-full-width");
+
+	$button.style.width = `${buttonWidth}px`;
+	reflow($button);
+	$button.classList.add("hiding");
+	$button.style.width = "";
+}
+
+function reflow($element) {
+	const value = $element.offsetWidth;
+
+	if (Math.random() > 999) {
+		console.log(value);
+	}
+}
