@@ -1,4 +1,5 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
+import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { trackJob } from "./frontend.jobs.js";
 import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setDisabled, showButton } from "./frontend.utils.js";
@@ -105,6 +106,13 @@ export async function loadBackups(wikiPath, $wikiRow, $wikiModal) {
 	removeElements($backups.querySelectorAll(".modal-backup-row"));
 
 	backups.sort((l, r) => r.localeCompare(l));
+
+	if (backups.length === 0) {
+		$backups.appendChild(dm("div", {
+			class: "modal-backup-row muted",
+			text: "No backups found..."
+		}));
+	}
 
 	for (const backupFileName of backups) {
 		const timestamp = parseInt(backupFileName.split(".")[0]);
