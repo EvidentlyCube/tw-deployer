@@ -236,3 +236,22 @@ function reflow($element) {
 		console.log(value);
 	}
 }
+
+export function showModal($modal) {
+	const $modals = document.q("#modals");
+
+	document.qA("#modals .modal").forEach($modal => $modal.classList.remove("visible"));
+
+	if (typeof $modal === "string") {
+		$modal = $modals.q(`.modal.${$modal}`);
+	}
+
+	$modal.classList.add("visible");
+	$modals.classList.add("visible");
+}
+
+export function hideModals() {
+	document.q("#modals").classList.remove("visible");
+	document.qA("#modals .modal").forEach($modal => $modal.classList.remove("visible"));
+
+}

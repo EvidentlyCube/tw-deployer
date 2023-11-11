@@ -2,7 +2,7 @@ import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { trackJob } from "./frontend.jobs.js";
-import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setDisabled, showButton } from "./frontend.utils.js";
+import { addSpinner, formatDate, formatSize, hideButton, hideModals, removeElements, removeSpinner, setDisabled, showButton, showModal } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	const $statusCell = $wikiRow.querySelector(".cell-status");
@@ -233,12 +233,9 @@ export async function restoreBackup(wikiPath, backup, $wikiRow, $wikiModal, $bac
 		return false;
 	}
 
-	$wikiModal.classList.remove("visible");
-
 	await trackJob(jobId, `Restoring backup '${backup}' to /${wikiPath}`);
 
-	$wikiModal.classList.add("visible");
-	document.q("#modals").classList.add("visible");
+	showModal($wikiModal);
 
 	await Promise.all([
 		await loadPm2Status(wikiPath, $wikiRow, $wikiModal),

@@ -10,8 +10,6 @@ export async function deleteWiki(wikiPath, $tr, $modal) {
 		return;
 	}
 
-	$modal.classList.remove("visible");
-
 	await trackJob(jobId, `Deleting wiki /${wikiPath}`);
 
 	$modal.remove();

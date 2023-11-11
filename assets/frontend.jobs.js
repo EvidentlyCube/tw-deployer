@@ -1,6 +1,6 @@
 import { apiFetch } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
-import { formatDate, sleep } from "./frontend.utils.js";
+import { formatDate, hideModals, showModal, sleep } from "./frontend.utils.js";
 
 const MaxDuration = 30 * 1000;
 
@@ -15,8 +15,7 @@ export async function trackJob(jobId, title) {
 
 	$closeButton.disabled = true;
 
-	$modals.classList.add("visible");
-	$jobModal.classList.add("visible");
+	showModal($jobModal);
 
 	let lastLogs = 0;
 	let lastNewLog = Date.now();
@@ -69,8 +68,7 @@ export async function trackJob(jobId, title) {
 	return new Promise(resolve => {
 		const onClose = () => {
 			$closeButton.removeEventListener("click", onClose);
-			$jobModal.classList.remove("visible");
-			$modals.classList.remove("visible");
+			hideModals();
 
 			resolve();
 		};

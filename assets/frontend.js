@@ -5,7 +5,7 @@ import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
-import { setDisabled } from "./frontend.utils.js";
+import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -36,8 +36,7 @@ ready(async () => {
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {
-			document.querySelector("#modals").classList.remove("visible");
-			document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("visible"));
+			hideModals();
 		}
 	});
 });
@@ -61,8 +60,7 @@ async function initializeWikiPath(wikiPath) {
 	$modals.appendChild($wikiModal);
 
 	$wikiRow.qOn(".action-show", "click", () => {
-		$modals.classList.add("visible");
-		$wikiModal.classList.add("visible");
+		showModal($wikiModal);
 	});
 
 	$wikiRow.qOn(".action-refresh", "click", async () => {
@@ -78,8 +76,7 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	$wikiModal.qOn(".action-close", "click", () => {
-		$modals.classList.remove("visible");
-		$wikiModal.classList.remove("visible");
+		hideModals();
 	});
 
 	$wikiModal.qOn(".modal-action-backup", "click", () => {
@@ -95,7 +92,7 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	$wikiModal.qOn(".modal-action-copy", "click", () => {
-		$wikiModal.classList.remove("visible");
+		hideModals();
 		handleCopyWikiModal(wikiPath, $wikiModal);
 	});
 

@@ -10,7 +10,6 @@ export async function createWiki(template, wikiPath, title, $modal) {
 		return false;
 	}
 
-	$modal.classList.remove("visible");
 
 	await trackJob(jobId, `Copying wiki /${template} to /${wikiPath}`);
 

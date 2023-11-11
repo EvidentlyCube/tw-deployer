@@ -1,13 +1,12 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
-import { setDisabled } from "./frontend.utils.js";
+import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
 export async function handleCopyWikiModal(template, $oldModal) {
 	const $modals = document.querySelector("#modals");
 	const $editModal = document.querySelector("#new-wiki-modal");
 
-	$modals.classList.add("visible");
-	$editModal.classList.add("visible");
+	showModal($editModal);
 	$editModal.querySelector("header").innerHTML = `Create a copy of <code>/${template}</code>`;
 	$editModal.querySelectorAll("input").forEach(input => input.value = "");
 	setDisabled($editModal, "button", false);
@@ -51,8 +50,7 @@ export async function handleCopyWikiModal(template, $oldModal) {
 	const onClose = () => {
 		teardown();
 
-		$modals.classList.add("visible");
-		$oldModal.classList.add("visible");
+		showModal($oldModal);
 	};
 
 	const teardown = () => {
@@ -60,8 +58,7 @@ export async function handleCopyWikiModal(template, $oldModal) {
 		$editModal.querySelector(".action-create").removeEventListener("click", onSubmit);
 		$editModal.querySelector(".action-close").removeEventListener("click", onClose);
 
-		$modals.classList.remove("visible");
-		$editModal.classList.remove("visible");
+		hideModals();
 	};
 
 	$editModal.addEventListener("keydown", onSubmit);
