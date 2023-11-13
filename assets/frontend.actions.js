@@ -2,7 +2,7 @@ import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { trackJob } from "./frontend.jobs.js";
-import { addSpinner, formatDate, formatSize, hideButton, hideModals, removeElements, removeSpinner, setDisabled, showButton, showModal } from "./frontend.utils.js";
+import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setDisabled, showButton, showModal } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	const $statusCell = $wikiRow.querySelector(".cell-status");

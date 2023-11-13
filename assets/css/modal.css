@@ -152,3 +152,12 @@
 	align-items: center;
 	margin-bottom: 0;
 }
+
+#users-modal table {
+	margin: auto;
+}
+
+#users-modal .actions-cell {
+	display: flex;
+	gap: 10px;
+}

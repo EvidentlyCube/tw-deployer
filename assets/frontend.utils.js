@@ -131,7 +131,10 @@ export function setDisabled(source, query, value = undefined) {
 	} else {
 		source.querySelectorAll(query).forEach(element => element.disabled = value);
 	}
+}
 
+export function setButtonsDisabled($container, value) {
+	$container.qA("button, .button").forEach($button => $button.disabled = value);
 }
 
 export async function sleep(duration) {

@@ -3,7 +3,6 @@ import { trackJob } from "./frontend.jobs.js";
 import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
 export async function handleCreateWikiModal() {
-	const $modals = document.querySelector("#modals");
 	const $editModal = document.querySelector("#new-wiki-modal");
 
 	showModal($editModal);

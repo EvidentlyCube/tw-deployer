@@ -1,6 +1,8 @@
 
 export function dm(tag, options) {
-	if (tag === "~spinner") {
+	if (tag.startsWith("~gg-")) {
+		return dm("span", { class: tag.substring(1) });
+	} else if (tag === "~spinner") {
 		return dm("div", { class: "spinner" });
 	} else if (tag === "~spinner75") {
 		return dm("div", { class: "spinner s-75" });
@@ -36,11 +38,14 @@ export function dm(tag, options) {
 			case "class":
 				element.className = options[key];
 				break;
+			case "autocomplete":
 			case "disabled":
 			case "href":
+			case "name":
 			case "target":
-			case "value":
 			case "title":
+			case "type":
+			case "value":
 				element[key] = options[key];
 				break;
 			case "child":

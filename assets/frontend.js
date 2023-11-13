@@ -5,6 +5,7 @@ import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
+import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
 import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
@@ -94,6 +95,10 @@ async function initializeWikiPath(wikiPath) {
 	$wikiModal.qOn(".modal-action-copy", "click", () => {
 		hideModals();
 		handleCopyWikiModal(wikiPath, $wikiModal);
+	});
+
+	$wikiModal.qOn(".modal-action-edit-users", "click", () => {
+		handleEditUsersModal(wikiPath, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-delete", "click", () => {

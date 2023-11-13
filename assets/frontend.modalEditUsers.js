@@ -1,68 +1,133 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
-import { trackJob } from "./frontend.jobs.js";
-import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
+import { dm } from "./frontend.dm.js";
+import { addSpinner, hideModals, removeSpinner, setButtonsDisabled, showModal } from "./frontend.utils.js";
 
 export async function handleEditUsersModal(wikiPath, $oldModal) {
-	const $modals = document.querySelector("#modals");
-	const $editModal = document.querySelector("#new-wiki-modal");
+	const users = await loadUsers(wikiPath, $oldModal);
 
-	showModal($editModal);
-	$editModal.querySelector("header").innerHTML = `Create a copy of <code>/${template}</code>`;
-	$editModal.querySelectorAll("input").forEach(input => input.value = "");
-	setDisabled($editModal, "button", false);
+	if (!users) {
+		return;
+	}
 
-	const onSubmit = async e => {
-		if (e.type === "keydown" && e.key !== "Enter") {
-			return;
+	const $usersModal = document.querySelector("#users-modal");
+
+	$usersModal.q("tbody").innerHTML = "";
+
+	users.forEach(user => addRow(user));
+
+	showModal($usersModal);
+
+	const onButton = async e => {
+		if (e.target.classList.contains("action-save")) {
+			await save(wikiPath);
+			// teardown();
+			// showModal($oldModal);
+
+		} else if (e.target.classList.contains("action-close")) {
+			teardown();
+			showModal($oldModal);
+
+		} else if (e.target.classList.contains("action-add")) {
+			addRow("", e.target.closest("tr"));
+
+		} else if (e.target.classList.contains("action-remove")) {
+			e.target.closest("tr").remove();
 		}
-
-		const wikiPath = $editModal.querySelector("input[name=path]").value;
-		const title = $editModal.querySelector("input[name=name]").value;
-
-		if (!wikiPath) {
-			return alert("Wiki Path was not provided");
-
-		} else if (/[^a-z0-9-]/.test(wikiPath)) {
-			return alert("Wiki Path contains disallowed characters");
-
-		} else if (wikiPath.length > 64) {
-			return alert("Wiki Path cannot be longer than 64 characters");
-
-		} else if (!title) {
-			return alert("Title is missing");
-		}
-
-		const csrf = await apiFetch("csrf-token");
-		const jobId = await apiFetchPost(`wiki/copy/${template}`, { csrf, wikiPath, title });
-
-		if (getLastApiError()) {
-			alert(`Operation failed: ${getLastApiError()}`);
-			return false;
-		}
-
-		teardown();
-
-		await trackJob(jobId, `Copying wiki /${template} to /${wikiPath}`);
-
-		window.location.reload();
-	};
-
-	const onClose = () => {
-		teardown();
-
-		showModal($oldModal);
 	};
 
 	const teardown = () => {
-		$editModal.removeEventListener("keydown", onSubmit);
-		$editModal.querySelector(".action-create").removeEventListener("click", onSubmit);
-		$editModal.querySelector(".action-close").removeEventListener("click", onClose);
+		$usersModal.removeEventListener("click", onButton);
 
-		hideModals($editModal);
+		hideModals();
 	};
 
-	$editModal.addEventListener("keydown", onSubmit);
-	$editModal.querySelector(".action-create").addEventListener("click", onSubmit);
-	$editModal.querySelector(".action-close").addEventListener("click", onClose);
+	$usersModal.addEventListener("click", onButton);
+}
 
+async function save(wikiPath) {
+	const $usersModal = document.querySelector("#users-modal");
+	const $saveButton = $usersModal.q(".action-save");
+	addSpinner($saveButton);
+
+	setButtonsDisabled($usersModal, true);
+
+	const users = Array.from($usersModal.qA("tbody tr")).map($row => {
+		const $username = $row.q(".name-cell input");
+		const $password = $row.q(".password-cell input");
+
+		if ($username.disabled || $password.disabled) {
+			return {
+				username: $username.value,
+				password: null,
+				keepPassword: true
+			};
+		}
+
+		if (!$username.value) {
+			return null;
+		}
+
+
+		return {
+			username: $username.value,
+			password: $password.value,
+			keepPassword: false
+		};
+	}).filter(x => x);
+
+	const csrf = await apiFetch("csrf-token");
+	await apiFetchPost(`wiki/save-users/${wikiPath}`, { csrf, users });
+
+	removeSpinner($saveButton);
+	setButtonsDisabled($usersModal, false);
+
+	if (getLastApiError()) {
+		alert(`Error while saving: ${getLastApiError()}`);
+		return false;
+	}
+
+	return true;
+}
+
+function addRow(user, $after = undefined) {
+	document.q("#users-modal tbody").insertBefore(getUserRow(user), $after?.nextSibling);
+}
+
+async function loadUsers(wikiPath, $oldModal) {
+	const $button = $oldModal.q(".modal-action-edit-users");
+	setButtonsDisabled($oldModal, true);
+	addSpinner($button);
+
+	const users = await apiFetch(`wiki/users/${wikiPath}`);
+
+	setButtonsDisabled($oldModal, false);
+	removeSpinner($button);
+
+	if (getLastApiError()) {
+		alert(`An error has occurred: ${getLastApiError()}`);
+		return false;
+	}
+
+	return users;
+}
+
+function getUserRow(username) {
+	return dm("tr", [
+		dm("td", {
+			class: "name-cell", child: [
+				dm("input", { autocomplete: "off", name: "name", value: username, disabled: !!username })
+			]
+		}),
+		dm("td", {
+			class: "password-cell", child: [
+				dm("input", { name: "password", type: "password", value: username ? "this is secret" : "", disabled: !!username })
+			]
+		}),
+		dm("td", {
+			class: "actions-cell", child: [
+				dm("button", { class: "action-add small", child: dm("~gg-math-plus") }),
+				dm("button", { class: "action-remove small danger", disabled: !!username, child: dm("~gg-math-minus") }),
+			]
+		})
+	]);
 }

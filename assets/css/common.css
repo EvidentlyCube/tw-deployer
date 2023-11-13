@@ -66,3 +66,7 @@ h6 {
 .hide {
 	display: none !important;
 }
+
+input:disabled {
+	cursor: not-allowed;
+}
