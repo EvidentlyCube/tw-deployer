@@ -1,12 +1,13 @@
 import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
-import { apiFetch } from "./frontend.api.js";
+import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
 import { getHtml } from "./frontend.getHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
+import { getSchedulerRowHtml } from "./frontend.getSchedulerRowHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
-import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
+import { addSpinner, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal, sleep } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -24,7 +25,11 @@ ready(async () => {
 
 	const wikiPaths = await apiFetch("get-wikis");
 
-	await Promise.all(wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath)));
+
+	await Promise.all([
+		loadScheduler(),
+		...wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath))
+	]);
 
 	setDisabled(document, "#wiki-table button", false);
 	setDisabled(document, "#modals button", false);
@@ -115,6 +120,38 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	await loadAll();
+}
+
+async function loadScheduler() {
+	const $scheduler = document.q("#scheduler-table tbody");
+	const jobs = await apiFetch("scheduler/jobs");
+
+	for (const job of jobs) {
+		const $row = getSchedulerRowHtml(job.id, job.name, job.startTimestamp);
+		$scheduler.appendChild($row);
+
+		$row.on("click", async () => {
+			if (!confirm(`Are you sure you want to run scheduler job '${job.name}'?`)) {
+				return;
+			}
+
+			const $button = $row.q("button");
+			addSpinner($button);
+			setButtonsDisabled(document, true);
+
+			const csrf = await apiFetch("csrf-token");
+			await apiFetchPost(`scheduler/run-job/${job.id}`, { csrf });
+
+			removeSpinner($button);
+			setButtonsDisabled(document, false);
+
+			if (getLastApiError()) {
+				alert(getLastApiError());
+			} else {
+				// window.location.reload();
+			}
+		});
+	}
 }
 
 function ready(fn) {

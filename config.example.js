@@ -10,11 +10,11 @@ const Config = {
 	// Duration, in millisecond, how long a CSRF token is valid
 	CsrfTokenValidityMs: 10 * 1000,
 
-	// Duration, in milliseconds, how long a one-time auth token is valid
-	OneTimeCodeValidityMs: 10 * 1000,
-
 	// Maximum size of a POST request in bytes
 	PostLimit: 10 * 1024 * 1024,
+
+	// How many backups to keep
+	NumberOfBackupsToKeep: 10,
 
 	// Login details to TW Deployer
 	Username: "",
