@@ -2,12 +2,14 @@ import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, sto
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
 import { getHtml } from "./frontend.getHtml.js";
+import { getJobsRowHtml } from "./frontend.getJobsRowHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { getSchedulerRowHtml } from "./frontend.getSchedulerRowHtml.js";
+import { trackJob } from "./frontend.jobs.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
-import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal, sleep } from "./frontend.utils.js";
+import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -25,9 +27,9 @@ ready(async () => {
 
 	const wikiPaths = await apiFetch("get-wikis");
 
-
 	await Promise.all([
 		loadScheduler(),
+		loadJobLogs(),
 		loadMemory(),
 		...wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath))
 	]);
@@ -46,6 +48,8 @@ ready(async () => {
 			hideModals();
 		}
 	});
+
+	document.on("tw-deployer:refresh-jobs", () => loadJobLogs());
 });
 
 async function initializeWikiPath(wikiPath) {
@@ -130,14 +134,14 @@ async function loadMemory() {
 	const $hdValue = document.q("#stats .stat-hd .value");
 
 	{ // RAM
-		const {available, total} = result.memory;
+		const { available, total } = result.memory;
 		const used = total - available;
 		const usedPercent = (used / total) * 100;
 
 		$ramValue.innerText = `${formatSize(used, undefined, 1)} / ${formatSize(total, undefined, 1)} (${usedPercent.toFixed(2)}%)`;
 	}
 	{ // HD
-		const {available, total} = result.disk;
+		const { available, total } = result.disk;
 		const used = total - available;
 		const usedPercent = (used / total) * 100;
 
@@ -153,7 +157,7 @@ async function loadScheduler() {
 		const $row = getSchedulerRowHtml(job.id, job.name, job.startTimestamp);
 		$scheduler.appendChild($row);
 
-		$row.on("click", async () => {
+		$row.qOn(".action-run-job", "click", async () => {
 			if (!confirm(`Are you sure you want to run scheduler job '${job.name}'?`)) {
 				return;
 			}
@@ -174,6 +178,28 @@ async function loadScheduler() {
 			} else {
 				window.location.reload();
 			}
+		});
+	}
+}
+
+async function loadJobLogs() {
+	const $jobsTable = document.q("#job-logs-table tbody");
+	const jobs = await apiFetch("jobs");
+
+	jobs.sort((l, r) => r.startedTimestamp - l.startedTimestamp);
+
+	$jobsTable.innerHTML = "";
+
+	for (const job of jobs) {
+		const $row = getJobsRowHtml(job.name, job.startedTimestamp);
+		$jobsTable.appendChild($row);
+
+		$row.qOn(".action-show-logs", "click", async () => {
+			trackJob(
+				job.id,
+				`${job.name} [Past Logs]`,
+				{ preventJobRefresh: true }
+			);
 		});
 	}
 }

@@ -1,9 +1,9 @@
 @import url('./common.css');
 @import url('./buttons.css');
+@import url('./table.css');
 @import url('./spinner.css');
 @import url('./css-icons.css');
 
 @import url('./stats.css');
 @import url('./wiki-table.css');
-@import url('./scheduler.css');
 @import url('./modal.css');

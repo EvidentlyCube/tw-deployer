@@ -251,6 +251,8 @@ export function showModal($modal) {
 
 	$modal.classList.add("visible");
 	$modals.classList.add("visible");
+
+	window.scrollTo(0, 0);
 }
 
 export function hideModals() {

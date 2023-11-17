@@ -1,0 +1,31 @@
+table {
+	border-collapse: collapse;
+}
+
+#scheduler-table td.cell-size,
+#scheduler-table td.cell-memory {
+	font-family: monospace;
+}
+
+table th {
+	text-align: left;
+}
+
+table th,
+table td {
+	padding: 4px 8px;
+	text-align: left;
+}
+
+table tr:hover td {
+	background: #F0F0F0;
+}
+
+table tr:not(:last-child) td {
+	border-bottom: 1px solid #888;
+}
+
+table .cell-actions>div {
+	display: flex;
+	gap: 5px;
+}
