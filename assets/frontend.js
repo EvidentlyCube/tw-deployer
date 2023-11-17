@@ -151,7 +151,7 @@ async function loadMemory() {
 
 async function loadScheduler() {
 	const $scheduler = document.q("#scheduler-table tbody");
-	const jobs = await apiFetch("scheduler/jobs");
+	const jobs = await apiFetch("scheduler/tasks");
 
 	for (const job of jobs) {
 		const $row = getSchedulerRowHtml(job.id, job.name, job.startTimestamp);
@@ -167,7 +167,7 @@ async function loadScheduler() {
 			setButtonsDisabled(document, true);
 
 			const csrf = await apiFetch("csrf-token");
-			await apiFetchPost(`scheduler/run-job/${job.id}`, { csrf });
+			await apiFetchPost(`scheduler/run-task/${job.id}`, { csrf });
 
 			if (getLastApiError()) {
 				removeSpinner($button);

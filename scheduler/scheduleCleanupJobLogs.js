@@ -1,11 +1,15 @@
+import { readdir, stat, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import Config from "../config.js";
-import { registerSchedulerJob } from "./Scheduler.js";
-import {readdir, stat, unlink} from "node:fs/promises";
 import { fileExists } from "../utils/FileUtils.js";
+import { registerSchedulerTask } from "./Scheduler.js";
 
 export function registerScheduleCleanupJobLogs() {
-	registerSchedulerJob(
+	if (!Config.JobLogsToKeep) {
+		throw new Error("Config.JobLogsToKeep is not configured");
+	}
+
+	registerSchedulerTask(
 		"nightly-job-log-cleanup",
 		"Nightly cleanup job logs",
 		() => {
@@ -22,7 +26,7 @@ export function registerScheduleCleanupJobLogs() {
 
 async function run() {
 	const jobLogsDirAbs = resolve(Config.Paths.Logs, "jobs");
-	const files = await readdir(jobLogsDirAbs, {withFileTypes: true});
+	const files = await readdir(jobLogsDirAbs, { withFileTypes: true });
 
 	const logFilesWithCreationTime = [];
 	for (const file of files) {

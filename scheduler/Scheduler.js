@@ -4,70 +4,70 @@ import { doNull } from "../utils/MiscUtils.js";
 import { isValidWikiPath } from "../utils/PathUtils.js";
 
 let isStarted = false;
-const registeredJobs = [];
+const registeredTasks = [];
 
-export function registerSchedulerJob(id, name, getNextExecutionTime, action) {
+export function registerSchedulerTask(taskId, name, getNextExecutionTime, action) {
 	if (isStarted) {
-		throw new Error("Cannot register new scheduler jobs when scheduler is running");
+		throw new Error("Cannot register new scheduler task when scheduler is running");
 	}
 
-	if (!isValidWikiPath(id)) {
-		throw new Error(`'${id} is not a valid job ID`);
+	if (!isValidWikiPath(taskId)) {
+		throw new Error(`'${taskId} is not a valid task ID`);
 	}
 
-	registeredJobs.push({
-		id,
+	registeredTasks.push({
+		id: taskId,
 		name,
 		getNextExecutionTime,
 		action
 	});
 }
 
-export function getSchedulerJobs() {
-	return registeredJobs.map(({id, name, startTimestamp}) => ({id, name, startTimestamp}));
+export function getSchedulerTasks() {
+	return registeredTasks.map(({ id, name, startTimestamp }) => ({ id, name, startTimestamp }));
 }
 
-export async function runSchedulerJob(jobId, log) {
-	const job = registeredJobs.find(job => job.id === jobId);
+export async function runSchedulerTask(taskId, log) {
+	const task = registeredTasks.find(task => task.id === taskId);
 
-	if (!job) {
-		throw new Error(`Job '${jobId}' not found`);
+	if (!task) {
+		throw new Error(`Scheduler task '${taskId}' not found`);
 	}
 
-	await job.action(log);
+	await task.action(log);
 }
 
 export async function initializeScheduler() {
-	const storedStartTimes = await readJobStartTimes();
+	const storedStartTimes = await readTaskStartTimes();
 
-	for (const job of registeredJobs) {
-		job.startTimestamp = storedStartTimes[job.name]
-			?? job.getNextExecutionTime();
+	for (const task of registeredTasks) {
+		task.startTimestamp = storedStartTimes[task.name]
+			?? task.getNextExecutionTime();
 	}
 
-	runJobs();
+	runTasks();
 }
 
-async function runJobs() {
-	for (const job of registeredJobs) {
-		if (job.startTimestamp <= Date.now()) {
-			await job.action(doNull);
-			job.startTimestamp = job.getNextExecutionTime();
+async function runTasks() {
+	for (const task of registeredTasks) {
+		if (task.startTimestamp <= Date.now()) {
+			await task.action(doNull);
+			task.startTimestamp = task.getNextExecutionTime();
 
-			if (job.startTimestamp <= Date.now()) {
-				throw new Error(`Scheduler job ${job.name} scheduled next execution immediately or in the past, that is not allowed`);
+			if (task.startTimestamp <= Date.now()) {
+				throw new Error(`Scheduler task ${task.name} scheduled next execution immediately or in the past, that is not allowed`);
 			}
 
-			await storeJobStartTimes();
+			await storeTaskStartTimes();
 		}
 	}
 
 	// Run every minute
-	setTimeout(runJobs, 60 * 1000);
+	setTimeout(runTasks, 60 * 1000);
 }
 
 
-async function readJobStartTimes() {
+async function readTaskStartTimes() {
 	try {
 		if (await fileExists(".scheduler")) {
 			return JSON.parse(await readFile(".scheduler", "utf-8"));
@@ -87,11 +87,11 @@ async function readJobStartTimes() {
 	return {};
 }
 
-async function storeJobStartTimes() {
+async function storeTaskStartTimes() {
 	const data = {};
 
-	registeredJobs.forEach(job => {
-		data[job.name] = job.startTimestamp;
+	registeredTasks.forEach(task => {
+		data[task.name] = task.startTimestamp;
 	});
 
 	if (await fileExists(".scheduler.bak")) {

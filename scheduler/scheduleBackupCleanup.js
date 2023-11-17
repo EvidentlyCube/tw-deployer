@@ -1,12 +1,16 @@
+import { readdir, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import Config from "../config.js";
 import { getWikiBackupsAbsolutePath } from "../utils/PathUtils.js";
 import { getAllWikiPaths } from "../utils/TwUtils.js";
-import { registerSchedulerJob } from "./Scheduler.js";
-import {readdir, unlink} from "node:fs/promises";
+import { registerSchedulerTask } from "./Scheduler.js";
 
 export function registerScheduleNightlyBackupCleanup() {
-	registerSchedulerJob(
+	if (!Config.NumberOfBackupsToKeep) {
+		throw new Error("Config.NumberOfBackupsToKeep is not configured");
+	}
+
+	registerSchedulerTask(
 		"nightly-backup-cleanup",
 		"Nightly backup cleanup",
 		() => {

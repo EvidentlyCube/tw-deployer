@@ -1,10 +1,10 @@
 import { actionBackupTiddlers } from "../actions/actionBackupTiddlers.js";
 import { doNull } from "../utils/MiscUtils.js";
 import { getAllWikiPaths } from "../utils/TwUtils.js";
-import { registerSchedulerJob } from "./Scheduler.js";
+import { registerSchedulerTask } from "./Scheduler.js";
 
 export function registerScheduleNightlyBackups() {
-	registerSchedulerJob(
+	registerSchedulerTask(
 		"nightly-backups",
 		"Nightly backups",
 		() => {
