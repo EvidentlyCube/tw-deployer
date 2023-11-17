@@ -1,5 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { createLogger } from "./Logger.js";
+import { resolve } from "node:path";
+import Config from "../config.js";
+import { writeFile } from "node:fs/promises";
 
 const jobs = new Map();
 
@@ -24,6 +27,16 @@ export async function startJob(name, callback) {
 	};
 
 	const logger = createLogger(`jobs/${jobId}.log`, { onLog });
+	const metaPath = resolve(Config.Paths.Logs, "jobs", `${jobId}.meta`);
+
+	const saveMeta = async () => {
+		const meta = {...jobInfo};
+		delete meta.logs;
+
+		return writeFile(metaPath, JSON.stringify(meta), "utf-8");
+	};
+
+	await saveMeta();
 
 	callback(logger).then(() => {
 		jobInfo.finishedTimestamp = Date.now();
@@ -38,7 +51,7 @@ export async function startJob(name, callback) {
 		};
 		jobInfo.isFinished = true;
 		jobInfo.isError = true;
-	});
+	}).then(saveMeta);
 
 	return jobId;
 }

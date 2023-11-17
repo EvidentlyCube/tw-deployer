@@ -14,7 +14,7 @@ export function getSchedulerRowHtml(id, name, nextRunTimestamp) {
 			}),
 			dm("td", {
 				class: "cell-next-run",
-				text: formatDate("YYYY-MM-DD hh:ss:mm", nextRunTimestamp)
+				text: formatDate("YYYY-MM-DD hh:mm:ss", nextRunTimestamp)
 			}),
 			dm("td", {
 				class: "cell-actions",

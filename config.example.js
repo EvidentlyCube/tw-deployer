@@ -16,6 +16,9 @@ const Config = {
 	// How many backups to keep
 	NumberOfBackupsToKeep: 10,
 
+	// How many job logs to keep
+	JobLogsToKeep: 30,
+
 	// Login details to TW Deployer
 	Username: "",
 	Password: "",

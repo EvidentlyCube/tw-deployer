@@ -7,7 +7,7 @@ import { getSchedulerRowHtml } from "./frontend.getSchedulerRowHtml.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
-import { addSpinner, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal, sleep } from "./frontend.utils.js";
+import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal, sleep } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -28,6 +28,7 @@ ready(async () => {
 
 	await Promise.all([
 		loadScheduler(),
+		loadMemory(),
 		...wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath))
 	]);
 
@@ -122,6 +123,28 @@ async function initializeWikiPath(wikiPath) {
 	await loadAll();
 }
 
+async function loadMemory() {
+	const result = await apiFetch("system/memory");
+
+	const $ramValue = document.q("#stats .stat-ram .value");
+	const $hdValue = document.q("#stats .stat-hd .value");
+
+	{ // RAM
+		const {available, total} = result.memory;
+		const used = total - available;
+		const usedPercent = (used / total) * 100;
+
+		$ramValue.innerText = `${formatSize(used, undefined, 1)} / ${formatSize(total, undefined, 1)} (${usedPercent.toFixed(2)}%)`;
+	}
+	{ // HD
+		const {available, total} = result.disk;
+		const used = total - available;
+		const usedPercent = (used / total) * 100;
+
+		$hdValue.innerText = `${formatSize(used, undefined, 1)} / ${formatSize(total, undefined, 1)} (${usedPercent.toFixed(2)}%)`;
+	}
+}
+
 async function loadScheduler() {
 	const $scheduler = document.q("#scheduler-table tbody");
 	const jobs = await apiFetch("scheduler/jobs");
@@ -142,13 +165,14 @@ async function loadScheduler() {
 			const csrf = await apiFetch("csrf-token");
 			await apiFetchPost(`scheduler/run-job/${job.id}`, { csrf });
 
-			removeSpinner($button);
-			setButtonsDisabled(document, false);
-
 			if (getLastApiError()) {
+				removeSpinner($button);
+				setButtonsDisabled(document, false);
+
 				alert(getLastApiError());
+
 			} else {
-				// window.location.reload();
+				window.location.reload();
 			}
 		});
 	}
