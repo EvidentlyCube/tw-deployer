@@ -3,6 +3,7 @@ import { registerScheduleNightlyBackupCleanup } from "./scheduler/scheduleBackup
 import { registerScheduleCleanupJobLogs } from "./scheduler/scheduleCleanupJobLogs.js";
 import { registerScheduleNightlyBackups } from "./scheduler/scheduleNightlyBackups.js";
 import { initServer } from "./server.js";
+import { initializeSharedRunner } from "./utils/SharedRunner.js";
 import { validateConfig } from "./validateConfig.js";
 import { validateServer } from "./validateServer.js";
 
@@ -16,6 +17,8 @@ async function bootstrap() {
 	registerScheduleNightlyBackupCleanup();
 	registerScheduleCleanupJobLogs();
 	initializeScheduler();
+
+	initializeSharedRunner();
 
 	await initServer();
 }

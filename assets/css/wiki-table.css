@@ -6,3 +6,7 @@
 #wiki-table tr[data-status="online"] td {
 	background: #CFC;
 }
+
+#wiki-table tr[data-status="offline"] td {
+	background: #FCC;
+}

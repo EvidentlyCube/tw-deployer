@@ -35,7 +35,6 @@ async function runJob(log, wikiPath, backup) {
 	const { backupPathAbs } = await validateParams(wikiPath, backup);
 
 	const wikiDirAbs = getWikiAbsolutePath(wikiPath);
-
 	const decompressedWikiPathAbs = await actionBackupDecompress(backupPathAbs, log);
 
 	await actionPm2Stop(wikiPath, log);

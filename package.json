@@ -13,6 +13,6 @@
     "eslint": "^8.53.0"
   },
   "dependencies": {
-    "googleapis": "^128.0.0"
+    "tiddlywiki": "^5.3.1"
   }
 }

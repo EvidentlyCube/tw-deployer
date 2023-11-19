@@ -76,6 +76,8 @@ export async function countFiles(path) {
 }
 
 export async function createTempFilePath(name, extension) {
+	extension = extension.replace(/^\.+|\.+$/g, "");
+
 	const tmpDirAbs = tmpdir();
 
 	let attempts = 0;

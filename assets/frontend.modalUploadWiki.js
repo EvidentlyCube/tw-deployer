@@ -34,7 +34,16 @@ export async function handleUploadWikiModal() {
 
 		} else if (!archiveFile) {
 			return alert("No file uploaded");
+		}
 
+		const archiveName = archiveFile.name;
+
+		if (
+			!archiveName.endsWith(".zip")
+			&& !archiveName.endsWith(".tar")
+			&& !archiveName.endsWith(".tar.gz")
+		) {
+			return alert("Selected file must either be ZIP or TAR archive");
 		}
 
 		const archive = await getFileAseBase64(archiveFile);
@@ -45,7 +54,7 @@ export async function handleUploadWikiModal() {
 
 		const csrf = await apiFetch("csrf-token");
 		console.log(JSON.stringify({ csrf, wikiPath, title, archive }).length / 1024 / 1024);
-		const jobId = await apiFetchPost("wiki/upload", { csrf, wikiPath, title, archive });
+		const jobId = await apiFetchPost("wiki/upload", { csrf, wikiPath, title, archive, archiveName });
 
 		if (getLastApiError()) {
 			alert(`Operation failed: ${getLastApiError()}`);

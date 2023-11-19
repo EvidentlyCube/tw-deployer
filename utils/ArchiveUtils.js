@@ -1,4 +1,4 @@
-import { execPromiseLogged } from "./ExecUtils";
+import { execPromiseLogged } from "./ExecUtils.js";
 
 export function isSupportedArchive(fileName) {
 	return fileName.endsWith(".tar")
