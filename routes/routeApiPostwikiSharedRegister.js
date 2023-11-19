@@ -20,6 +20,7 @@ async function action(req, res) {
 
 	if (isSharedWiki(wikiPath)) {
 		throw new ApiError(409, "Wiki is already running in shared mode");
+
 	} else if (await getPm2DetailsForWiki(wikiPath)) {
 		throw new ApiError(409, "Wiki is already running in standalone mode");
 	}

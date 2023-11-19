@@ -10,8 +10,8 @@ const SharedWikisConfigPath = ".shared-wikis";
 const registeredWikiPaths = [];
 const serverMap = new Map();
 
-export async function isSharedWiki(wikiPath) {
-	return registerSharedWiki.indexOf(wikiPath) !== -1;
+export function isSharedWiki(wikiPath) {
+	return registeredWikiPaths.indexOf(wikiPath) !== -1;
 }
 
 export async function getSharedWikiStatus(wikiPath) {
@@ -22,6 +22,8 @@ export async function getSharedWikiStatus(wikiPath) {
 	const server = serverMap.get(wikiPath);
 
 	if (!server) {
+		startSharedWiki(wikiPath);
+
 		return "shared-off";
 	} else if (server === true) {
 		return "shared-initializing";
@@ -32,7 +34,8 @@ export async function getSharedWikiStatus(wikiPath) {
 
 export async function initializeSharedRunner() {
 	if (await fileExists(SharedWikisConfigPath)) {
-		const contents = await readFile(SharedWikisConfigPath);
+		const contents = await readFile(SharedWikisConfigPath, "utf8");
+		console.log(contents);
 		registeredWikiPaths.push(...contents.split("\n").filter(empty));
 	}
 

@@ -9,18 +9,31 @@ export function getModalHtml(wikiPath) {
 			dm("div", {
 				class: "modal-actions",
 				child: [
-					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
+					dm("button", { class: "modal-action-start", text: "Start Standalone", disabled: true }),
+					dm("button", { class: "modal-action-start-shared", text: "Start Shared", disabled: true }),
 					dm("button", { class: "modal-action-stop danger", text: "Stop", disabled: true }),
-					dm("button", { class: "modal-action-start", text: "Start", disabled: true }),
 					dm("button", { class: "modal-action-delete danger", text: "Delete", disabled: true }),
+
+				]
+			}),
+			dm("div", {
+				class: "modal-actions",
+				child: [
+					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
-					dm("button", { class: "modal-action-edit-users", text: "Users", disabled: true }),
 					dm("a", {
 						href: `?api=wiki/download/${wikiPath}`,
 						title: "Download this wiki's files",
 						class: "small button",
 						child: dm("span", { class: "gg-software-download" })
 					})
+				]
+			}),
+
+			dm("div", {
+				class: "modal-actions",
+				child: [
+					dm("button", { class: "modal-action-edit-users", text: "Users", disabled: true })
 				]
 			}),
 			dm("div", {

@@ -4,7 +4,7 @@ import { getSharedWikiStatus, isSharedWiki } from "../utils/SharedRunner.js";
 import { respondApiError, respondApiSuccess } from "./respond.js";
 
 export default getRouteData(
-	"/?api=wiki/shared-status/:wikiPath",
+	"/?api=wiki/shared/status/:wikiPath",
 	action
 );
 
@@ -20,6 +20,6 @@ async function action(req, res) {
 	}
 
 	return respondApiSuccess(res, {
-		status: getSharedWikiStatus(wikiPath)
+		status: await getSharedWikiStatus(wikiPath)
 	});
 }

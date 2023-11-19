@@ -3,10 +3,16 @@
 	font-family: monospace;
 }
 
-#wiki-table tr[data-status="online"] td {
+#wiki-table tr[data-status="online"] td,
+#wiki-table tr[data-status="shared-on"] td {
 	background: #CFC;
 }
 
-#wiki-table tr[data-status="offline"] td {
+#wiki-table tr[data-status="shared-initializing"] td {
+	background: #FFC;
+}
+
+#wiki-table tr[data-status="offline"] td,
+#wiki-table tr[data-status="shared-off"] td {
 	background: #FCC;
 }

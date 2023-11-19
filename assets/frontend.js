@@ -1,4 +1,4 @@
-import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
+import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, registerSharedWiki, startWiki, stopWiki } from "./frontend.actions.js";
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
 import { getHtml } from "./frontend.getHtml.js";
@@ -102,6 +102,10 @@ async function initializeWikiPath(wikiPath) {
 
 	$wikiModal.qOn(".modal-action-start", "click", () => {
 		startWiki(wikiPath, $wikiRow, $wikiModal);
+	});
+
+	$wikiModal.qOn(".modal-action-start-shared", "click", () => {
+		registerSharedWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-copy", "click", () => {
