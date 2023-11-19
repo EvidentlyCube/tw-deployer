@@ -2,7 +2,7 @@ import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
 import { trackJob } from "./frontend.jobs.js";
-import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setDisabled, showButton, showModal } from "./frontend.utils.js";
+import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setButtonsDisabled, setDisabled, showButton, showModal } from "./frontend.utils.js";
 
 export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	const $statusCell = $wikiRow.querySelector(".cell-status");
@@ -166,7 +166,7 @@ export async function backupWiki(wikiPath, $wikiRow, $wikiModal) {
 	const $button = $wikiModal.querySelector(".modal-action-backup");
 	addSpinner($button);
 
-	setDisabled($wikiModal, [$button, "button"], true);
+	setButtonsDisabled($wikiModal, true);
 
 	const csrf = await apiFetch("csrf-token");
 	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
@@ -179,11 +179,11 @@ export async function backupWiki(wikiPath, $wikiRow, $wikiModal) {
 	}
 
 	removeSpinner($button);
-	setDisabled($wikiModal, [$button, "button"], false);
+	setButtonsDisabled($wikiModal, false);
 }
 
 export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
-	setDisabled($wikiModal, ["button"], true);
+	setButtonsDisabled($wikiModal, true);
 
 	const $button = $wikiModal.querySelector(".modal-action-stop");
 	addSpinner($button);
@@ -204,7 +204,7 @@ export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
 	}
 
 	removeSpinner($button);
-	setDisabled($wikiModal, ["button"], false);
+	setButtonsDisabled($wikiModal, true);
 }
 
 export async function startWiki(wikiPath, $wikiRow, $wikiModal) {

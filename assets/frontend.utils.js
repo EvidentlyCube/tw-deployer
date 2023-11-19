@@ -203,7 +203,7 @@ export function showButton($button) {
 	const timeoutId = setTimeout(() => {
 		$button.removeAttribute("data-timeout");
 		$button.style.width = "";
-	}, 500);
+	}, 250);
 
 	$button.setAttribute("data-timeout", timeoutId);
 }

@@ -4,7 +4,8 @@
             "args": "index.js start",
             "ignore_watch": [
                 "node_modules",
-                "assets"
+                "assets",
+                "./.*"
             ],
             "max_restarts": 3,
             "name": "TW Deployer",

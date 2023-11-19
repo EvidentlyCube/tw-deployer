@@ -20,11 +20,11 @@
 
 	transition: color 0.25s ease,
 		background-color 0.25s ease,
-		width 0.5s ease,
-		padding-left 0.5s ease,
-		padding-right 0.5s ease,
-		margin-left 0.5s ease,
-		margin-right 0.5s ease;
+		width 0.25s ease,
+		padding-left 0.25s ease,
+		padding-right 0.25s ease,
+		margin-left 0.25s ease,
+		margin-right 0.25s ease;
 
 }
 
