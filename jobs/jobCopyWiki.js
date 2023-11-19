@@ -36,7 +36,6 @@ export async function startJobCopyWiki(
 	}
 }
 
-
 async function runJob(log, title, template, wikiPath) {
 	log("Job started");
 

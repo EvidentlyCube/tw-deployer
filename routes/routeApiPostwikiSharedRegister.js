@@ -1,17 +1,14 @@
-import { actionPm2Save } from "../actions/actionPm2Save.js";
-import { actionPm2Start } from "../actions/actionPm2Start.js";
 import { validateCsrfToken } from "../utils/Csrf.js";
 import { ApiError } from "../utils/Errors.js";
 import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { doNull } from "../utils/MiscUtils.js";
 import { isValidWikiPath } from "../utils/PathUtils.js";
 import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { isSharedWiki } from "../utils/SharedRunner.js";
+import { isSharedWiki, registerSharedWiki } from "../utils/SharedRunner.js";
 import { getPm2DetailsForWiki } from "../utils/pm2.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default getRouteData(
-	"/?api=start-wiki/:wikiPath",
+	"/?api=wiki/shared/register/:wikiPath",
 	action
 );
 
@@ -22,17 +19,12 @@ async function action(req, res) {
 	const { wikiPath } = await validateParams(req);
 
 	if (isSharedWiki(wikiPath)) {
-		throw new ApiError(409, "Wiki is running in shared mode, can't be started as a separate process");
+		throw new ApiError(409, "Wiki is already running in shared mode");
+	} else if (await getPm2DetailsForWiki(wikiPath)) {
+		throw new ApiError(409, "Wiki is already running in standalone mode");
 	}
 
-	const details = await getPm2DetailsForWiki(wikiPath);
-
-	if (details && details.pm2_env.status === "online") {
-		throw new ApiError(409, "Wiki is online, can't be started");
-	}
-
-	await actionPm2Start(wikiPath, doNull);
-	await actionPm2Save(doNull);
+	await registerSharedWiki(wikiPath);
 
 	respondApiSuccess(res, true);
 }
