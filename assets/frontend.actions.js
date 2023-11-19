@@ -204,7 +204,7 @@ export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
 	}
 
 	removeSpinner($button);
-	setButtonsDisabled($wikiModal, true);
+	setButtonsDisabled($wikiModal, false);
 }
 
 export async function startWiki(wikiPath, $wikiRow, $wikiModal) {
