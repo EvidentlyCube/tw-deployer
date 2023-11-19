@@ -1,5 +1,9 @@
 import * as fs from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
+import { formatDate } from "../assets/frontend.utils.js";
 import { execPromise } from "./ExecUtils.js";
+import { sleep } from "./MiscUtils.js";
 
 export async function fileExists(path) {
 	try {
@@ -69,4 +73,22 @@ export async function countFiles(path) {
 	}
 
 	return fileCount;
+}
+
+export async function createTempFilePath(name, extension) {
+	const tmpDirAbs = tmpdir();
+
+	let attempts = 0;
+	while (attempts++ < 100) {
+		const fileName = `${name}-${formatDate("YYYYMMDD-hhmmss-lll")}${extension ? "." + extension : ""}`;
+		const fileAbsPath = resolve(tmpDirAbs, fileName);
+
+		if (!await fileExists(fileAbsPath)) {
+			return fileAbsPath;
+		}
+
+		await sleep(1);
+	}
+
+	throw new Error(`Failed to generate temp file path for extension ${extension}`);
 }

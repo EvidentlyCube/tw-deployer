@@ -4,10 +4,12 @@ import { registerScheduleCleanupJobLogs } from "./scheduler/scheduleCleanupJobLo
 import { registerScheduleNightlyBackups } from "./scheduler/scheduleNightlyBackups.js";
 import { initServer } from "./server.js";
 import { validateConfig } from "./validateConfig.js";
+import { validateServer } from "./validateServer.js";
 
 bootstrap().catch(e => console.log(e));
 
 async function bootstrap() {
+	await validateServer();
 	await validateConfig();
 
 	registerScheduleNightlyBackups();

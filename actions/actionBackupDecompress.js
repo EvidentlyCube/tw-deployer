@@ -1,19 +1,14 @@
 import { mkdir } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
-import { formatDate } from "../utils/DateUtils.js";
+import { universalDecompress } from "../utils/ArchiveUtils.js";
 import { ActionError } from "../utils/Errors.js";
 import { execPromiseLogged } from "../utils/ExecUtils.js";
-import { fileExists } from "../utils/FileUtils.js";
+import { createTempFilePath as createNewTempPath, fileExists } from "../utils/FileUtils.js";
 
-export async function actionBackupDecompress(tarPath, log) {
-	log(`[Action: unpack tar '${tarPath}'`);
+export async function actionBackupDecompress(archivePath, log) {
+	log(`[Action: decompress backup '${archivePath}' and  get path to wiki dir`);
 
-	const tmpDirAbs = resolve(
-		tmpdir(),
-		formatDate("YYYYMMDD-hhmmss-wiki"),
-		"wiki"
-	);
+	const tmpDirAbs = await createNewTempPath("backup", "");
 
 	if (await fileExists(tmpDirAbs)) {
 		throw new ActionError(`Cannot decompress to location ${tmpDirAbs} because it already exists`);
@@ -21,7 +16,7 @@ export async function actionBackupDecompress(tarPath, log) {
 
 	await mkdir(tmpDirAbs, { recursive: true });
 
-	await decompress(tarPath, tmpDirAbs, log);
+	await decompress(archivePath, tmpDirAbs, log);
 	const decompressedWikiPathAbs = await findWikiDirectory(tmpDirAbs, log);
 
 	if (!decompressedWikiPathAbs) {
@@ -35,11 +30,11 @@ export async function actionBackupDecompress(tarPath, log) {
 	return decompressedWikiPathAbs;
 }
 
-async function decompress(tarPath, tmpDirAbs, log) {
-	const { code, stderr } = await execPromiseLogged(`tar -xf ${tarPath} -C ${tmpDirAbs}`, log);
-
-	if (code) {
-		throw new ActionError(`Failed to decompress with error: ${stderr}`);
+async function decompress(archivePath, tmpDirAbs, log) {
+	try {
+		await universalDecompress(archivePath, tmpDirAbs, log);
+	} catch (e) {
+		throw new ActionError(e.message);
 	}
 }
 

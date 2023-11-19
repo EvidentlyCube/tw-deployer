@@ -9,6 +9,7 @@ import { trackJob } from "./frontend.jobs.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
+import { handleUploadWikiModal } from "./frontend.modalUploadWiki.js";
 import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
@@ -42,6 +43,7 @@ ready(async () => {
 	}, 200);
 
 	document.qOn("#action-create-wiki", "click", () => handleCreateWikiModal());
+	document.qOn("#action-upload-wiki", "click", () => handleUploadWikiModal());
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {

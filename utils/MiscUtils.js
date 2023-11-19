@@ -10,3 +10,9 @@ export function empty(x) {
 
 export function doNull() { }
 
+
+export async function sleep(duration) {
+	return new Promise(resolve => {
+		setTimeout(resolve, duration);
+	});
+}

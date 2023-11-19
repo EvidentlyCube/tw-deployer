@@ -11,6 +11,8 @@ export async function execPromise(command) {
 }
 
 export async function execPromiseLogged(command, log) {
+	log = log || doNull();
+
 	log(`Executing: ${command}`);
 	const { code, stdout, stderr } = await execPromise(command);
 	log("Execution finished.");

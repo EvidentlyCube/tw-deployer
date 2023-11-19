@@ -1,14 +1,14 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
-import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
+import { getFileAseBase64, hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
-export async function handleCreateWikiModal() {
+export async function handleUploadWikiModal() {
 	const $editModal = document.querySelector("#new-wiki-modal");
 
 	showModal($editModal);
-	$editModal.q("header").innerHTML = "Create a new wiki";
-	$editModal.qA("input").forEach(input => input.value = "");
-	$editModal.q(".zip-file").classList.add("hide");
+	$editModal.querySelector("header").innerHTML = "Create a new wiki";
+	$editModal.querySelectorAll("input").forEach(input => input.value = "");
+	$editModal.q(".zip-file").classList.remove("hide");
 	setDisabled($editModal, "button", false);
 
 	const onSubmit = async e => {
@@ -18,6 +18,7 @@ export async function handleCreateWikiModal() {
 
 		const wikiPath = $editModal.querySelector("input[name=path]").value;
 		const title = $editModal.querySelector("input[name=name]").value;
+		const archiveFile = $editModal.querySelector("input[name=file]").files[0];
 
 		if (!wikiPath) {
 			return alert("Wiki Path was not provided");
@@ -30,10 +31,21 @@ export async function handleCreateWikiModal() {
 
 		} else if (!title) {
 			return alert("Title is missing");
+
+		} else if (!archiveFile) {
+			return alert("No file uploaded");
+
+		}
+
+		const archive = await getFileAseBase64(archiveFile);
+
+		if (!archive) {
+			return alert("Invalid file uploaded");
 		}
 
 		const csrf = await apiFetch("csrf-token");
-		const jobId = await apiFetchPost("wiki/create", { csrf, wikiPath, title });
+		console.log(JSON.stringify({ csrf, wikiPath, title, archive }).length / 1024 / 1024);
+		const jobId = await apiFetchPost("wiki/upload", { csrf, wikiPath, title, archive });
 
 		if (getLastApiError()) {
 			alert(`Operation failed: ${getLastApiError()}`);

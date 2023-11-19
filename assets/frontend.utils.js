@@ -255,6 +255,26 @@ export function showModal($modal) {
 	window.scrollTo(0, 0);
 }
 
+export async function getFileAseBase64(file) {
+	if (!file) {
+		return null;
+	}
+
+	return new Promise(resolve => {
+		const reader = new FileReader();
+		reader.onload = function () {
+			resolve(btoa(reader.result));
+		};
+
+		reader.onerror = function (error) {
+			resolve(null);
+		};
+
+		reader.readAsBinaryString(file);
+	});
+
+}
+
 export function hideModals() {
 	document.q("#modals").classList.remove("visible");
 	document.qA("#modals .modal").forEach($modal => $modal.classList.remove("visible"));

@@ -42,6 +42,7 @@
 			<h2>Actions:</h2>
 			<div id="global-actions">
 				<button id="action-create-wiki">Create Wiki</button>
+				<button id="action-upload-wiki">Upload Wiki</button>
 			</div>
 
 			<h2>Scheduler:</h2>
@@ -123,6 +124,21 @@
 							required
 						/>
 						<p class="muted">Must not be empty</p>
+					</div>
+
+					<div class="form-row zip-file">
+						<label for="name">Wiki Archive</label>
+						<input
+							type="file"
+							name="file"
+							placeholder="Input name here..."
+							onblur="reportValidity()"
+							required
+						/>
+						<p class="muted">
+							Must contain a "wiki" directory, "tiddlywiki.info"
+							file or at least tiddlers.
+						</p>
 					</div>
 				</form>
 
