@@ -26,6 +26,21 @@ const Config = {
 	// Hostname, must not include the final slash
 	Hostname: "",
 
+	Logs: {
+		// Whether to output core logs to console
+		OutputCoreLogsToConsole: true,
+
+		// Whether to store core logs on the disk
+		StoreCoreLogs: true,
+
+		// Whether to output access logs to console
+		OutputAccessLogsToConsole: true,
+
+		// Whether to store access logs on the disk
+		StoreAccessLogs: false,
+
+	},
+
 	// Paths to various things
 	Paths: {
 		// Where the logs are stored

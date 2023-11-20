@@ -51,14 +51,21 @@ export function createLogger(path, options) {
 
 		options.onLog?.(message);
 
-		if (!isPendingFlush) {
+		if (options.write && !isPendingFlush) {
 			isPendingFlush = true;
 			setTimeout(flush, 500);
 		}
 	};
 }
 
-export const CoreLog = createLogger("tw-deployer.log", {
-	consoleOutput: true,
+export const CoreLog = createLogger("core.log", {
+	write: Config.Logs?.StoreCoreLogs ?? false,
+	consoleOutput: Config.Logs?.OutputCoreLogsToConsole ?? false,
 	consoleOutputIncludeDate:false,
+});
+
+export const AccessLog = createLogger("access.log", {
+	write: Config.Logs?.StoreAccessLogs ?? false,
+	consoleOutput: Config.Logs?.OutputAccessLogsToConsole ?? false,
+	consoleOutputIncludeDate: false,
 });

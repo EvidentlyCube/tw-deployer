@@ -3,12 +3,12 @@ import Config from "./config.js";
 
 import { routeErrorHandler, routeRequest } from "./router.js";
 import { Routes } from "./routes/routes.js";
-import { CoreLog } from "./utils/Logger.js";
+import { AccessLog } from "./utils/Logger.js";
 
 export async function initServer() {
 	http
 		.createServer(async (req, res) => {
-			CoreLog("server", `${req.method} ${req.url}`);
+			AccessLog("server", `${req.method} ${req.url}`);
 
 			try {
 				if (!authenticate(req, res)) {

@@ -1,5 +1,5 @@
 import { ActionError, ApiError, CsrfError, NotFoundError } from "./utils/Errors.js";
-import { CoreLog } from "./utils/Logger.js";
+import { AccessLog } from "./utils/Logger.js";
 
 export async function routeRequest(routesData, req, res) {
 	for (const { route, rawRoute, action } of routesData) {
@@ -8,7 +8,7 @@ export async function routeRequest(routesData, req, res) {
 		if (match) {
 			req.pathParams = { ...match.groups };
 
-			CoreLog("router", `Routed to ${rawRoute}`);
+			AccessLog("router", `Routed to ${rawRoute}`);
 			await action(req, res);
 			return true;
 		}
