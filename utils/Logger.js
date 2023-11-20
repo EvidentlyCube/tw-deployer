@@ -3,7 +3,6 @@ import { resolve } from "path";
 import Config from "../config.js";
 import { formatDate } from "./DateUtils.js";
 
-
 export function createLogger(path, options) {
 	if (path.includes("..")) {
 		throw new Error(`Cannot create logger with path "${path}" that includes ".."`);
@@ -32,9 +31,23 @@ export function createLogger(path, options) {
 		}
 	};
 
+	return (type, message) => {
+		if (message === undefined) {
+			message = type;
+			type = undefined;
+		}
 
-	return (message) => {
-		appendQueue.push(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll")}] ${message}`);
+		const now = Date.now();
+		const typePrefix = type ? `<${type}> ` : "";
+		appendQueue.push(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll", now)}] ${typePrefix}${message}`);
+
+		if (options.consoleOutput) {
+			if (options.consoleOutputIncludeDate) {
+				console.log(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll", now)}] ${typePrefix}${message}`);
+			} else {
+				console.log(`${typePrefix}${message}`);
+			}
+		}
 
 		options.onLog?.(message);
 
@@ -44,3 +57,8 @@ export function createLogger(path, options) {
 		}
 	};
 }
+
+export const CoreLog = createLogger("tw-deployer.log", {
+	consoleOutput: true,
+	consoleOutputIncludeDate:false,
+});

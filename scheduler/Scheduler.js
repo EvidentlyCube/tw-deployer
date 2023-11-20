@@ -2,6 +2,7 @@ import { cp, readFile, unlink, writeFile } from "node:fs/promises";
 import { fileExists } from "../utils/FileUtils.js";
 import { doNull } from "../utils/MiscUtils.js";
 import { isValidWikiPath } from "../utils/PathUtils.js";
+import { CoreLog } from "../utils/Logger.js";
 
 let isStarted = false;
 const registeredTasks = [];
@@ -14,6 +15,8 @@ export function registerSchedulerTask(taskId, name, getNextExecutionTime, action
 	if (!isValidWikiPath(taskId)) {
 		throw new Error(`'${taskId} is not a valid task ID`);
 	}
+
+	CoreLog("scheduler", `Registering task ${name} (${taskId})`);
 
 	registeredTasks.push({
 		id: taskId,
