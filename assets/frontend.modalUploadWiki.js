@@ -52,7 +52,7 @@ export async function handleUploadWikiModal() {
 			return alert("Invalid file uploaded");
 		}
 
-		const csrf = await apiFetch("csrf-token");
+		const csrf = await apiFetch("csrf/generate");
 		console.log(JSON.stringify({ csrf, wikiPath, title, archive }).length / 1024 / 1024);
 		const jobId = await apiFetchPost("wiki/upload", { csrf, wikiPath, title, archive, archiveName });
 

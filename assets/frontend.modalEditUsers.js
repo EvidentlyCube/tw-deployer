@@ -75,7 +75,7 @@ async function save(wikiPath) {
 		};
 	}).filter(x => x);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	await apiFetchPost(`wiki/save-users/${wikiPath}`, { csrf, users });
 
 	removeSpinner($saveButton);

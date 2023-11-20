@@ -168,7 +168,7 @@ export async function backupWiki(wikiPath, $wikiRow, $wikiModal) {
 
 	setButtonsDisabled($wikiModal, true);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
@@ -188,7 +188,7 @@ export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
 	const $button = $wikiModal.querySelector(".modal-action-stop");
 	addSpinner($button);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	if ($wikiRow.getAttribute("data-mode") === "pm2") {
 		await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
 
@@ -213,7 +213,7 @@ export async function startWiki(wikiPath, $wikiRow, $wikiModal) {
 	const $button = $wikiModal.querySelector(".modal-action-start");
 	addSpinner($button);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	await apiFetchPost(`start-wiki/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
@@ -233,7 +233,7 @@ export async function registerSharedWiki(wikiPath, $wikiRow, $wikiModal) {
 	const $button = $wikiModal.querySelector(".modal-action-start-shared");
 	addSpinner($button);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	await apiFetchPost(`wiki/shared/register/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
@@ -252,7 +252,7 @@ export async function deleteBackup(wikiPath, backup, $wikModal, $backupRow) {
 
 	setDisabled($wikModal, ["button"], true);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	await apiFetchPost(`delete-wiki-backup/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {
@@ -272,7 +272,7 @@ export async function restoreBackup(wikiPath, backup, $wikiRow, $wikiModal, $bac
 
 	setDisabled($wikiModal, ["button"], true);
 
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	const jobId = await apiFetchPost(`wiki/restore-backup/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {

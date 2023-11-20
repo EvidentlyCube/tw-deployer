@@ -3,7 +3,7 @@ import { getRouteData } from "../utils/RouteUtils.js";
 import { respondApiSuccess } from "./respond.js";
 
 export default getRouteData(
-	"/?api=csrf-token",
+	"/?api=csrf/generate",
 	action
 );
 

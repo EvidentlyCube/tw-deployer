@@ -32,7 +32,7 @@ export async function handleCreateWikiModal() {
 			return alert("Title is missing");
 		}
 
-		const csrf = await apiFetch("csrf-token");
+		const csrf = await apiFetch("csrf/generate");
 		const jobId = await apiFetchPost("wiki/create", { csrf, wikiPath, title });
 
 		if (getLastApiError()) {

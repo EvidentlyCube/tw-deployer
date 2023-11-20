@@ -2,7 +2,7 @@ import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
 
 export async function deleteWiki(wikiPath, $tr, $modal) {
-	const csrf = await apiFetch("csrf-token");
+	const csrf = await apiFetch("csrf/generate");
 	const jobId = await apiFetchPost(`wiki-delete/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {

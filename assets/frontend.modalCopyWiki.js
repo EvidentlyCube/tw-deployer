@@ -31,7 +31,7 @@ export async function handleCopyWikiModal(template, $oldModal) {
 			return alert("Title is missing");
 		}
 
-		const csrf = await apiFetch("csrf-token");
+		const csrf = await apiFetch("csrf/generate");
 		const jobId = await apiFetchPost(`wiki/copy/${template}`, { csrf, wikiPath, title });
 
 		if (getLastApiError()) {

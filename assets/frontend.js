@@ -172,7 +172,7 @@ async function loadScheduler() {
 			addSpinner($button);
 			setButtonsDisabled(document, true);
 
-			const csrf = await apiFetch("csrf-token");
+			const csrf = await apiFetch("csrf/generate");
 			await apiFetchPost(`scheduler/run-task/${job.id}`, { csrf });
 
 			if (getLastApiError()) {
