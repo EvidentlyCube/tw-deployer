@@ -8,7 +8,7 @@ export const Routes = [];
 buildRoutesArray();
 
 async function buildRoutesArray() {
-	CoreLog("routes", `Building routes array`);
+	CoreLog("routes", "Building routes array");
 
 	const routesDirAbs = dirname(fileURLToPath(import.meta.url));
 
@@ -23,6 +23,8 @@ async function buildRoutesArray() {
 			return 0;
 		}
 	});
+
+	CoreLog("routes", `Found ${Routes.length} routes`);
 }
 
 async function getRoutesIn(dirAbs) {
@@ -41,12 +43,13 @@ async function getRoutesIn(dirAbs) {
 		}
 
 		if (!file.name.endsWith(".route.js")) {
-			CoreLog("routes", `Not a route: ${fileAbs}`);
+			CoreLog("routes", `Not a route file: ${fileAbs}`);
 			continue;
 		}
 
 		const module = await import(fileAbs);
 		if (!module.default.route || !module.default.action) {
+			CoreLog("routes", `File missing route data: ${fileAbs}`);
 			continue;
 		}
 
