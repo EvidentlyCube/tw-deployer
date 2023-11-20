@@ -65,7 +65,7 @@ export function createBackupRowHtml(wikiPath, backupFilename, backupTimestamp) {
 			dm("button", { class: "action-delete-backup danger", text: "Delete" }),
 			dm("button", { class: "action-restore-backup", text: "Restore" }),
 			dm("a", {
-				href: `?api=wiki/backup/${wikiPath}/${backupFilename}`,
+				href: `?api=wiki-backups/download/${wikiPath}/${backupFilename}`,
 				class: "action-download-backup button small",
 				child: dm("span", { class: "gg-software-download" })
 			}),

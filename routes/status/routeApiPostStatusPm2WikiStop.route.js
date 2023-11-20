@@ -1,16 +1,16 @@
-import { actionPm2Delete } from "../actions/actionPm2Delete.js";
-import { actionPm2Save } from "../actions/actionPm2Save.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { doNull } from "../utils/MiscUtils.js";
-import { isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { getPm2DetailsForWiki } from "../utils/pm2.js";
-import { respondApiSuccess } from "./respond.js";
+import { actionPm2Delete } from "../../actions/actionPm2Delete.js";
+import { actionPm2Save } from "../../actions/actionPm2Save.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { doNull } from "../../utils/MiscUtils.js";
+import { isValidWikiPath } from "../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { getPm2DetailsForWiki } from "../../utils/pm2.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=stop-wiki/:wikiPath",
+	"/?api=status/pm2-wiki/stop:wikiPath",
 	action
 );
 

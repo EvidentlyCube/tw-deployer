@@ -1,14 +1,14 @@
-import { startJobRestoreBackup } from "../jobs/jobRestoreBackup.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { fileExists } from "../utils/FileUtils.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
+import { startJobRestoreBackup } from "../../jobs/jobRestoreBackup.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki/restore-backup/:wikiPath/:backup",
+	"/?api=wiki-backups/restore/:wikiPath/:backup",
 	action
 );
 

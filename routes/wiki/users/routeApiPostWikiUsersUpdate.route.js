@@ -1,21 +1,21 @@
 import * as fs from "node:fs";
-import { startJobCopyWiki } from "../jobs/jobCopyWiki.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { canAccessFile, fileExists, isDirectory } from "../utils/FileUtils.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
-import { doNull, isSafeCsvValue } from "../utils/MiscUtils.js";
-import { getWikiUsers } from "../utils/TwUtils.js";
-import Config from "../config.js";
+import { startJobCopyWiki } from "../../../jobs/jobCopyWiki.js";
+import { validateCsrfToken } from "../../../utils/Csrf.js";
+import { ApiError } from "../../../utils/Errors.js";
+import { canAccessFile, fileExists, isDirectory } from "../../../utils/FileUtils.js";
+import { parseRequestBodyJson } from "../../../utils/HttpUtils.js";
+import { getWikiAbsolutePath, isValidWikiPath } from "../../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../../respond.js";
+import { doNull, isSafeCsvValue } from "../../../utils/MiscUtils.js";
+import { getWikiUsers } from "../../../utils/TwUtils.js";
+import Config from "../../../config.js";
 import { resolve } from "node:path";
 import { writeFile } from "node:fs/promises";
-import { actionPm2Restart } from "../actions/actionPm2Restart.js";
+import { actionPm2Restart } from "../../../actions/actionPm2Restart.js";
 
 export default getRouteData(
-	"/?api=wiki/save-users/:wikiPath",
+	"/?api=wiki/users/update/:wikiPath",
 	action
 );
 

@@ -14,8 +14,8 @@ export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 	const $modalMemoryPercent = $wikiModal.querySelector(".cell-memory-percent td");
 
 	const [statusPm2, statusShared] = await Promise.all([
-		apiFetch(`pm2-status/${wikiPath}`),
-		apiFetch(`wiki/shared/status/${wikiPath}`)
+		apiFetch(`status/pm2-wiki/info/${wikiPath}`),
+		apiFetch(`status/shared-wiki/info/${wikiPath}`)
 	]);
 
 	$wikiRow.setAttribute("data-status", statusPm2.status);
@@ -78,7 +78,7 @@ export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
 }
 
 export async function loadWikiDetails(wikiPath, $wikiRow, $wikiModal) {
-	const details = await apiFetch(`wiki-details/${wikiPath}`);
+	const details = await apiFetch(`wiki/info/${wikiPath}`);
 
 	$wikiRow.setAttribute("data-port", details.port);
 	$wikiRow.setAttribute("data-title", details.title);
@@ -122,7 +122,7 @@ export async function loadWikiDetails(wikiPath, $wikiRow, $wikiModal) {
 }
 
 export async function loadBackups(wikiPath, $wikiRow, $wikiModal) {
-	const backups = await apiFetch(`wiki-backups/${wikiPath}`) ?? [];
+	const backups = await apiFetch(`wiki-backups/summary/${wikiPath}`) ?? [];
 
 	const $backups = $wikiModal.querySelector(".modal-backups");
 	removeElements($backups.querySelector(".spinner"));
@@ -169,7 +169,7 @@ export async function backupWiki(wikiPath, $wikiRow, $wikiModal) {
 	setButtonsDisabled($wikiModal, true);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
+	await apiFetchPost(`wiki-backups/create/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
@@ -190,10 +190,10 @@ export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
 
 	const csrf = await apiFetch("csrf/generate");
 	if ($wikiRow.getAttribute("data-mode") === "pm2") {
-		await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
+		await apiFetchPost(`status/pm2-wiki/stop${wikiPath}`, { csrf });
 
 	} else if ($wikiRow.getAttribute("data-mode") === "shared") {
-		await apiFetchPost(`wiki/shared/unregister/${wikiPath}`, { csrf });
+		await apiFetchPost(`status/shared-wiki/unregister/${wikiPath}`, { csrf });
 	}
 
 	if (getLastApiError()) {
@@ -214,7 +214,7 @@ export async function startWiki(wikiPath, $wikiRow, $wikiModal) {
 	addSpinner($button);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`start-wiki/${wikiPath}`, { csrf });
+	await apiFetchPost(`status/pm2-wiki/start${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
@@ -234,7 +234,7 @@ export async function registerSharedWiki(wikiPath, $wikiRow, $wikiModal) {
 	addSpinner($button);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`wiki/shared/register/${wikiPath}`, { csrf });
+	await apiFetchPost(`status/shared-wiki/register/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
@@ -253,7 +253,7 @@ export async function deleteBackup(wikiPath, backup, $wikModal, $backupRow) {
 	setDisabled($wikModal, ["button"], true);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`delete-wiki-backup/${wikiPath}/${backup}`, { csrf });
+	await apiFetchPost(`wiki-backups/delete/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
@@ -273,7 +273,7 @@ export async function restoreBackup(wikiPath, backup, $wikiRow, $wikiModal, $bac
 	setDisabled($wikiModal, ["button"], true);
 
 	const csrf = await apiFetch("csrf/generate");
-	const jobId = await apiFetchPost(`wiki/restore-backup/${wikiPath}/${backup}`, { csrf });
+	const jobId = await apiFetchPost(`wiki-backups/restore/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(`Operation failed: ${getLastApiError()}`);

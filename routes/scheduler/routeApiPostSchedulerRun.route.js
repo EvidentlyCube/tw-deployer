@@ -1,13 +1,14 @@
-import { runSchedulerTask } from "../scheduler/Scheduler.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { doNull } from "../utils/MiscUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
+
+import { runSchedulerTask } from "../../scheduler/Scheduler.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { doNull } from "../../utils/MiscUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=scheduler/run-task/:taskId",
+	"/?api=scheduler/run/:taskId",
 	action
 );
 

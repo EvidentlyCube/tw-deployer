@@ -1,11 +1,11 @@
-import Config from "../config.js";
-import { isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { getWikiUsers } from "../utils/TwUtils.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import Config from "../../../config.js";
+import { isValidWikiPath } from "../../../utils/PathUtils.js";
+import { getRouteData } from "../../../utils/RouteUtils.js";
+import { getWikiUsers } from "../../../utils/TwUtils.js";
+import { respondApiError, respondApiSuccess } from "../../respond.js";
 
 export default getRouteData(
-	"/?api=wiki/users/:wikiPath",
+	"/?api=wiki/users/list/:wikiPath",
 	action
 );
 

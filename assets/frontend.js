@@ -26,7 +26,7 @@ ready(async () => {
 		this.qA(query).forEach(element => element.addEventListener(event, listener, options));
 	};
 
-	const wikiPaths = await apiFetch("get-wikis");
+	const wikiPaths = await apiFetch("wiki/summary");
 
 	await Promise.all([
 		loadScheduler(),
@@ -157,14 +157,14 @@ async function loadMemory() {
 
 async function loadScheduler() {
 	const $scheduler = document.q("#scheduler-table tbody");
-	const jobs = await apiFetch("scheduler/tasks");
+	const tasks = await apiFetch("scheduler/tasks");
 
-	for (const job of jobs) {
-		const $row = getSchedulerRowHtml(job.id, job.name, job.startTimestamp);
+	for (const task of tasks) {
+		const $row = getSchedulerRowHtml(task.id, task.name, task.startTimestamp);
 		$scheduler.appendChild($row);
 
 		$row.qOn(".action-run-job", "click", async () => {
-			if (!confirm(`Are you sure you want to run scheduler job '${job.name}'?`)) {
+			if (!confirm(`Are you sure you want to run scheduler task '${task.name}'?`)) {
 				return;
 			}
 
@@ -173,7 +173,7 @@ async function loadScheduler() {
 			setButtonsDisabled(document, true);
 
 			const csrf = await apiFetch("csrf/generate");
-			await apiFetchPost(`scheduler/run-task/${job.id}`, { csrf });
+			await apiFetchPost(`scheduler/run/${task.id}`, { csrf });
 
 			if (getLastApiError()) {
 				removeSpinner($button);
@@ -190,7 +190,7 @@ async function loadScheduler() {
 
 async function loadJobLogs() {
 	const $jobsTable = document.q("#job-logs-table tbody");
-	const jobs = await apiFetch("jobs");
+	const jobs = await apiFetch("jobs/summary");
 
 	jobs.sort((l, r) => r.startedTimestamp - l.startedTimestamp);
 

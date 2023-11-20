@@ -1,11 +1,11 @@
-import { execPromise } from "../utils/ExecUtils.js";
-import { isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { getPm2DetailsForWiki } from "../utils/pm2.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { execPromise } from "../../utils/ExecUtils.js";
+import { isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { getPm2DetailsForWiki } from "../../utils/pm2.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=pm2-status/:wikiName",
+	"/?api=status/pm2-wiki/info/:wikiName",
 	action
 );
 

@@ -1,13 +1,13 @@
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { resolve } from "node:path";
-import { fileExists } from "../utils/FileUtils.js";
-import { getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiError } from "./respond.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiError } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki/backup/:wikiPath/:backup",
+	"/?api=wiki-backups/download/:wikiPath/:backup",
 	action
 );
 

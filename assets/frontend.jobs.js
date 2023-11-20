@@ -22,7 +22,7 @@ export async function trackJob(jobId, title, options = {}) {
 	let indent = 1;
 
 	while (lastNewLog + MaxDuration) {
-		const result = await apiFetch(`job/${jobId}`);
+		const result = await apiFetch(`jobs/info/${jobId}`);
 
 		if (!result) {
 			$logContainerModal.appendChild(document.createElement("hr"));

@@ -1,11 +1,11 @@
 import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
-import Config from "../config.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
+import Config from "../../config.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=jobs",
+	"/?api=/summary",
 	action
 );
 

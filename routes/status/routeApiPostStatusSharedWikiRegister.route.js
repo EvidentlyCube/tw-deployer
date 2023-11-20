@@ -1,14 +1,14 @@
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { isSharedWiki, registerSharedWiki } from "../utils/SharedRunner.js";
-import { getPm2DetailsForWiki } from "../utils/pm2.js";
-import { respondApiSuccess } from "./respond.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { isValidWikiPath } from "../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { isSharedWiki, registerSharedWiki } from "../../utils/SharedRunner.js";
+import { getPm2DetailsForWiki } from "../../utils/pm2.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki/shared/register/:wikiPath",
+	"/?api=status/shared-wiki/register/:wikiPath",
 	action
 );
 

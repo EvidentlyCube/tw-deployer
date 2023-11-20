@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import { resolve } from "node:path";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respond } from "./respond.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respond } from "../respond.js";
 
 export default getRouteData(
 	"/",

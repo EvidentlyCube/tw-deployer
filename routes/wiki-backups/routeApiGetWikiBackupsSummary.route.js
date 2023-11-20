@@ -1,11 +1,11 @@
 import { readdir } from "node:fs/promises";
-import { fileExists } from "../utils/FileUtils.js";
-import { getWikiBackupsAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { getWikiBackupsAbsolutePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki-backups/:wikiPath",
+	"/?api=wiki-backups/summary/:wikiPath",
 	action
 );
 

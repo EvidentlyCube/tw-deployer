@@ -76,7 +76,7 @@ async function save(wikiPath) {
 	}).filter(x => x);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`wiki/save-users/${wikiPath}`, { csrf, users });
+	await apiFetchPost(`wiki/users/update/${wikiPath}`, { csrf, users });
 
 	removeSpinner($saveButton);
 	setButtonsDisabled($usersModal, false);
@@ -98,7 +98,7 @@ async function loadUsers(wikiPath, $oldModal) {
 	setButtonsDisabled($oldModal, true);
 	addSpinner($button);
 
-	const users = await apiFetch(`wiki/users/${wikiPath}`);
+	const users = await apiFetch(`wiki/users/list/${wikiPath}`);
 
 	setButtonsDisabled($oldModal, false);
 	removeSpinner($button);

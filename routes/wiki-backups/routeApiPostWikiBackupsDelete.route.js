@@ -1,17 +1,17 @@
 import { resolve } from "path";
-import { actionBackupDelete } from "../actions/actionBackupDelete.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { fileExists } from "../utils/FileUtils.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { doNull } from "../utils/MiscUtils.js";
-import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { isSharedWiki } from "../utils/SharedRunner.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { actionBackupDelete } from "../../actions/actionBackupDelete.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { doNull } from "../../utils/MiscUtils.js";
+import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { isSharedWiki } from "../../utils/SharedRunner.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=delete-wiki-backup/:wikiPath/:backup",
+	"/?api=wiki-backups/delete/:wikiPath/:backup",
 	action
 );
 

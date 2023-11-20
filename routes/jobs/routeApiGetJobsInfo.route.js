@@ -1,9 +1,9 @@
-import { getJobInfo } from "../utils/JobRunner.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { getJobInfo } from "../../utils/JobRunner.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=job/:jobId",
+	"/?api=jobs/info/:jobId",
 	action
 );
 

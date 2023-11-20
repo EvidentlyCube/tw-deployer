@@ -1,7 +1,7 @@
-import { ApiError } from "../utils/Errors.js";
-import { execPromise } from "../utils/ExecUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
+import { ApiError } from "../../utils/Errors.js";
+import { execPromise } from "../../utils/ExecUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
 	"/?api=system/memory",

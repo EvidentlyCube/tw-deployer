@@ -1,10 +1,10 @@
-import { isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { getSharedWikiStatus, isSharedWiki } from "../utils/SharedRunner.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { getSharedWikiStatus, isSharedWiki } from "../../utils/SharedRunner.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki/shared/status/:wikiPath",
+	"/?api=status/shared-wiki/info/:wikiPath",
 	action
 );
 
