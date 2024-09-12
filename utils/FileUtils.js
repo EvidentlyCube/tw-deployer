@@ -1,9 +1,17 @@
 import * as fs from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { resolve } from "node:path";
+import { extname, resolve } from "node:path";
 import { formatDate } from "../assets/frontend.utils.js";
 import { execPromise } from "./ExecUtils.js";
 import { sleep } from "./MiscUtils.js";
+
+export function getFileExtension(filename) {
+	if (filename.endsWith(".tar.gz")) {
+		return "tar.gz";
+	} else {
+		return extname(filename);
+	}
+}
 
 export async function fileExists(path) {
 	try {

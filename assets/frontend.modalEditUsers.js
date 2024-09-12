@@ -47,8 +47,8 @@ export async function handleEditUsersModal(wikiPath, $oldModal) {
 async function save(wikiPath) {
 	const $usersModal = document.querySelector("#users-modal");
 	const $saveButton = $usersModal.q(".action-save");
-	addSpinner($saveButton);
 
+	addSpinner($saveButton);
 	setButtonsDisabled($usersModal, true);
 
 	const users = Array.from($usersModal.qA("tbody tr")).map($row => {

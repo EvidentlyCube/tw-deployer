@@ -1,14 +1,13 @@
-import { extname } from "node:path";
+import { writeFile } from "node:fs/promises";
+import { startJobUploadWiki } from "../../jobs/jobUploadWiki.js";
+import { isSupportedArchive } from "../../utils/ArchiveUtils.js";
 import { validateCsrfToken } from "../../utils/Csrf.js";
 import { ApiError } from "../../utils/Errors.js";
-import { createTempFilePath, fileExists } from "../../utils/FileUtils.js";
+import { createTempFilePath, fileExists, getFileExtension } from "../../utils/FileUtils.js";
 import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
 import { getWikiAbsolutePath, isValidWikiPath } from "../../utils/PathUtils.js";
 import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
 import { respondApiSuccess } from "../respond.js";
-import { isSupportedArchive } from "../../utils/ArchiveUtils.js";
-import { writeFile } from "node:fs/promises";
-import { startJobUploadWiki } from "../../jobs/jobUploadWiki.js";
 
 export default getRouteData(
 	"/?api=wiki/upload",
@@ -21,7 +20,7 @@ async function action(req, res) {
 
 	const { title, wikiPath, archive, archiveName } = await validateParams(req);
 
-	const archiveTempPathAbs = await createTempFilePath("archive", extname(archiveName));
+	const archiveTempPathAbs = await createTempFilePath("archive", getFileExtension(archiveName));
 
 	await writeFile(
 		archiveTempPathAbs,
