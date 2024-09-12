@@ -37,24 +37,24 @@ export async function startJobCopyWiki(
 }
 
 
-async function runJob(log, title, template, wikiPath) {
+async function runJob(log, title, wikiPathSource, wikiPathNew) {
 	log("Job started");
 
-	await validateParams(title, template, wikiPath);
+	await validateParams(title, wikiPathSource, wikiPathNew);
 
-	await actionWikiCopy(template, wikiPath, log);
-	await actionTiddlerUpdateHost(wikiPath, log);
-	await actionTiddlerUpdateTitle(wikiPath, title, log);
-	await actionWikiCleanup(wikiPath, log);
+	await actionWikiCopy(wikiPathSource, wikiPathNew, log);
+	await actionTiddlerUpdateHost(wikiPathNew, log);
+	await actionTiddlerUpdateTitle(wikiPathNew, title, log);
+	await actionWikiCleanup(wikiPathNew, log);
 
-	const port = await actionDetermineWikiPort(wikiPath, log);
+	const port = await actionDetermineWikiPort(wikiPathNew, log);
 
-	await actionPreparePackageJson(wikiPath, port, log);
-	await actionCreatePm2Config(wikiPath, port, log);
-	await actionPm2Delete(wikiPath, log);
-	await actionPm2Start(wikiPath, log);
+	await actionPreparePackageJson(wikiPathNew, port, log);
+	await actionCreatePm2Config(wikiPathNew, port, log);
+	await actionPm2Delete(wikiPathNew, log);
+	await actionPm2Start(wikiPathNew, log);
 	await actionPm2Save(log);
-	await actionNginxAddWiki(wikiPath, port, log);
+	await actionNginxAddWiki(wikiPathNew, port, log);
 	await actionNginxRestart(log);
 
 	log("Job finished");

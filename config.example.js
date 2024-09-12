@@ -7,6 +7,12 @@ const Config = {
 	// Tiddlywiki instances will start from this port
 	TwPortCountFrom: 8080,
 
+	// Array of port ranges. Must be an array of 2-element arrays where the first element
+	// is the start of the range and second is the end of the range.
+	TwPortRanges: [
+		[8100, 8199]
+	],
+
 	// Duration, in millisecond, how long a CSRF token is valid
 	CsrfTokenValidityMs: 10 * 1000,
 
@@ -28,8 +34,11 @@ const Config = {
 		// Where the logs are stored
 		Logs: "/var/log/tw-deployer/",
 
-		// Path to an nginx configuration file that will be used for adding new TW instances
-		NginxConfig: "/etc/nginx/sites-available/example.com",
+		// Directory to store backups
+		Backups: "/root/htdocs/backups",
+
+		// Path to an nginx directory that contains all configurations for Wikis
+		NginxConfigDir: "/etc/nginx/sites-available/example.com",
 
 		// Path where the wikis are stored
 		Wikis: "/root/htdocs/tiddlywikis",

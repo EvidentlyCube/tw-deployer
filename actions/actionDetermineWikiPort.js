@@ -1,12 +1,13 @@
-import { readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import Config from "../config.js";
 import { ActionError } from "../utils/Errors.js";
-import { isPortOpen } from "../utils/ExecUtils.js";
+import { getUsedPorts, isPortOpen } from "../utils/ExecUtils.js";
+import { getValidPorts } from "../utils/PortUtils.js";
 import { getWikiPackageJson } from "../utils/TwUtils.js";
 
 export async function actionDetermineWikiPort(wikiPath, log) {
-	log(`[Action: determine wiki path for ${wikiPath}`);
+	log(`[Action: determine wiki port for ${wikiPath}`);
 
 	const nginxPort = await extractPortFromNginx(wikiPath);
 	if (nginxPort) {
@@ -24,14 +25,18 @@ export async function actionDetermineWikiPort(wikiPath, log) {
 		return packageJson.port;
 	}
 
-	for (let i = 0; i < 500; i++) {
-		const port = Config.TwPortCountFrom + i;
+	const validPorts = getValidPorts();
+	const usedPorts = await getUsedPorts();
 
-		if (await isPortOpen(port)) {
-			log(`Found unused port ${port}`);
-			log("[/Action]");
+	for (const port of validPorts) {
+		if (!usedPorts.has(port)) {
 
-			return port;
+			if (await isPortOpen(port)) {
+				log(`Found unused port ${port}`);
+				log("[/Action]");
+
+				return port;
+			}
 		}
 	}
 
@@ -39,12 +44,14 @@ export async function actionDetermineWikiPort(wikiPath, log) {
 }
 
 async function extractPortFromNginx(wikiPath) {
-	const nginxConfig = await readFile(resolve(process.cwd(), Config.Paths.NginxConfig), "utf-8");
+	const fileNames = await readdir(resolve(process.cwd(), Config.Paths.NginxConfigDir), "utf-8");
 
-	const match = nginxConfig.match(new RegExp(`:(\\d+)\\/${wikiPath};`));
+	for (const fileName of fileNames) {
+		const bits = fileName.split(".");
 
-	if (match) {
-		return parseInt(match[1]);
+		if (bits.length === 2 && bits[1] === wikiPath && Number.isInteger(parseFloat(bits[0]))) {
+			return parseFloat(bits[0]);
+		}
 	}
 
 	return false;

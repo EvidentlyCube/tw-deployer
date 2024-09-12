@@ -10,6 +10,7 @@ export async function validateConfig() {
 	await validateNginxPath();
 	await validateBackupsPath();
 	await validatePort();
+	await validatePortRanges();
 	await validateUsername();
 	await validatePassword();
 }
@@ -61,24 +62,24 @@ async function validateWikisPath() {
 }
 
 async function validateNginxPath() {
-	const configPath = Config.Paths.NginxConfig;
+	const { NginxConfigDir } = Config.Paths;
 
 	try {
-		const stat = await fs.promises.stat(configPath);
+		const stat = await fs.promises.stat(NginxConfigDir);
 
-		if (stat.isDirectory()) {
-			exit(`Config.Paths.NginxConfig=${JSON.stringify(configPath)} -> Path is a directory, expected a file`);
+		if (!stat.isDirectory()) {
+			exit(`Config.Paths.NginxConfigDir=${JSON.stringify(NginxConfigDir)} -> Path is a file, expected a directory`);
 		}
 
 	} catch (e) {
-		exit(`Config.Paths.NginxConfig=${JSON.stringify(configPath)} -> Failed to stat -> ${e}`);
+		exit(`Config.Paths.NginxConfigDir=${JSON.stringify(NginxConfigDir)} -> Failed to stat -> ${e}`);
 	}
 
 	try {
-		await fs.promises.access(configPath, fs.constants.W_OK | fs.constants.R_OK);
+		await fs.promises.access(NginxConfigDir, fs.constants.W_OK | fs.constants.R_OK);
 
 	} catch (e) {
-		exit(`Config.Paths.NginxConfig=${JSON.stringify(configPath)} -> Invalid access -> ${e}`);
+		exit(`Config.Paths.NginxConfigDir=${JSON.stringify(NginxConfigDir)} -> Invalid access -> ${e}`);
 	}
 }
 
@@ -108,6 +109,36 @@ async function validatePort() {
 
 	if (!await isPortOpen(Port)) {
 		exit(`Config.Port=${JSON.stringify(Port)} -> Port is already used`);
+	}
+}
+
+async function validatePortRanges() {
+	const { TwPortRanges } = Config;
+
+	if (!Array.isArray(TwPortRanges)) {
+		exit("Config.TwPortRanges - Expected an array");
+	}
+
+	for (let i = 0; i < TwPortRanges.length; i++) {
+		const range = TwPortRanges[i];
+
+		if (!Array.isArray(range)) {
+			exit(`Config.TwPortRanges[${i}] - Expected an array`);
+		} else if (range.length !== 2) {
+			exit(`Config.TwPortRanges[${i}] - Expected an array of length=2, got length=${range.length}`);
+		} else if (typeof range[0] !== "number") {
+			exit(`Config.TwPortRanges[${i}][0] - Expected a number type but got '${typeof range[0]}'`);
+		} else if (!Number.isInteger(range[0])) {
+			exit(`Config.TwPortRanges[${i}][0] - Expected an integer but got '${range[0]}'`);
+		} else if (typeof range[1] !== "number") {
+			exit(`Config.TwPortRanges[${i}][1] - Expected a number type but got '${typeof range[1]}'`);
+		} else if (!Number.isInteger(range[1])) {
+			exit(`Config.TwPortRanges[${i}][1] - Expected an integer but got '${range[1]}'`);
+		} else if (range[0] > range[1]) {
+			exit(`Config.TwPortRanges[${i}] - Range start is larger than range end`);
+		} else if (range[1] > 65535) {
+			exit(`Config.TwPortRanges[${i}] - Range is larger than the max port number`);
+		}
 	}
 }
 
