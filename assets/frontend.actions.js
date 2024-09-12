@@ -1,44 +1,69 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
+import { dm } from "./frontend.dm.js";
 import { createBackupRowHtml } from "./frontend.getModalHtml.js";
-import { addSpinner, formatDate, formatSize, removeElements, removeSpinner, setDisabled } from "./frontend.utils.js";
+import { trackJob } from "./frontend.jobs.js";
+import { addSpinner, formatDate, formatSize, hideButton, removeElements, removeSpinner, setButtonsDisabled, setDisabled, showButton, showModal } from "./frontend.utils.js";
 
-export async function loadPm2Status(wikiPath, $tr, $modal) {
-	const $statusCell = $tr.querySelector(".cell-status");
-	const $memoryCell = $tr.querySelector(".cell-memory");
+export async function loadPm2Status(wikiPath, $wikiRow, $wikiModal) {
+	const $statusCell = $wikiRow.querySelector(".cell-status");
+	const $memoryCell = $wikiRow.querySelector(".cell-memory");
 
-	const $modalPID = $modal.querySelector(".cell-pid td");
-	const $modalPm2ID = $modal.querySelector(".cell-pm2-id td");
-	const $modalMemoryUsed = $modal.querySelector(".cell-memory-used td");
-	const $modalMemoryPercent = $modal.querySelector(".cell-memory-percent td");
+	const $modalPID = $wikiModal.querySelector(".cell-pid td");
+	const $modalPm2ID = $wikiModal.querySelector(".cell-pm2-id td");
+	const $modalMemoryUsed = $wikiModal.querySelector(".cell-memory-used td");
+	const $modalMemoryPercent = $wikiModal.querySelector(".cell-memory-percent td");
 
-	const status = await apiFetch(`pm2-status/${wikiPath}`);
+	const [statusPm2, statusShared] = await Promise.all([
+		apiFetch(`status/pm2-wiki/info/${wikiPath}`),
+		apiFetch(`status/shared-wiki/info/${wikiPath}`)
+	]);
 
-	$tr.setAttribute("data-status", status.status);
-	$tr.setAttribute("data-memory-used", status.memoryUsed);
-	$tr.setAttribute("data-memory-used-percent", status.memoryUsedPercent);
+	$wikiRow.setAttribute("data-status", statusPm2.status);
+	$wikiRow.setAttribute("data-memory-used", statusPm2.memoryUsed);
+	$wikiRow.setAttribute("data-memory-used-percent", statusPm2.memoryUsedPercent);
 
-	$modal.querySelector(".modal-action-stop").classList.remove("hide");
-	$modal.querySelector(".modal-action-start").classList.remove("hide");
-	$modal.querySelector(".modal-action-delete").classList.remove("hide");
+	showButton($wikiModal.q(".modal-action-stop"));
+	showButton($wikiModal.q(".modal-action-start"));
+	showButton($wikiModal.q(".modal-action-start-shared"));
+	showButton($wikiModal.q(".modal-action-delete"));
 
-	if (status) {
-		$tr.setAttribute("data-status", status.status);
+	if (statusPm2) {
+		$wikiRow.setAttribute("data-mode", "pm2");
+		$wikiRow.setAttribute("data-status", statusPm2.status);
 
-		$statusCell.innerText = status.status;
-		$memoryCell.querySelector(".primary").innerText = formatSize(status.memoryUsed);
-		$memoryCell.querySelector(".secondary").innerText = `${status.memoryUsedPercent}%`;
-		$modalPID.innerText = status.pid;
-		$modalPm2ID.innerText = status.pmId;
-		$modalMemoryUsed.innerText = formatSize(status.memoryUsed);
-		$modalMemoryPercent.innerText = `${status.memoryUsedPercent}%`;
+		$statusCell.innerText = statusPm2.status;
+		$memoryCell.querySelector(".primary").innerText = formatSize(statusPm2.memoryUsed);
+		$memoryCell.querySelector(".secondary").innerText = `${statusPm2.memoryUsedPercent}%`;
+		$modalPID.innerText = statusPm2.pid;
+		$modalPm2ID.innerText = statusPm2.pmId;
+		$modalMemoryUsed.innerText = formatSize(statusPm2.memoryUsed);
+		$modalMemoryPercent.innerText = `${statusPm2.memoryUsedPercent}%`;
 
-		if (status.status === "online") {
-			$modal.querySelector(".modal-action-start").classList.add("hide");
-			$modal.querySelector(".modal-action-delete").classList.add("hide");
+		if (statusPm2.status === "online") {
+			hideButton($wikiModal.q(".modal-action-start"));
+			hideButton($wikiModal.q(".modal-action-start-shared"));
+			hideButton($wikiModal.q(".modal-action-delete"));
 		}
 
+	} else if (statusShared) {
+		$wikiRow.setAttribute("data-mode", "shared");
+		$wikiRow.setAttribute("data-status", statusShared.status);
+
+		$statusCell.innerText = statusShared.status;
+		$memoryCell.querySelector(".primary").innerHTML = '<span class="muted">n/a</span>';
+		$memoryCell.querySelector(".secondary").innerHTML = '<span class="muted">n/a</span>';
+		$modalPID.innerHTML = '<span class="muted">n/a</span>';
+		$modalPm2ID.innerHTML = '<span class="muted">n/a</span>';
+		$modalMemoryUsed.innerHTML = '<span class="muted">n/a</span>';
+		$modalMemoryPercent.innerHTML = '<span class="muted">n/a</span>';
+
+		hideButton($wikiModal.q(".modal-action-start"));
+		hideButton($wikiModal.q(".modal-action-start-shared"));
+		hideButton($wikiModal.q(".modal-action-delete"));
+
 	} else {
-		$tr.setAttribute("data-status", "offline");
+		$wikiRow.setAttribute("data-mode", "off");
+		$wikiRow.setAttribute("data-status", "offline");
 
 		$statusCell.innerText = "offline";
 		$memoryCell.querySelector(".primary").innerHTML = '<span class="muted">n/a</span>';
@@ -48,28 +73,28 @@ export async function loadPm2Status(wikiPath, $tr, $modal) {
 		$modalMemoryUsed.innerHTML = '<span class="muted">n/a</span>';
 		$modalMemoryPercent.innerHTML = '<span class="muted">n/a</span>';
 
-		$modal.querySelector(".modal-action-stop").classList.add("hide");
+		hideButton($wikiModal.q(".modal-action-stop"));
 	}
 }
 
-export async function loadWikiDetails(wikiPath, $tr, $modal) {
-	const details = await apiFetch(`wiki-details/${wikiPath}`);
+export async function loadWikiDetails(wikiPath, $wikiRow, $wikiModal) {
+	const details = await apiFetch(`wiki/info/${wikiPath}`);
 
-	$tr.setAttribute("data-port", details.port);
-	$tr.setAttribute("data-title", details.title);
-	$tr.setAttribute("data-tiddlers-count", details.tiddlersCount);
-	$tr.setAttribute("data-tiddlers-size", details.tiddlersSize);
-	$tr.setAttribute("data-total-size", details.totalSize);
+	$wikiRow.setAttribute("data-port", details.port);
+	$wikiRow.setAttribute("data-title", details.title);
+	$wikiRow.setAttribute("data-tiddlers-count", details.tiddlersCount);
+	$wikiRow.setAttribute("data-tiddlers-size", details.tiddlersSize);
+	$wikiRow.setAttribute("data-total-size", details.totalSize);
 
-	const $titleCell = $tr.querySelector(".cell-title a");
-	const $sizeCell = $tr.querySelector(".cell-size");
-	const $tiddlersCell = $tr.querySelector(".cell-tiddlers");
+	const $titleCell = $wikiRow.querySelector(".cell-title a");
+	const $sizeCell = $wikiRow.querySelector(".cell-size");
+	const $tiddlersCell = $wikiRow.querySelector(".cell-tiddlers");
 
-	const $modalTitle = $modal.querySelector("header");
-	const $modalPort = $modal.querySelector(".cell-port td");
-	const $modalTiddlers = $modal.querySelector(".cell-tiddlers td");
-	const $modalSizeTiddlers = $modal.querySelector(".cell-size-tiddlers td");
-	const $modalSizeAll = $modal.querySelector(".cell-size-all td");
+	const $modalTitle = $wikiModal.querySelector("header");
+	const $modalPort = $wikiModal.querySelector(".cell-port td");
+	const $modalTiddlers = $wikiModal.querySelector(".cell-tiddlers td");
+	const $modalSizeTiddlers = $wikiModal.querySelector(".cell-size-tiddlers td");
+	const $modalSizeAll = $wikiModal.querySelector(".cell-size-all td");
 
 	if (details) {
 		$titleCell.innerText = details.title;
@@ -96,116 +121,175 @@ export async function loadWikiDetails(wikiPath, $tr, $modal) {
 	}
 }
 
-export async function loadBackups(wikiPath, $modal) {
-	const backups = await apiFetch(`wiki-backups/${wikiPath}`) ?? [];
+export async function loadBackups(wikiPath, $wikiRow, $wikiModal) {
+	const backups = await apiFetch(`wiki-backups/summary/${wikiPath}`) ?? [];
 
-	const $backups = $modal.querySelector(".modal-backups");
+	const $backups = $wikiModal.querySelector(".modal-backups");
 	removeElements($backups.querySelector(".spinner"));
 	removeElements($backups.querySelectorAll(".modal-backup-row"));
 
 	backups.sort((l, r) => r.localeCompare(l));
 
+	if (backups.length === 0) {
+		$backups.appendChild(dm("div", {
+			class: "modal-backup-row muted",
+			text: "No backups found..."
+		}));
+	}
+
 	for (const backupFileName of backups) {
 		const timestamp = parseInt(backupFileName.split(".")[0]);
 
-		const $backup = createBackupRowHtml(wikiPath, backupFileName, timestamp);
+		const $backupRow = createBackupRowHtml(wikiPath, backupFileName, timestamp);
 
-		$backups.appendChild($backup);
+		$backups.appendChild($backupRow);
 
-		$backup.querySelector(".action-delete-backup").addEventListener("click", () => {
+		$backupRow.querySelector(".action-delete-backup").addEventListener("click", () => {
 			if (confirm(`Are you sure you want to delete backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}?`)) {
-				deleteBackup(wikiPath, backupFileName, $modal, $backup);
+				deleteBackup(wikiPath, backupFileName, $wikiModal, $backupRow);
 			}
 		});
 
-		$backup.querySelector(".action-restore-backup").addEventListener("click", () => {
+		$backupRow.querySelector(".action-restore-backup").addEventListener("click", () => {
 			if (confirm(`Are you sure you want to restore backup from ${formatDate("YYYY-MM-DD hh:mm:ss", timestamp)}? All current TW content will be removed, consider backing it up first.`)) {
-
+				restoreBackup(wikiPath, backupFileName, $wikiRow, $wikiModal, $backupRow);
 			}
 		});
 	}
 }
 
-export async function backupWiki(wikiPath, $modal) {
+export async function backupWiki(wikiPath, $wikiRow, $wikiModal) {
 	if (!confirm(`Are you sure you want to backup wiki ${wikiPath}?`)) {
 		return;
 	}
 
-	const $button = $modal.querySelector(".modal-action-backup");
+	const $button = $wikiModal.querySelector(".modal-action-backup");
 	addSpinner($button);
 
-	setDisabled($modal, [$button, "button"], true);
+	setButtonsDisabled($wikiModal, true);
 
-	const csrf = await apiFetch("csrf-token");
-	await apiFetchPost(`backup-wiki/${wikiPath}`, { csrf });
+	const csrf = await apiFetch("csrf/generate");
+	await apiFetchPost(`wiki-backups/create/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
 
 	} else {
-		await loadBackups(wikiPath, $modal);
+		await loadBackups(wikiPath, $wikiRow, $wikiModal);
 	}
 
 	removeSpinner($button);
-	setDisabled($modal, [$button, "button"], false);
+	setButtonsDisabled($wikiModal, false);
 }
 
-export async function stopWiki(wikiPath, $tr, $modal) {
-	setDisabled($modal, ["button"], true);
+export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
+	setButtonsDisabled($wikiModal, true);
 
-	const $button = $modal.querySelector(".modal-action-stop");
+	const $button = $wikiModal.querySelector(".modal-action-stop");
 	addSpinner($button);
 
-	const csrf = await apiFetch("csrf-token");
-	await apiFetchPost(`stop-wiki/${wikiPath}`, { csrf });
+	const csrf = await apiFetch("csrf/generate");
+	if ($wikiRow.getAttribute("data-mode") === "pm2") {
+		await apiFetchPost(`status/pm2-wiki/stop${wikiPath}`, { csrf });
+
+	} else if ($wikiRow.getAttribute("data-mode") === "shared") {
+		await apiFetchPost(`status/shared-wiki/unregister/${wikiPath}`, { csrf });
+	}
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
 
 	} else {
-		await loadPm2Status(wikiPath, $tr, $modal);
+		await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
 	}
 
 	removeSpinner($button);
-	setDisabled($modal, ["button"], false);
+	setButtonsDisabled($wikiModal, false);
 }
 
-export async function startWiki(wikiPath, $tr, $modal) {
-	setDisabled($modal, ["button"], true);
+export async function startWiki(wikiPath, $wikiRow, $wikiModal) {
+	setDisabled($wikiModal, ["button"], true);
 
-	const $button = $modal.querySelector(".modal-action-start");
+	const $button = $wikiModal.querySelector(".modal-action-start");
 	addSpinner($button);
 
-	const csrf = await apiFetch("csrf-token");
-	await apiFetchPost(`start-wiki/${wikiPath}`, { csrf });
+	const csrf = await apiFetch("csrf/generate");
+	await apiFetchPost(`status/pm2-wiki/start${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
 
 	} else {
-		await loadPm2Status(wikiPath, $tr, $modal);
+		await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
 	}
 
 	removeSpinner($button);
-	setDisabled($modal, ["button"], false);
+	setDisabled($wikiModal, ["button"], false);
 }
 
-export async function deleteBackup(wikiPath, backup, $modal, $backup) {
-	const $button = $backup.querySelector(".action-delete-backup");
+export async function registerSharedWiki(wikiPath, $wikiRow, $wikiModal) {
+	setDisabled($wikiModal, ["button"], true);
+
+	const $button = $wikiModal.querySelector(".modal-action-start-shared");
 	addSpinner($button);
 
-	setDisabled($modal, ["button"], true);
+	const csrf = await apiFetch("csrf/generate");
+	await apiFetchPost(`status/shared-wiki/register/${wikiPath}`, { csrf });
 
-	const csrf = await apiFetch("csrf-token");
-	await apiFetchPost(`delete-wiki-backup/${wikiPath}/${backup}`, { csrf });
+	if (getLastApiError()) {
+		alert(getLastApiError());
+
+	} else {
+		await loadPm2Status(wikiPath, $wikiRow, $wikiModal);
+	}
+
+	removeSpinner($button);
+	setDisabled($wikiModal, ["button"], false);
+}
+export async function deleteBackup(wikiPath, backup, $wikModal, $backupRow) {
+	const $button = $backupRow.querySelector(".action-delete-backup");
+	addSpinner($button);
+
+	setDisabled($wikModal, ["button"], true);
+
+	const csrf = await apiFetch("csrf/generate");
+	await apiFetchPost(`wiki-backups/delete/${wikiPath}/${backup}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());
 		removeSpinner($button);
 
 	} else {
-		$backup.remove();
+		$backupRow.remove();
 	}
 
-	setDisabled($modal, ["button"], false);
+	setDisabled($wikModal, ["button"], false);
+}
+
+export async function restoreBackup(wikiPath, backup, $wikiRow, $wikiModal, $backupRow) {
+	const $button = $backupRow.querySelector(".action-delete-backup");
+	addSpinner($button);
+
+	setDisabled($wikiModal, ["button"], true);
+
+	const csrf = await apiFetch("csrf/generate");
+	const jobId = await apiFetchPost(`wiki-backups/restore/${wikiPath}/${backup}`, { csrf });
+
+	if (getLastApiError()) {
+		alert(`Operation failed: ${getLastApiError()}`);
+		return false;
+	}
+
+	await trackJob(jobId, `Restoring backup '${backup}' to /${wikiPath}`);
+
+	showModal($wikiModal);
+
+	await Promise.all([
+		await loadPm2Status(wikiPath, $wikiRow, $wikiModal),
+		await loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
+	]);
+
+	removeSpinner($button);
+	setDisabled($wikiModal, ["button"], false);
+
 }

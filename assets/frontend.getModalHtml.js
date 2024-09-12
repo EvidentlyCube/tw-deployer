@@ -9,10 +9,17 @@ export function getModalHtml(wikiPath) {
 			dm("div", {
 				class: "modal-actions",
 				child: [
+					dm("button", { class: "modal-action-start", text: "Start Standalone", disabled: true }),
+					dm("button", { class: "modal-action-start-shared", text: "Start Shared", disabled: true }),
+					dm("button", { class: "modal-action-stop danger", text: "Stop", disabled: true }),
+					dm("button", { class: "modal-action-delete danger", text: "Delete", disabled: true }),
+
+				]
+			}),
+			dm("div", {
+				class: "modal-actions",
+				child: [
 					dm("button", { class: "modal-action-backup", text: "Backup", disabled: true }),
-					dm("button", { class: "modal-action-stop hide", text: "Stop", disabled: true }),
-					dm("button", { class: "modal-action-start hide", text: "Start", disabled: true }),
-					dm("button", { class: "modal-action-delete hide danger", text: "Delete", disabled: true }),
 					dm("button", { class: "modal-action-copy", text: "Copy", disabled: true }),
 					dm("a", {
 						href: `?api=wiki/download/${wikiPath}`,
@@ -20,6 +27,13 @@ export function getModalHtml(wikiPath) {
 						class: "small button",
 						child: dm("span", { class: "gg-software-download" })
 					})
+				]
+			}),
+
+			dm("div", {
+				class: "modal-actions",
+				child: [
+					dm("button", { class: "modal-action-edit-users", text: "Users", disabled: true })
 				]
 			}),
 			dm("div", {
@@ -32,7 +46,7 @@ export function getModalHtml(wikiPath) {
 			,
 			dm("div", {
 				class: "modal-close",
-				child: dm("button", { class: "action-close", child: "Close" })
+				child: dm("button", { class: "action-close info", child: "Close" })
 			})
 		]
 	});
@@ -51,7 +65,7 @@ export function createBackupRowHtml(wikiPath, backupFilename, backupTimestamp) {
 			dm("button", { class: "action-delete-backup danger", text: "Delete" }),
 			dm("button", { class: "action-restore-backup", text: "Restore" }),
 			dm("a", {
-				href: `?api=wiki/backup/${wikiPath}/${backupFilename}`,
+				href: `?api=wiki-backups/download/${wikiPath}/${backupFilename}`,
 				class: "action-download-backup button small",
 				child: dm("span", { class: "gg-software-download" })
 			}),
@@ -73,7 +87,7 @@ function getPropsTable(wikiPath) {
 	return dm("div", [
 		dm("h3", "Properties:"),
 		dm("table", {
-			class: "properties",
+			class: "wiki-properties",
 			child: [
 				getRow("Path", "cell-path", `/${wikiPath}`),
 				getRow("Port", "cell-port"),

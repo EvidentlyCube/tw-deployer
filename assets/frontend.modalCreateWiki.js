@@ -1,15 +1,14 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
-import { setDisabled } from "./frontend.utils.js";
+import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
 export async function handleCreateWikiModal() {
-	const $modals = document.querySelector("#modals");
 	const $editModal = document.querySelector("#new-wiki-modal");
 
-	$modals.classList.add("visible");
-	$editModal.classList.add("visible");
-	$editModal.querySelector("header").innerHTML = "Create a new wiki";
-	$editModal.querySelectorAll("input").forEach(input => input.value = "");
+	showModal($editModal);
+	$editModal.q("header").innerHTML = "Create a new wiki";
+	$editModal.qA("input").forEach(input => input.value = "");
+	$editModal.q(".zip-file").classList.add("hide");
 	setDisabled($editModal, "button", false);
 
 	const onSubmit = async e => {
@@ -33,7 +32,7 @@ export async function handleCreateWikiModal() {
 			return alert("Title is missing");
 		}
 
-		const csrf = await apiFetch("csrf-token");
+		const csrf = await apiFetch("csrf/generate");
 		const jobId = await apiFetchPost("wiki/create", { csrf, wikiPath, title });
 
 		if (getLastApiError()) {
@@ -57,8 +56,7 @@ export async function handleCreateWikiModal() {
 		$editModal.querySelector(".action-create").removeEventListener("click", onSubmit);
 		$editModal.querySelector(".action-close").removeEventListener("click", onClose);
 
-		$modals.classList.remove("visible");
-		$editModal.classList.remove("visible");
+		hideModals();
 	};
 
 	$editModal.addEventListener("keydown", onSubmit);

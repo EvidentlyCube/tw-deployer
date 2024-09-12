@@ -1,7 +1,13 @@
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileExists } from "./FileUtils.js";
 import { getTiddlerAbsolutePath, getWikiAbsolutePath } from "./PathUtils.js";
+import { empty } from "./MiscUtils.js";
+import Config from "../config.js";
+
+export async function getAllWikiPaths() {
+	return await readdir(resolve(process.cwd(), Config.Paths.Wikis));
+}
 
 export async function getTiddlerText(wikiPath, tiddlerName) {
 	const path = getTiddlerAbsolutePath(wikiPath, tiddlerName);
@@ -77,4 +83,25 @@ export async function writeTiddler(wikiPath, tiddlerFileName, fields) {
 		createTiddlerContent(fields),
 		"utf8"
 	);
+}
+
+export async function getWikiUsers(wikiPath) {
+	const wikiDirAbs = getWikiAbsolutePath(wikiPath);
+	const usersCsvPathAbs = resolve(wikiDirAbs, "wiki", "users.csv");
+
+	if (!await fileExists(usersCsvPathAbs)) {
+		throw new Error(`Wiki /${wikiPath} has no users.csv`);
+	}
+
+	const csv = await readFile(usersCsvPathAbs, "utf-8");
+	return csv.split("\n").slice(1).map(row => {
+		const [username, password] = row.split(",");
+
+		if (!username) {
+			return null;
+		}
+
+		return {username, password};
+	}).filter(empty);
+
 }

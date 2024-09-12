@@ -2,12 +2,12 @@ import { createReadStream } from "node:fs";
 import { stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { formatDate } from "../utils/DateUtils.js";
-import { tarGzPath } from "../utils/ExecUtils.js";
-import { fileExists } from "../utils/FileUtils.js";
-import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondError } from "./respond.js";
+import { formatDate } from "../../utils/DateUtils.js";
+import { tarGzPath } from "../../utils/ExecUtils.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { getWikiAbsolutePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondError } from "../respond.js";
 
 export default getRouteData(
 	"/?api=wiki/download/:wikiPath",

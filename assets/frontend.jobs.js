@@ -1,11 +1,10 @@
 import { apiFetch } from "./frontend.api.js";
 import { dm } from "./frontend.dm.js";
-import { formatDate, sleep } from "./frontend.utils.js";
+import { formatDate, hideModals, showModal, sleep } from "./frontend.utils.js";
 
 const MaxDuration = 30 * 1000;
 
-export async function trackJob(jobId, title) {
-	const $modals = document.querySelector("#modals");
+export async function trackJob(jobId, title, options = {}) {
 	const $jobModal = document.querySelector("#job-modal");
 	const $logContainerModal = $jobModal.querySelector(".log-container");
 	const $closeButton = $jobModal.querySelector(".action-close");
@@ -15,8 +14,7 @@ export async function trackJob(jobId, title) {
 
 	$closeButton.disabled = true;
 
-	$modals.classList.add("visible");
-	$jobModal.classList.add("visible");
+	showModal($jobModal);
 
 	let lastLogs = 0;
 	let lastNewLog = Date.now();
@@ -24,10 +22,20 @@ export async function trackJob(jobId, title) {
 	let indent = 1;
 
 	while (lastNewLog + MaxDuration) {
-		const result = await apiFetch(`job/${jobId}`);
+		const result = await apiFetch(`jobs/info/${jobId}`);
+
+		if (!result) {
+			$logContainerModal.appendChild(document.createElement("hr"));
+			$logContainerModal.appendChild(dm("header", { class: "error", text: "Server responded with an error" }));
+			break;
+		}
 
 		if (result.logs.length > lastLogs) {
-			for (const log of result.logs.slice(lastLogs)) {
+			for (let log of result.logs.slice(lastLogs)) {
+				if (typeof log === "string") {
+					log = extractLogRowFromString(log);
+				}
+
 				if (log.log.toLowerCase().startsWith("[/action")) {
 					indent--;
 				}
@@ -66,11 +74,14 @@ export async function trackJob(jobId, title) {
 	$logContainerModal.scrollTop = $logContainerModal.scrollHeight;
 	$closeButton.disabled = false;
 
+	if (!options.preventJobRefresh) {
+		document.dispatchEvent(new Event("tw-deployer:refresh-jobs"));
+	}
+
 	return new Promise(resolve => {
 		const onClose = () => {
 			$closeButton.removeEventListener("click", onClose);
-			$jobModal.classList.remove("visible");
-			$modals.classList.remove("visible");
+			hideModals();
 
 			resolve();
 		};
@@ -92,4 +103,43 @@ function formatLog(log, indent) {
 	row.appendChild(dm("span", { html: logHtml }));
 
 	return row;
+}
+
+function extractLogRowFromString(logString) {
+	const matches = /^\s*\[(.+?)\]\s*(.+)$/.exec(logString);
+
+	if (matches) {
+		return {
+			log: matches[2],
+			on: readDate(matches[1])
+		};
+	} else {
+		return {
+			log: logString,
+			on: Date.now()
+		};
+	}
+}
+
+function readDate(dateString) {
+	const matches = /^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)\.(\d+)$/.exec(dateString);
+
+	if (!matches) {
+		console.log(dateString);
+		return Date.now();
+	}
+	const date = new Date();
+	date.setFullYear(
+		parseInt(matches[1]),
+		parseInt(matches[2]) - 1,
+		parseInt(matches[3]),
+	);
+	date.setHours(
+		parseInt(matches[4]),
+		parseInt(matches[5]),
+		parseInt(matches[6]),
+		parseInt(matches[7])
+	);
+
+	return date.getTime();
 }

@@ -1,12 +1,12 @@
 import { resolve } from "node:path";
-import { countFiles, getDirectorySize } from "../utils/FileUtils.js";
-import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { getTiddlerText, getWikiPackageJson } from "../utils/TwUtils.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { countFiles, getDirectorySize } from "../../utils/FileUtils.js";
+import { getWikiAbsolutePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { getTiddlerText, getWikiPackageJson } from "../../utils/TwUtils.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=wiki-details/:wikiPath",
+	"/?api=wiki/info/:wikiPath",
 	action
 );
 

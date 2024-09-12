@@ -5,18 +5,33 @@
 	padding: 0 30px;
 	border: none;
 	border-radius: 2px;
+	overflow: hidden;
 
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
+	white-space: nowrap;
 
 	background: #5b89b8;
 	text-transform: uppercase;
 	color: white;
 	cursor: pointer;
 
-	transition: background-color 0.25s ease;
+	transition: color 0.25s ease,
+		background-color 0.25s ease,
+		width 0.25s ease,
+		padding-left 0.25s ease,
+		padding-right 0.25s ease,
+		margin-left 0.25s ease,
+		margin-right 0.25s ease;
+
+}
+
+:is(button, .button).hiding {
+	width: 0;
+	padding: 0;
+	margin: 0 !important;
 }
 
 :is(button, .button):not(:disabled):hover {
@@ -40,7 +55,7 @@
 
 :is(button, .button):disabled.info {
 	background: #F0F0F088;
-	color: black;
+	color: #888;
 }
 
 :is(button, .button).info:hover {

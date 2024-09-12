@@ -1,5 +1,9 @@
 import { resolve } from "node:path";
-import { actionUntarWiki } from "../actions/actionUntarWiki.js";
+import { actionBackupDecompress } from "../actions/actionBackupDecompress.js";
+import { actionPm2Start } from "../actions/actionPm2Start.js";
+import { actionPm2Stop } from "../actions/actionPm2Stop.js";
+import { actionWikiDeleteAllTiddlers } from "../actions/actionWikiDeleteAllTiddlers.js";
+import { execPromiseLogged } from "../utils/ExecUtils.js";
 import { fileExists, isDirectory } from "../utils/FileUtils.js";
 import { startJob } from "../utils/JobRunner.js";
 import { LockTypeWikiAction, acquireLock, releaseLock } from "../utils/LockUtils.js";
@@ -30,7 +34,13 @@ async function runJob(log, wikiPath, backup) {
 
 	const { backupPathAbs } = await validateParams(wikiPath, backup);
 
-	await actionUntarWiki(backupPathAbs, log);
+	const wikiDirAbs = getWikiAbsolutePath(wikiPath);
+	const decompressedWikiPathAbs = await actionBackupDecompress(backupPathAbs, log);
+
+	await actionPm2Stop(wikiPath, log);
+	await actionWikiDeleteAllTiddlers(wikiPath, log);
+	await execPromiseLogged(`cp -rf '${decompressedWikiPathAbs}' '${wikiDirAbs}'`, log);
+	await actionPm2Start(wikiPath, log);
 
 	log("Job finished");
 }

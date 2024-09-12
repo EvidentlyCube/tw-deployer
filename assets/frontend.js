@@ -1,11 +1,16 @@
-import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, startWiki, stopWiki } from "./frontend.actions.js";
-import { apiFetch } from "./frontend.api.js";
+import { backupWiki, loadBackups, loadPm2Status, loadWikiDetails, registerSharedWiki, startWiki, stopWiki } from "./frontend.actions.js";
+import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { deleteWiki } from "./frontend.deleteWiki.js";
 import { getHtml } from "./frontend.getHtml.js";
+import { getJobsRowHtml } from "./frontend.getJobsRowHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
+import { getSchedulerRowHtml } from "./frontend.getSchedulerRowHtml.js";
+import { trackJob } from "./frontend.jobs.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
-import { setDisabled } from "./frontend.utils.js";
+import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
+import { handleUploadWikiModal } from "./frontend.modalUploadWiki.js";
+import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -21,21 +26,32 @@ ready(async () => {
 		this.qA(query).forEach(element => element.addEventListener(event, listener, options));
 	};
 
-	const wikiPaths = await apiFetch("get-wikis");
+	const wikiPaths = await apiFetch("wiki/summary");
 
-	await Promise.all(wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath)));
+	await Promise.all([
+		loadScheduler(),
+		loadJobLogs(),
+		loadMemory(),
+		...wikiPaths.sort().map(wikiPath => initializeWikiPath(wikiPath))
+	]);
 
 	setDisabled(document, "#wiki-table button", false);
 	setDisabled(document, "#modals button", false);
 
+	setTimeout(() => {
+		document.body.classList.remove("no-transition");
+	}, 200);
+
 	document.qOn("#action-create-wiki", "click", () => handleCreateWikiModal());
+	document.qOn("#action-upload-wiki", "click", () => handleUploadWikiModal());
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {
-			document.querySelector("#modals").classList.remove("visible");
-			document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("visible"));
+			hideModals();
 		}
 	});
+
+	document.on("tw-deployer:refresh-jobs", () => loadJobLogs());
 });
 
 async function initializeWikiPath(wikiPath) {
@@ -47,9 +63,9 @@ async function initializeWikiPath(wikiPath) {
 
 	const loadAll = async () => {
 		return Promise.all([
-			await loadPm2Status(wikiPath, $wikiRow, $wikiModal),
-			await loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
-			await loadBackups(wikiPath, $wikiModal),
+			loadPm2Status(wikiPath, $wikiRow, $wikiModal),
+			loadWikiDetails(wikiPath, $wikiRow, $wikiModal),
+			loadBackups(wikiPath, $wikiRow, $wikiModal),
 		]);
 	};
 
@@ -57,8 +73,7 @@ async function initializeWikiPath(wikiPath) {
 	$modals.appendChild($wikiModal);
 
 	$wikiRow.qOn(".action-show", "click", () => {
-		$modals.classList.add("visible");
-		$wikiModal.classList.add("visible");
+		showModal($wikiModal);
 	});
 
 	$wikiRow.qOn(".action-refresh", "click", async () => {
@@ -74,12 +89,11 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	$wikiModal.qOn(".action-close", "click", () => {
-		$modals.classList.remove("visible");
-		$wikiModal.classList.remove("visible");
+		hideModals();
 	});
 
 	$wikiModal.qOn(".modal-action-backup", "click", () => {
-		backupWiki(wikiPath, $wikiModal);
+		backupWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-stop", "click", () => {
@@ -90,9 +104,17 @@ async function initializeWikiPath(wikiPath) {
 		startWiki(wikiPath, $wikiRow, $wikiModal);
 	});
 
+	$wikiModal.qOn(".modal-action-start-shared", "click", () => {
+		registerSharedWiki(wikiPath, $wikiRow, $wikiModal);
+	});
+
 	$wikiModal.qOn(".modal-action-copy", "click", () => {
-		$wikiModal.classList.remove("visible");
-		handleCopyWikiModal(wikiPath);
+		hideModals();
+		handleCopyWikiModal(wikiPath, $wikiModal);
+	});
+
+	$wikiModal.qOn(".modal-action-edit-users", "click", () => {
+		handleEditUsersModal(wikiPath, $wikiModal);
 	});
 
 	$wikiModal.qOn(".modal-action-delete", "click", () => {
@@ -109,6 +131,83 @@ async function initializeWikiPath(wikiPath) {
 	});
 
 	await loadAll();
+}
+
+async function loadMemory() {
+	const result = await apiFetch("system/memory");
+
+	const $ramValue = document.q("#stats .stat-ram .value");
+	const $hdValue = document.q("#stats .stat-hd .value");
+
+	{ // RAM
+		const { available, total } = result.memory;
+		const used = total - available;
+		const usedPercent = (used / total) * 100;
+
+		$ramValue.innerText = `${formatSize(used, undefined, 1)} / ${formatSize(total, undefined, 1)} (${usedPercent.toFixed(2)}%)`;
+	}
+	{ // HD
+		const { available, total } = result.disk;
+		const used = total - available;
+		const usedPercent = (used / total) * 100;
+
+		$hdValue.innerText = `${formatSize(used, undefined, 1)} / ${formatSize(total, undefined, 1)} (${usedPercent.toFixed(2)}%)`;
+	}
+}
+
+async function loadScheduler() {
+	const $scheduler = document.q("#scheduler-table tbody");
+	const tasks = await apiFetch("scheduler/tasks");
+
+	for (const task of tasks) {
+		const $row = getSchedulerRowHtml(task.id, task.name, task.startTimestamp);
+		$scheduler.appendChild($row);
+
+		$row.qOn(".action-run-job", "click", async () => {
+			if (!confirm(`Are you sure you want to run scheduler task '${task.name}'?`)) {
+				return;
+			}
+
+			const $button = $row.q("button");
+			addSpinner($button);
+			setButtonsDisabled(document, true);
+
+			const csrf = await apiFetch("csrf/generate");
+			await apiFetchPost(`scheduler/run/${task.id}`, { csrf });
+
+			if (getLastApiError()) {
+				removeSpinner($button);
+				setButtonsDisabled(document, false);
+
+				alert(getLastApiError());
+
+			} else {
+				window.location.reload();
+			}
+		});
+	}
+}
+
+async function loadJobLogs() {
+	const $jobsTable = document.q("#job-logs-table tbody");
+	const jobs = await apiFetch("jobs/summary");
+
+	jobs.sort((l, r) => r.startedTimestamp - l.startedTimestamp);
+
+	$jobsTable.innerHTML = "";
+
+	for (const job of jobs) {
+		const $row = getJobsRowHtml(job.name, job.startedTimestamp);
+		$jobsTable.appendChild($row);
+
+		$row.qOn(".action-show-logs", "click", async () => {
+			trackJob(
+				job.id,
+				`${job.name} [Past Logs]`,
+				{ preventJobRefresh: true }
+			);
+		});
+	}
 }
 
 function ready(fn) {

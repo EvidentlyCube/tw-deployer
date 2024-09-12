@@ -1,27 +1,18 @@
 import { readdir } from "fs/promises";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
+import { CoreLog } from "../utils/Logger.js";
 
 export const Routes = [];
 
 buildRoutesArray();
 
 async function buildRoutesArray() {
-	const dir = dirname(fileURLToPath(import.meta.url));
-	const files = await readdir(dir);
+	CoreLog("routes", "Building routes array");
 
-	for (const file of files) {
-		if (!file.startsWith("route") || file === "routes.js") {
-			continue;
-		}
+	const routesDirAbs = dirname(fileURLToPath(import.meta.url));
 
-		const module = await import(resolve(dir, file));
-		if (!module.default.route || !module.default.action) {
-			continue;
-		}
-
-		Routes.push(module.default);
-	}
+	Routes.push(...await getRoutesIn(routesDirAbs));
 
 	Routes.sort((l, r) => {
 		if (l.pathArgumentCount !== r.pathArgumentCount) {
@@ -32,4 +23,39 @@ async function buildRoutesArray() {
 			return 0;
 		}
 	});
+
+	CoreLog("routes", `Found ${Routes.length} routes`);
+}
+
+async function getRoutesIn(dirAbs) {
+	CoreLog("routes", `Searching for routes in ${dirAbs}`);
+	const files = await readdir(dirAbs, {withFileTypes: true});
+
+	CoreLog("routes", `Checking ${files.length} files in ${dirAbs}`);
+
+	const routes = [];
+	for (const file of files) {
+		const fileAbs = resolve(dirAbs, file.name);
+
+		if (file.isDirectory()) {
+			routes.push(...await getRoutesIn(fileAbs));
+			continue;
+		}
+
+		if (!file.name.endsWith(".route.js")) {
+			CoreLog("routes", `Not a route file: ${fileAbs}`);
+			continue;
+		}
+
+		const module = await import(fileAbs);
+		if (!module.default.route || !module.default.action) {
+			CoreLog("routes", `File missing route data: ${fileAbs}`);
+			continue;
+		}
+
+		CoreLog("routes", `Found route: ${module.default.rawRoute}`);
+		Routes.push(module.default);
+	}
+
+	return routes;
 }

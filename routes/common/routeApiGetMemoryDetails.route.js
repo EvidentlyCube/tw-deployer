@@ -1,18 +1,16 @@
-import { ApiError } from "../utils/Errors.js";
-import { execPromise } from "../utils/ExecUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondApiSuccess } from "./respond.js";
+import { ApiError } from "../../utils/Errors.js";
+import { execPromise } from "../../utils/ExecUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=memory-details",
+	"/?api=system/memory",
 	action
 );
 
 async function action(req, res) {
 	const memory = await getMemory();
 	const diskUsage = await getDiskUsage();
-
-	console.log(diskUsage);
 
 	return respondApiSuccess(res, {
 		memory: {

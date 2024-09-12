@@ -73,25 +73,31 @@ export function formatTime(time) {
 	}
 }
 
-export function formatSize(size) {
+export function formatSize(size, decimals = null, spaces = 0) {
+	const infix = " ".repeat(spaces);
+
 	if (size < 1000) {
-		return `${size}B`;
+		return `${toDigits(size, decimals)}${infix}B`;
 
 	} else if (size < 1000 ** 2) {
-		return `${toDigits(size / 1000)}KB`;
+		return `${toDigits(size / 1000, decimals)}${infix}KB`;
 
 	} else if (size < 1000 ** 3) {
-		return `${toDigits(size / 1000 / 1000)}MB`;
+		return `${toDigits(size / 1000 / 1000, decimals)}${infix}MB`;
 
 	} else if (size < 1000 ** 4) {
-		return `${toDigits(size / 1000 / 1000 / 1000)}GB`;
+		return `${toDigits(size / 1000 / 1000 / 1000, decimals)}${infix}GB`;
 
 	} else {
-		return `${toDigits(size / 1000 / 1000 / 1000 / 1000)}TB`;
+		return `${toDigits(size / 1000 / 1000 / 1000 / 1000, decimals)}${infix}TB`;
 	}
 }
 
-export function toDigits(number) {
+export function toDigits(number, decimals = null) {
+	if (decimals !== null) {
+		return number.toFixed(decimals);
+	}
+
 	if (number >= 1000) {
 		return number;
 	} else if (number >= 100) {
@@ -125,7 +131,10 @@ export function setDisabled(source, query, value = undefined) {
 	} else {
 		source.querySelectorAll(query).forEach(element => element.disabled = value);
 	}
+}
 
+export function setButtonsDisabled($container, value) {
+	$container.qA("button, .button").forEach($button => $button.disabled = value);
 }
 
 export async function sleep(duration) {
@@ -160,4 +169,114 @@ export function removeSpinner($from) {
 	$spinner.setAttribute("data-timeout", setTimeout(() => {
 		$spinner.remove();
 	}, 250));
+}
+
+export function showButton($button) {
+	if ($button.classList.contains("hide")) {
+		$button.classList.remove("hide");
+
+		if ($button.offsetWidth === 0) {
+			return;
+		}
+
+		const buttonWidth = $button.offsetWidth;
+		$button.setAttribute("data-full-width", buttonWidth);
+		$button.style.transition = "none";
+		$button.style.width = 0;
+		$button.style.padding = 0;
+		$button.style.margin = 0;
+		$button.classList.add("hiding");
+		reflow($button);
+		$button.style.transition = "";
+		$button.style.width = "";
+		$button.style.padding = "";
+		$button.style.margin = "";
+		reflow($button);
+		$button.style.width = `${buttonWidth}px`;
+		$button.classList.remove("hiding");
+	} else {
+		const buttonWidth = $button.getAttribute("data-full-width");
+		$button.style.width = `${buttonWidth}px`;
+		$button.classList.remove("hiding");
+	}
+
+	const timeoutId = setTimeout(() => {
+		$button.removeAttribute("data-timeout");
+		$button.style.width = "";
+	}, 250);
+
+	$button.setAttribute("data-timeout", timeoutId);
+}
+
+export function hideButton($button) {
+	if (!$button.hasAttribute("data-full-width") && !$button.offsetWidth) {
+		$button.classList.add("hide");
+		return;
+	}
+
+	const timeoutId = $button.getAttribute("data-timeout");
+	if (timeoutId) {
+		clearTimeout(timeoutId);
+		$button.removeAttribute("data-timeout");
+	}
+
+	if (!$button.hasAttribute("data-full-width")) {
+		$button.setAttribute("data-full-width", $button.offsetWidth);
+	}
+
+	const buttonWidth = $button.getAttribute("data-full-width");
+
+	$button.style.width = `${buttonWidth}px`;
+	reflow($button);
+	$button.classList.add("hiding");
+	$button.style.width = "";
+}
+
+function reflow($element) {
+	const value = $element.offsetWidth;
+
+	if (Math.random() > 999) {
+		console.log(value);
+	}
+}
+
+export function showModal($modal) {
+	const $modals = document.q("#modals");
+
+	document.qA("#modals .modal").forEach($modal => $modal.classList.remove("visible"));
+
+	if (typeof $modal === "string") {
+		$modal = $modals.q(`.modal.${$modal}`);
+	}
+
+	$modal.classList.add("visible");
+	$modals.classList.add("visible");
+
+	window.scrollTo(0, 0);
+}
+
+export async function getFileAseBase64(file) {
+	if (!file) {
+		return null;
+	}
+
+	return new Promise(resolve => {
+		const reader = new FileReader();
+		reader.onload = function () {
+			resolve(btoa(reader.result));
+		};
+
+		reader.onerror = function (error) {
+			resolve(null);
+		};
+
+		reader.readAsBinaryString(file);
+	});
+
+}
+
+export function hideModals() {
+	document.q("#modals").classList.remove("visible");
+	document.qA("#modals .modal").forEach($modal => $modal.classList.remove("visible"));
+
 }

@@ -3,15 +3,17 @@
         {
             "args": "index.js start",
             "ignore_watch": [
-                "^node_modules/",
-                "^assets/"
+                "node_modules",
+                "assets",
+                "./.*"
             ],
             "max_restarts": 3,
             "name": "TW Deployer",
             "pmx": false,
             "script": "node",
             "time": true,
-            "watch": true
+            "watch": true,
+            "restart_delay": 400
         }
     ]
 }

@@ -1,12 +1,14 @@
 import { ActionError, ApiError, CsrfError, NotFoundError } from "./utils/Errors.js";
+import { AccessLog } from "./utils/Logger.js";
 
 export async function routeRequest(routesData, req, res) {
-	for (const { route, action } of routesData) {
+	for (const { route, rawRoute, action } of routesData) {
 		const match = route.exec(req.url);
 
 		if (match) {
 			req.pathParams = { ...match.groups };
 
+			AccessLog("router", `Routed to ${rawRoute}`);
 			await action(req, res);
 			return true;
 		}

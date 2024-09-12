@@ -7,8 +7,23 @@
 		<script src="$$assets/frontend.js" type="module"></script>
 	</head>
 
-	<body>
+	<body class="no-transition">
 		<div id="content">
+			<h1>TiddlyWiki Deployer</h1>
+			<div id="stats">
+				<div class="stat stat-ram">
+					<strong>Memory Usage:</strong>
+					<span class="value"
+						><span class="spinner s-50"></span
+					></span>
+				</div>
+				<div class="stat stat-hd">
+					<strong>Disk Usage:</strong>
+					<span class="value"
+						><span class="spinner s-50"></span
+					></span>
+				</div>
+			</div>
 			<h2>Existing instances:</h2>
 			<table id="wiki-table">
 				<thead>
@@ -27,7 +42,33 @@
 			<h2>Actions:</h2>
 			<div id="global-actions">
 				<button id="action-create-wiki">Create Wiki</button>
+				<button id="action-upload-wiki">Upload Wiki</button>
 			</div>
+
+			<h2>Scheduler:</h2>
+			<table id="scheduler-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Will run on</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+
+			<h2>Job Logs:</h2>
+			<table id="job-logs-table">
+				<thead>
+					<tr>
+						<th>Job Name</th>
+						<th>Run on</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
 		</div>
 
 		<div id="modals">
@@ -36,7 +77,24 @@
 				<header></header>
 				<div class="log-container"></div>
 				<div class="modal-close">
-					<button class="action-close" disabled>Close</button>
+					<button class="action-close info" disabled>Close</button>
+				</div>
+			</div>
+			<div id="users-modal" class="modal">
+				<header></header>
+				<table>
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Password</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<div class="modal-close">
+					<button class="action-save">Save</button>
+					<button class="action-close info">Close</button>
 				</div>
 			</div>
 			<div id="new-wiki-modal" class="modal">
@@ -66,6 +124,21 @@
 							required
 						/>
 						<p class="muted">Must not be empty</p>
+					</div>
+
+					<div class="form-row zip-file">
+						<label for="name">Wiki Archive</label>
+						<input
+							type="file"
+							name="file"
+							placeholder="Input name here..."
+							onblur="reportValidity()"
+							required
+						/>
+						<p class="muted">
+							Must contain a "wiki" directory, "tiddlywiki.info"
+							file or at least tiddlers.
+						</p>
 					</div>
 				</form>
 

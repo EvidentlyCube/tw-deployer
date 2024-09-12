@@ -3,10 +3,24 @@
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
 body {
 	margin: 0;
 	padding: 0;
+
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	background: #CCC;
+}
+
+.no-transition * {
+	transition: none !important;
 }
 
 h1,
@@ -19,11 +33,13 @@ h6 {
 }
 
 #content {
+	flex-grow: 1;
+
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 
-	max-width: 1200px;
+	width: 1200px;
 	margin: auto;
 	padding: 32px;
 
@@ -33,7 +49,10 @@ h6 {
 #global-actions {
 	display: flex;
 	justify-content: center;
-	gap: 20px;
+}
+
+#global-actions>* {
+	margin: 0 10px 20px;
 }
 
 .form-row {
@@ -58,4 +77,8 @@ h6 {
 
 .hide {
 	display: none !important;
+}
+
+input:disabled {
+	cursor: not-allowed;
 }

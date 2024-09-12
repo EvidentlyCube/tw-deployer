@@ -1,5 +1,8 @@
 /.vscode/
 /node_modules/
 /config.js
+/old
 
-old/
+/.scheduler
+/.shared-wikis
+/.scheduler.bak

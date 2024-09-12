@@ -1,13 +1,11 @@
 import { apiFetch, apiFetchPost, getLastApiError } from "./frontend.api.js";
 import { trackJob } from "./frontend.jobs.js";
-import { setDisabled } from "./frontend.utils.js";
+import { hideModals, setDisabled, showModal } from "./frontend.utils.js";
 
-export async function handleCopyWikiModal(template) {
-	const $modals = document.querySelector("#modals");
+export async function handleCopyWikiModal(template, $oldModal) {
 	const $editModal = document.querySelector("#new-wiki-modal");
 
-	$modals.classList.add("visible");
-	$editModal.classList.add("visible");
+	showModal($editModal);
 	$editModal.querySelector("header").innerHTML = `Create a copy of <code>/${template}</code>`;
 	$editModal.querySelectorAll("input").forEach(input => input.value = "");
 	setDisabled($editModal, "button", false);
@@ -33,7 +31,7 @@ export async function handleCopyWikiModal(template) {
 			return alert("Title is missing");
 		}
 
-		const csrf = await apiFetch("csrf-token");
+		const csrf = await apiFetch("csrf/generate");
 		const jobId = await apiFetchPost(`wiki/copy/${template}`, { csrf, wikiPath, title });
 
 		if (getLastApiError()) {
@@ -50,6 +48,8 @@ export async function handleCopyWikiModal(template) {
 
 	const onClose = () => {
 		teardown();
+
+		showModal($oldModal);
 	};
 
 	const teardown = () => {
@@ -57,8 +57,7 @@ export async function handleCopyWikiModal(template) {
 		$editModal.querySelector(".action-create").removeEventListener("click", onSubmit);
 		$editModal.querySelector(".action-close").removeEventListener("click", onClose);
 
-		$modals.classList.remove("visible");
-		$editModal.classList.remove("visible");
+		hideModals();
 	};
 
 	$editModal.addEventListener("keydown", onSubmit);

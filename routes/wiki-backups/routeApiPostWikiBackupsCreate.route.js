@@ -1,15 +1,15 @@
-import { actionBackupTiddlers } from "../actions/actionBackupTiddlers.js";
-import { validateCsrfToken } from "../utils/Csrf.js";
-import { ApiError } from "../utils/Errors.js";
-import { fileExists } from "../utils/FileUtils.js";
-import { parseRequestBodyJson } from "../utils/HttpUtils.js";
-import { doNull } from "../utils/MiscUtils.js";
-import { getWikiAbsolutePath, isValidWikiPath } from "../utils/PathUtils.js";
-import { assertPost, getRouteData } from "../utils/RouteUtils.js";
-import { respondApiError, respondApiSuccess } from "./respond.js";
+import { actionBackupTiddlers } from "../../actions/actionBackupTiddlers.js";
+import { validateCsrfToken } from "../../utils/Csrf.js";
+import { ApiError } from "../../utils/Errors.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
+import { doNull } from "../../utils/MiscUtils.js";
+import { getWikiAbsolutePath, isValidWikiPath } from "../../utils/PathUtils.js";
+import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
+import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=backup-wiki/:wikiPath",
+	"/?api=wiki-backups/create/:wikiPath",
 	action
 );
 

@@ -3,7 +3,6 @@ import { resolve } from "path";
 import Config from "../config.js";
 import { formatDate } from "./DateUtils.js";
 
-
 export function createLogger(path, options) {
 	if (path.includes("..")) {
 		throw new Error(`Cannot create logger with path "${path}" that includes ".."`);
@@ -32,15 +31,41 @@ export function createLogger(path, options) {
 		}
 	};
 
+	return (type, message) => {
+		if (message === undefined) {
+			message = type;
+			type = undefined;
+		}
 
-	return (message) => {
-		appendQueue.push(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll")}] ${message}`);
+		const now = Date.now();
+		const typePrefix = type ? `<${type}> ` : "";
+		appendQueue.push(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll", now)}] ${typePrefix}${message}`);
+
+		if (options.consoleOutput) {
+			if (options.consoleOutputIncludeDate) {
+				console.log(`[${formatDate("YYYY-MM-DD hh:mm:ss.lll", now)}] ${typePrefix}${message}`);
+			} else {
+				console.log(`${typePrefix}${message}`);
+			}
+		}
 
 		options.onLog?.(message);
 
-		if (!isPendingFlush) {
+		if (options.write && !isPendingFlush) {
 			isPendingFlush = true;
 			setTimeout(flush, 500);
 		}
 	};
 }
+
+export const CoreLog = createLogger("core.log", {
+	write: Config.Logs?.StoreCoreLogs ?? false,
+	consoleOutput: Config.Logs?.OutputCoreLogsToConsole ?? false,
+	consoleOutputIncludeDate:false,
+});
+
+export const AccessLog = createLogger("access.log", {
+	write: Config.Logs?.StoreAccessLogs ?? false,
+	consoleOutput: Config.Logs?.OutputAccessLogsToConsole ?? false,
+	consoleOutputIncludeDate: false,
+});

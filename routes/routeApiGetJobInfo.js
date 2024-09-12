@@ -10,8 +10,6 @@ export default getRouteData(
 async function action(req, res) {
 	const jobInfo = getJobInfo(req.pathParams.jobId);
 
-
-
 	if (jobInfo) {
 		respondApiSuccess(res, jobInfo);
 	} else {

@@ -4,8 +4,6 @@ import { actionNginxAddWiki } from "../actions/actionNginxAddWiki.js";
 import { actionNginxRestart } from "../actions/actionNginxRestart.js";
 import { actionNpmInstallDependency } from "../actions/actionNpmInstallDependency.js";
 import { actionPm2Delete } from "../actions/actionPm2Delete.js";
-import { actionPm2Save } from "../actions/actionPm2Save.js";
-import { actionPm2Start } from "../actions/actionPm2Start.js";
 import { actionPreparePackageJson } from "../actions/actionPreparePackageJson.js";
 import { actionTiddlerUpdateHost } from "../actions/actionTiddlerUpdateHost.js";
 import { actionTiddlerUpdateTitle } from "../actions/actionTiddlerUpdateTitle.js";
@@ -52,8 +50,6 @@ async function runJob(log, title, wikiPath) {
 
 	await actionCreatePm2Config(wikiPath, port, log);
 	await actionPm2Delete(wikiPath, log);
-	await actionPm2Start(wikiPath, log);
-	await actionPm2Save(log);
 	await actionNginxAddWiki(wikiPath, port, log);
 	await actionNginxRestart(log);
 

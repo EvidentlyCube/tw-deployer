@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.53.0"
+  },
+  "dependencies": {
+    "tiddlywiki": "^5.3.1"
   }
 }

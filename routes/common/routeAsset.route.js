@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import { resolve } from "node:path";
-import { fileExists } from "../utils/FileUtils.js";
-import { getRouteData } from "../utils/RouteUtils.js";
-import { respondError } from "./respond.js";
+import { fileExists } from "../../utils/FileUtils.js";
+import { getRouteData } from "../../utils/RouteUtils.js";
+import { respondError } from "../respond.js";
 
 export default getRouteData(
 	"/$$assets/:rest:fileName",
