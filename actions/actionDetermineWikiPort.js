@@ -26,6 +26,7 @@ export async function actionDetermineWikiPort(wikiPath, log) {
 	if (emptyPort) {
 		log(`Found unused port ${emptyPort}`);
 		log("[/Action]");
+		return emptyPort;
 	}
 
 	throw new ActionError(`Failed to determine port for ${wikiPath}`);
