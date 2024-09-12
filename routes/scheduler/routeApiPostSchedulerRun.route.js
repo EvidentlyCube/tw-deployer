@@ -19,12 +19,12 @@ async function action(req, res) {
 	const { taskId } = await validateParams(req);
 
 	try {
-		runSchedulerTask(taskId, doNull);
+		const jobId = await runSchedulerTask(taskId, doNull);
+
+		respondApiSuccess(res, jobId);
 	} catch (e) {
 		throw new ApiError(400, e.message);
 	}
-
-	respondApiSuccess(res, true);
 }
 
 async function validateParams(req) {

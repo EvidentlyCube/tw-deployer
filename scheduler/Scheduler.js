@@ -1,8 +1,9 @@
 import { cp, readFile, unlink, writeFile } from "node:fs/promises";
 import { fileExists } from "../utils/FileUtils.js";
+import { startJob } from "../utils/JobRunner.js";
+import { CoreLog } from "../utils/Logger.js";
 import { doNull } from "../utils/MiscUtils.js";
 import { isValidWikiPath } from "../utils/PathUtils.js";
-import { CoreLog } from "../utils/Logger.js";
 
 let isStarted = false;
 const registeredTasks = [];
@@ -37,7 +38,7 @@ export async function runSchedulerTask(taskId, log) {
 		throw new Error(`Scheduler task '${taskId}' not found`);
 	}
 
-	await task.action(log);
+	return await startJob(`Scheduler: ${task.name}`, task.action);
 }
 
 export async function initializeScheduler() {
@@ -54,7 +55,7 @@ export async function initializeScheduler() {
 async function runTasks() {
 	for (const task of registeredTasks) {
 		if (task.startTimestamp <= Date.now()) {
-			await task.action(doNull);
+			await runSchedulerTask(task.id, doNull);
 			task.startTimestamp = task.getNextExecutionTime();
 
 			if (task.startTimestamp <= Date.now()) {

@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import Config from "../config";
+import Config from "../config.js";
 import { OneTimeCodeError } from "./Errors";
 
 const codes = new Map();

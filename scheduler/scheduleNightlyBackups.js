@@ -1,6 +1,5 @@
 import { actionBackupTiddlers } from "../actions/actionBackupTiddlers.js";
-import { doNull } from "../utils/MiscUtils.js";
-import { getAllWikiPaths } from "../utils/TwUtils.js";
+import { getWikiPaths } from "../utils/WikiUtils.js";
 import { registerSchedulerTask } from "./Scheduler.js";
 
 export function registerScheduleNightlyBackups() {
@@ -15,11 +14,11 @@ export function registerScheduleNightlyBackups() {
 			now.setSeconds(0);
 			return now;
 		},
-		async () => {
-			const wikis = await getAllWikiPaths();
+		async (log) => {
+			const wikis = await getWikiPaths();
 
 			for (const wikiPath of wikis) {
-				await actionBackupTiddlers(wikiPath, doNull);
+				await actionBackupTiddlers(wikiPath, log);
 			}
 		}
 	);

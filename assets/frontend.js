@@ -10,7 +10,7 @@ import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
 import { handleEditUsersModal } from "./frontend.modalEditUsers.js";
 import { handleUploadWikiModal } from "./frontend.modalUploadWiki.js";
-import { addSpinner, formatSize, hideModals, removeSpinner, setButtonsDisabled, setDisabled, showModal } from "./frontend.utils.js";
+import { addSpinner, formatSize, hideModals, setButtonsDisabled, setDisabled, showModal } from "./frontend.utils.js";
 
 ready(async () => {
 	Document.prototype.q = Document.prototype.querySelector;
@@ -173,17 +173,17 @@ async function loadScheduler() {
 			setButtonsDisabled(document, true);
 
 			const csrf = await apiFetch("csrf/generate");
-			await apiFetchPost(`scheduler/run/${task.id}`, { csrf });
+			const jobId = await apiFetchPost(`scheduler/run/${task.id}`, { csrf });
+			console.log(jobId);
 
 			if (getLastApiError()) {
-				removeSpinner($button);
-				setButtonsDisabled(document, false);
-
-				alert(getLastApiError());
-
-			} else {
-				window.location.reload();
+				alert(`Operation failed: ${getLastApiError()}`);
+				return false;
 			}
+
+			await trackJob(jobId, task.name);
+
+			window.location.reload();
 		});
 	}
 }
@@ -200,7 +200,10 @@ async function loadJobLogs() {
 		const $row = getJobsRowHtml(job.name, job.startedTimestamp);
 		$jobsTable.appendChild($row);
 
-		$row.qOn(".action-show-logs", "click", async () => {
+		$row.qOn(".action-show-logs", "click", async (e) => {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+
 			trackJob(
 				job.id,
 				`${job.name} [Past Logs]`,

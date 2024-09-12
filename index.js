@@ -1,3 +1,4 @@
+import { fixKnownProblems } from "./fixKnownProblems.js";
 import { initializeScheduler } from "./scheduler/Scheduler.js";
 import { registerScheduleNightlyBackupCleanup } from "./scheduler/scheduleBackupCleanup.js";
 import { registerScheduleCleanupJobLogs } from "./scheduler/scheduleCleanupJobLogs.js";
@@ -22,6 +23,8 @@ async function bootstrap() {
 	initializeScheduler();
 
 	initializeSharedRunner();
+
+	await fixKnownProblems();
 
 	await initServer();
 }

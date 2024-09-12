@@ -4,9 +4,6 @@ const Config = {
 	// Port used by TW Deployer
 	Port: 8001,
 
-	// Tiddlywiki instances will start from this port
-	TwPortCountFrom: 8080,
-
 	// Array of port ranges. Must be an array of 2-element arrays where the first element
 	// is the start of the range and second is the end of the range.
 	TwPortRanges: [
@@ -28,6 +25,12 @@ const Config = {
 
 	// Hostname, must not include the final slash
 	Hostname: "",
+
+	// How many backups of each wiki to keep
+	NumberOfBackupsToKeep: 10,
+
+	// How many Job logs to keep
+	JobLogsToKeep: 30,
 
 	// Paths to various things
 	Paths: {

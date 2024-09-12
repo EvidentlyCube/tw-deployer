@@ -1,5 +1,5 @@
 import { getRouteData } from "../../utils/RouteUtils.js";
-import { getAllWikiPaths } from "../../utils/TwUtils.js";
+import { getWikiPaths } from "../../utils/WikiUtils.js";
 import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
@@ -8,5 +8,5 @@ export default getRouteData(
 );
 
 async function action(req, res) {
-	respondApiSuccess(res, await getAllWikiPaths());
+	respondApiSuccess(res, await getWikiPaths());
 }

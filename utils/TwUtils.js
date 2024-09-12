@@ -1,13 +1,8 @@
-import { readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileExists } from "./FileUtils.js";
-import { getTiddlerAbsolutePath, getWikiAbsolutePath } from "./PathUtils.js";
 import { empty } from "./MiscUtils.js";
-import Config from "../config.js";
-
-export async function getAllWikiPaths() {
-	return await readdir(resolve(process.cwd(), Config.Paths.Wikis));
-}
+import { getTiddlerAbsolutePath, getWikiAbsolutePath } from "./PathUtils.js";
 
 export async function getTiddlerText(wikiPath, tiddlerName) {
 	const path = getTiddlerAbsolutePath(wikiPath, tiddlerName);
@@ -101,7 +96,7 @@ export async function getWikiUsers(wikiPath) {
 			return null;
 		}
 
-		return {username, password};
+		return { username, password };
 	}).filter(empty);
 
 }

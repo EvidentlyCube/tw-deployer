@@ -7,7 +7,6 @@ import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
 import { doNull } from "../../utils/MiscUtils.js";
 import { getWikiAbsolutePath, getWikiBackupsAbsolutePath, isSafePath, isValidWikiPath } from "../../utils/PathUtils.js";
 import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
-import { isSharedWiki } from "../../utils/SharedRunner.js";
 import { respondApiError, respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
@@ -51,10 +50,6 @@ async function validateParams(req) {
 
 	} else if (!await fileExists(backupAbsPath)) {
 		throw new ApiError(400, "Backup does not exists");
-	}
-
-	if (isSharedWiki(wikiPath)) {
-		throw new ApiError(400, "Wiki is registered as shared");
 	}
 
 	return { wikiPath, backup };

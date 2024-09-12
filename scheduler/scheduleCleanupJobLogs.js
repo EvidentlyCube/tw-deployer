@@ -24,34 +24,72 @@ export function registerScheduleCleanupJobLogs() {
 	);
 }
 
-async function run() {
+async function run(log) {
+	await removeLogsWithoutMeta(log);
+
+	log("Remove old logs");
 	const jobLogsDirAbs = resolve(Config.Paths.Logs, "jobs");
 	const files = await readdir(jobLogsDirAbs, { withFileTypes: true });
 
-	const logFilesWithCreationTime = [];
+	log(`Found ${files.length} files`);
+	const metaFilesWithCreationTime = [];
 	for (const file of files) {
 		if (file.isDirectory()) {
 			continue;
 		}
 
-		if (!file.name.endsWith(".log")) {
+		if (!file.name.endsWith(".meta")) {
 			continue;
 		}
 
 		const logPathAbs = resolve(file.path, file.name);
 		const fileStat = await stat(logPathAbs);
-		logFilesWithCreationTime.push([logPathAbs, fileStat.ctimeMs]);
+		metaFilesWithCreationTime.push([logPathAbs, fileStat.ctimeMs]);
 	}
 
-	logFilesWithCreationTime.sort((l, r) => r[1] - l[1]);
+	metaFilesWithCreationTime.sort((l, r) => r[1] - l[1]);
 
-	for (const [logPathAbs] of logFilesWithCreationTime.slice(Config.JobLogsToKeep)) {
-		const metaPathAbs = logPathAbs.substring(0, logPathAbs.length - 4) + ".meta";
+	for (const [metaPathAbs] of metaFilesWithCreationTime.slice(Config.JobLogsToKeep)) {
+		const logsPathAbs = metaPathAbs.substring(0, metaPathAbs.length - 5) + ".job";
 
-		if (await fileExists(metaPathAbs)) {
-			await unlink(metaPathAbs);
+		if (await fileExists(logsPathAbs)) {
+			log(`Unlink ${logsPathAbs}`);
+			await unlink(logsPathAbs);
 		}
 
-		await unlink(logPathAbs);
+		log(`Unlink ${metaPathAbs}`);
+		await unlink(metaPathAbs);
 	}
+}
+
+async function removeLogsWithoutMeta(log) {
+	log("Remove logs without meta file");
+
+	const jobLogsDirAbs = resolve(Config.Paths.Logs, "jobs");
+	const files = await readdir(jobLogsDirAbs, { withFileTypes: true });
+
+	const logFiles = new Set();
+	const metaFiles = new Set();
+
+	for (const file of files) {
+		if (file.isDirectory()) {
+			continue;
+		}
+
+		if (file.name.endsWith(".meta")) {
+			metaFiles.add(file.name.substring(0, file.name.length - 5));
+		} else if (file.name.endsWith(".log")) {
+			logFiles.add(file.name.substring(0, file.name.length - 4));
+		}
+	}
+
+	for (const logName of logFiles.values()) {
+		if (metaFiles.has(logName)) {
+			continue;
+		}
+
+		log(`Removing ${logName}.log`);
+		await unlink(resolve(jobLogsDirAbs, `${logName}.log`));
+	}
+
 }

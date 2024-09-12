@@ -1,9 +1,10 @@
 import { readdir } from "node:fs/promises";
 import { resolve } from "node:path";
-import Config from "../config";
-import { isValidWikiPath } from "./PathUtils";
-import { getWikiPackageJson } from "./TwUtils";
-import { getWikiPaths } from "./WikiUtils";
+import Config from "../config.js";
+import { isPortOpen } from "./ExecUtils.js";
+import { isValidWikiPath } from "./PathUtils.js";
+import { getWikiPackageJson } from "./TwUtils.js";
+import { getWikiPaths } from "./WikiUtils.js";
 
 /**
  * @returns Set
@@ -38,7 +39,7 @@ async function getNginxUsedPorts() {
 async function getWikiUsedPorts() {
 	const ports = [];
 
-	for (const wikiPath of getWikiPaths()) {
+	for (const wikiPath of await getWikiPaths()) {
 		const packageJson = await getWikiPackageJson(wikiPath);
 
 		ports.push(parseInt(packageJson.port));
@@ -51,7 +52,24 @@ async function getWikiUsedPorts() {
  * @returns Promise<Set>
  */
 export async function getUsedPorts() {
-	const set = new Set([...getNginxUsedPorts(), ...getWikiUsedPorts()]);
+	const nginxPorts = await getNginxUsedPorts();
+	const wikiPorts = await getWikiUsedPorts();
 
-	return set;
+	return new Set([...nginxPorts, ...wikiPorts]);
+}
+
+export async function findUnusedPort() {
+	const validPorts = getValidPorts();
+	const usedPorts = await getUsedPorts();
+
+	for (const port of validPorts) {
+		if (!usedPorts.has(port)) {
+
+			if (await isPortOpen(port)) {
+				return port;
+			}
+		}
+	}
+
+	return false;
 }

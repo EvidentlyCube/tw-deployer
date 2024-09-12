@@ -2,7 +2,7 @@ import { readdir, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import Config from "../config.js";
 import { getWikiBackupsAbsolutePath } from "../utils/PathUtils.js";
-import { getAllWikiPaths } from "../utils/TwUtils.js";
+import { getWikiPaths } from "../utils/WikiUtils.js";
 import { registerSchedulerTask } from "./Scheduler.js";
 
 export function registerScheduleNightlyBackupCleanup() {
@@ -25,16 +25,23 @@ export function registerScheduleNightlyBackupCleanup() {
 	);
 }
 
-async function run() {
-	const wikis = await getAllWikiPaths();
+async function run(log) {
+	const wikis = await getWikiPaths();
 
 	for (const wikiPath of wikis) {
+		log(`Cleanup '${wikiPath}'`);
 		const backupAbsPath = getWikiBackupsAbsolutePath(wikiPath);
 		const files = await readdir(backupAbsPath);
 
 		files.sort((l, r) => r.localeCompare(l));
 
 		const filesToDelete = files.slice(Config.NumberOfBackupsToKeep);
-		await Promise.all(filesToDelete.map(file => unlink(resolve(backupAbsPath, file))));
+		log(`Deleting ${filesToDelete.length} files`);
+
+		await Promise.all(filesToDelete.map(file => {
+			const path = resolve(backupAbsPath, file);
+			log(`Deleting ${path}`);
+			return unlink(path);
+		}));
 	}
 }
