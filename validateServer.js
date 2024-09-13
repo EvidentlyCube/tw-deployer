@@ -5,6 +5,8 @@ export async function validateServer() {
 	await expectCommand("tar --version", "tar");
 	await expectCommand("zip --version", "zip");
 	await expectCommand("unzip -v", "unzip");
+
+	await expectSudo("service nginx restart");
 }
 
 async function expectCommand(command, tool) {
@@ -13,6 +15,19 @@ async function expectCommand(command, tool) {
 	if (code) {
 		console.error(`Command ${command} has failed.`);
 		console.error(`TW Deployer requires ${tool} to be installed on the server`);
+		console.error(`Error code: ${code}`);
+		console.error(`Response: ${stderr}`);
+		process.exit(1);
+	}
+}
+
+async function expectSudo(command) {
+	const { code, stderr } = await execPromise(`sudo -l ${command}`);
+
+	if (code) {
+		console.error("Cannot sudo the following command:");
+		console.error(`    sudo ${command}`);
+		console.error("TW Deployer requires the ability to sudo this command to function properly.");
 		console.error(`Error code: ${code}`);
 		console.error(`Response: ${stderr}`);
 		process.exit(1);
