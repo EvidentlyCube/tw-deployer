@@ -1,5 +1,5 @@
 import { validateCsrfToken } from "../../utils/Csrf.js";
-import { execPromise } from "../../utils/ExecUtils.js";
+import { execPromiseLogged } from "../../utils/ExecUtils.js";
 import { parseRequestBodyJson } from "../../utils/HttpUtils.js";
 import { assertPost, getRouteData } from "../../utils/RouteUtils.js";
 import { respondApiSuccess } from "../respond.js";
@@ -15,7 +15,7 @@ async function action(req, res) {
 	await validateCsrfToken(req.body.csrf);
 
 	setTimeout(() => {
-		execPromise("git pull --ff");
+		execPromiseLogged("git pull --ff", log => console.log(log));
 	}, 1000);
 
 	return respondApiSuccess(res, true);

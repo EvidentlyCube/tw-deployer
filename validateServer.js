@@ -6,7 +6,7 @@ export async function validateServer() {
 	await expectCommand("zip --version", "zip");
 	await expectCommand("unzip -v", "unzip");
 
-	await expectSudo("service nginx restart");
+	await expectSudo("service nginx reload");
 }
 
 async function expectCommand(command, tool) {
