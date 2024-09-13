@@ -5,6 +5,7 @@ import { getHtml } from "./frontend.getHtml.js";
 import { getJobsRowHtml } from "./frontend.getJobsRowHtml.js";
 import { getModalHtml } from "./frontend.getModalHtml.js";
 import { getSchedulerRowHtml } from "./frontend.getSchedulerRowHtml.js";
+import { handleUpdateWiki } from "./frontend.handleUpdateWiki.js";
 import { trackJob } from "./frontend.jobs.js";
 import { handleCopyWikiModal } from "./frontend.modalCopyWiki.js";
 import { handleCreateWikiModal } from "./frontend.modalCreateWiki.js";
@@ -44,6 +45,7 @@ ready(async () => {
 
 	document.qOn("#action-create-wiki", "click", () => handleCreateWikiModal());
 	document.qOn("#action-upload-wiki", "click", () => handleUploadWikiModal());
+	document.qOn("#action-self-update", "click", () => handleUpdateWiki());
 
 	document.on("keydown", e => {
 		if (e.key === "Escape") {
