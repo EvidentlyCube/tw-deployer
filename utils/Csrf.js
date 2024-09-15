@@ -31,9 +31,7 @@ function isTokenExpired(creationTime) {
 }
 
 setTimeout(() => {
-	const tokens = Array.from(tokens.keys());
-
-	for (const token of tokens) {
+	for (const token of Array.from(tokens.keys())) {
 		if (isTokenExpired(tokens.get(token))) {
 			tokens.delete(token);
 		}
