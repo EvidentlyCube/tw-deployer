@@ -45,6 +45,12 @@ const Config = {
 
 		// Path where the wikis are stored
 		Wikis: "/root/htdocs/tiddlywikis",
+	},
+
+	Advanced: {
+		// If `true` then automatic nginx restart is not performed and the check
+		// if `sudo service nginx reload` is available is skipped
+		ManualNginxRestart: false
 	}
 };
 

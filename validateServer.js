@@ -1,3 +1,4 @@
+import { CONFIG_isManualNginxRestart } from "./utils/ConfigUtils.js";
 import { execPromise } from "./utils/ExecUtils.js";
 
 export async function validateServer() {
@@ -6,7 +7,9 @@ export async function validateServer() {
 	await expectCommand("zip --version", "zip");
 	await expectCommand("unzip -v", "unzip");
 
-	await expectSudo("service nginx reload");
+	if (!CONFIG_isManualNginxRestart()) {
+		await expectSudo("service nginx reload");
+	}
 }
 
 async function expectCommand(command, tool) {
