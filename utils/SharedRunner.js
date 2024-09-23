@@ -11,6 +11,18 @@ const SharedWikisConfigPath = ".shared-wikis";
 const registeredWikiPaths = [];
 const serverMap = new Map();
 
+let isClosing = false;
+
+export function areAllSharedWikisClosed() {
+	for (const server of serverMap.values()) {
+		if (server.listening) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 export function isSharedWiki(wikiPath) {
 	return registeredWikiPaths.indexOf(wikiPath) !== -1;
 }
@@ -78,7 +90,9 @@ export async function unregisterSharedWiki(wikiPath) {
 }
 
 async function startSharedWiki(wikiPath) {
-	if (serverMap.has(wikiPath)) {
+	if (isClosing) {
+		// Sigint received, don't do anything
+	} else if (serverMap.has(wikiPath)) {
 		// Wiki already running
 		return;
 	}
@@ -154,3 +168,18 @@ function stopSharedWiki(wikiPath) {
 		CoreLog("shared-runner", `Cannot stop, wiki not found: ${wikiPath}`);
 	}
 }
+
+process.on('SIGINT', async () => {
+	if (isClosing) {
+		return;
+	}
+
+	console.log("Closing shared servers");
+
+	isClosing = true;
+
+	for (const [name, server] of serverMap.entries()) {
+		console.log(`Closing shared server '${name}'`);
+		server.close();
+	}
+});

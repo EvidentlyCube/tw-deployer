@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "args": "index.js start",
+            "args": "index.js",
             "ignore_watch": [
                 "node_modules",
                 "assets",
