@@ -50,7 +50,15 @@ const Config = {
 	Advanced: {
 		// If `true` then automatic nginx restart is not performed and the check
 		// if `sudo service nginx reload` is available is skipped
-		ManualNginxRestart: false
+		ManualNginxRestart: false,
+
+		// Host used for nginx locations, use this docker container's name
+		// if using docker
+		NginxHost: 'http://127.0.0.1',
+
+		// Overrides TW host option, use "0.0.0.0" if you want wikis to be accessible
+		// over the network
+		TiddlyWikiHost: "127.0.0.1"
 	}
 };
 

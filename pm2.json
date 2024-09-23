@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "args": "index.js",
+            "args": "--env-file=.env index.js",
             "ignore_watch": [
                 "node_modules",
                 "assets",
