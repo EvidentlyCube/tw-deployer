@@ -12,8 +12,8 @@ import { validateServer } from "./validateServer.js";
 bootstrap().catch(e => console.log(e));
 
 async function bootstrap() {
-	await validateServer();
 	await validateConfig();
+	await validateServer();
 
 	CoreLog("server", "Starting server");
 

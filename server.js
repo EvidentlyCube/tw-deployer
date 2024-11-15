@@ -63,7 +63,6 @@ export async function initServer() {
 
 		isShuttingDown = true;
 
-
 		const tryKill = () => {
 			if (areAllSharedWikisClosed()) {
 				console.log("Attempt exit now");

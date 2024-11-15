@@ -16,8 +16,8 @@ const Config = {
 	PostLimit: parseInt(process.env.TWD_POST_MAX_SIZE_BYTES ?? 10 * 1024 * 1024),
 
 	// Login details to TW Deployer
-	Username: parseInt(process.env.TWD_USERNAME ?? "admin"),
-	Password: parseInt(process.env.TWD_PASSWORD ?? "admin"),
+	Username: process.env.TWD_USERNAME ?? "admin",
+	Password: process.env.TWD_PASSWORD ?? "admin",
 
 	// Hostname, must not include the final slash
 	Hostname: process.env.TWD_HOSTNAME,
