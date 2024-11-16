@@ -39,7 +39,7 @@ export async function startJob(name, callback) {
 		const meta = { ...jobInfo };
 		delete meta.logs;
 
-		debugLog(`Saving meta for job ${name} (${id})`);
+		debugLog(`Saving meta for job ${name} (${jobId})`);
 		return writeFile(metaPath, JSON.stringify(meta), "utf-8");
 	};
 

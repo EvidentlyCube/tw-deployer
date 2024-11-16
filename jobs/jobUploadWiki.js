@@ -1,3 +1,5 @@
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
 import { actionBackupDecompress } from "../actions/actionBackupDecompress.js";
 import { actionCreatePm2Config } from "../actions/actionCreatePm2Config.js";
 import { actionDetermineWikiPort } from "../actions/actionDetermineWikiPort.js";
@@ -46,11 +48,12 @@ async function runJob(log, title, wikiPath, archivePathAbs) {
 	const wikiDirAbs = getWikiAbsolutePath(wikiPath);
 	const decompressedWikiPathAbs = await actionBackupDecompress(archivePathAbs, log);
 
+	await mkdir(wikiDirAbs);
+	await execPromiseLogged(`mv '${decompressedWikiPathAbs}' '${join(wikiDirAbs, 'wiki')}'`, log);
+
 	await actionWikiCreate(wikiPath, log);
 	await actionPreparePackageJson(wikiPath, port, log);
 	await actionNpmInstallDependency(wikiPath, "tiddlywiki", log);
-
-	await execPromiseLogged(`cp -rf '${decompressedWikiPathAbs}' '${wikiDirAbs}'`, log);
 
 	await actionTiddlerUpdateHost(wikiPath, log);
 	await actionTiddlerUpdateTitle(wikiPath, title, log);
