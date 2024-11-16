@@ -10,7 +10,7 @@ import { getPm2DetailsForWiki } from "../../utils/pm2.js";
 import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=status/pm2-wiki/stop:wikiPath",
+	"/?api=status/pm2-wiki/stop/:wikiPath",
 	action
 );
 
@@ -22,7 +22,7 @@ async function action(req, res) {
 
 	const details = await getPm2DetailsForWiki(wikiPath);
 
-	if (details.pm2_env.status !== "online") {
+	if (!details || details.pm2_env.status !== "online") {
 		throw new ApiError(409, "Wiki is not online, can't be stopped");
 	}
 

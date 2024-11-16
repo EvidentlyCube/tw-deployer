@@ -1,3 +1,4 @@
+import { CONFIG_isPm2Enabled } from "./ConfigUtils.js";
 import { execPromise } from "./ExecUtils.js";
 
 const Pm2CacheDuration = 10 * 1000;
@@ -33,6 +34,10 @@ export async function flushPm2Cache() {
 }
 
 export async function getPm2DetailsForWiki(wikiPath) {
+	if (!CONFIG_isPm2Enabled()) {
+		return null;
+	}
+
 	const records = JSON.parse(await pm2JsonList());
 	return records.find(record => record.name === getPm2WikiName(wikiPath));
 }

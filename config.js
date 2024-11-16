@@ -46,6 +46,9 @@ const Config = {
 	},
 
 	Advanced: {
+		// If `true` then completely disables requirement of PM2 to run anything
+		OnlyShared: parseBool(process.env.TWD_ONLY_SHARED ?? false),
+
 		// If `true` then automatic nginx restart is not performed and the check
 		// if `sudo service nginx reload` is available is skipped
 		ManualNginxRestart: parseBool(process.env.TWD_ADV_MANUAL_NGINX ?? false),

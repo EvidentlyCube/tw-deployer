@@ -1,12 +1,14 @@
-import { CONFIG_isManualNginxRestart } from "./utils/ConfigUtils.js";
+import { CONFIG_isManualNginxRestart, CONFIG_isPm2Enabled } from "./utils/ConfigUtils.js";
 import { execPromise } from "./utils/ExecUtils.js";
 
 export async function validateServer() {
-	await expectCommand("pm2 --version", "pm2");
 	await expectCommand("tar --version", "tar");
 	await expectCommand("zip --version", "zip");
 	await expectCommand("unzip -v", "unzip");
 
+	if (CONFIG_isPm2Enabled()) {
+		await expectCommand("pm2 --version", "pm2");
+	}
 	if (!CONFIG_isManualNginxRestart()) {
 		await expectSudo("service nginx reload");
 	}

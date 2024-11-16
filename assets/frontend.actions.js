@@ -190,7 +190,7 @@ export async function stopWiki(wikiPath, $wikiRow, $wikiModal) {
 
 	const csrf = await apiFetch("csrf/generate");
 	if ($wikiRow.getAttribute("data-mode") === "pm2") {
-		await apiFetchPost(`status/pm2-wiki/stop${wikiPath}`, { csrf });
+		await apiFetchPost(`status/pm2-wiki/stop/${wikiPath}`, { csrf });
 
 	} else if ($wikiRow.getAttribute("data-mode") === "shared") {
 		await apiFetchPost(`status/shared-wiki/unregister/${wikiPath}`, { csrf });
@@ -214,7 +214,7 @@ export async function startWiki(wikiPath, $wikiRow, $wikiModal) {
 	addSpinner($button);
 
 	const csrf = await apiFetch("csrf/generate");
-	await apiFetchPost(`status/pm2-wiki/start${wikiPath}`, { csrf });
+	await apiFetchPost(`status/pm2-wiki/start/${wikiPath}`, { csrf });
 
 	if (getLastApiError()) {
 		alert(getLastApiError());

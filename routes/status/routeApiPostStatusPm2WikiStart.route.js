@@ -11,7 +11,7 @@ import { getPm2DetailsForWiki } from "../../utils/pm2.js";
 import { respondApiSuccess } from "../respond.js";
 
 export default getRouteData(
-	"/?api=status/pm2-wiki/start:wikiPath",
+	"/?api=status/pm2-wiki/start/:wikiPath",
 	action
 );
 

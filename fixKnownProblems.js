@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { actionNginxAddWiki } from "./actions/actionNginxAddWiki.js";
 import { actionNginxRestart } from "./actions/actionNginxRestart.js";
 import { actionPm2Delete } from "./actions/actionPm2Delete.js";
+import { CONFIG_isPm2Enabled } from "./utils/ConfigUtils.js";
 import { getAllNginxConfigs } from "./utils/NginxUtils.js";
 import { getWikiAbsolutePath } from "./utils/PathUtils.js";
 import { findUnusedPort } from "./utils/PortUtils.js";
@@ -43,8 +44,10 @@ async function regenerateAllPorts() {
 
 	for (const wikiPath of await getWikiPaths()) {
 		console.log(`Fixing wiki ${wikiPath}...`);
-		console.log("   ...pm2 removal");
-		await actionPm2Delete(wikiPath, log);
+		if (CONFIG_isPm2Enabled()) {
+			console.log("   ...pm2 removal");
+			await actionPm2Delete(wikiPath, log);
+		}
 		console.log("   ...unregister shared wiki");
 		await unregisterSharedWiki(wikiPath);
 
