@@ -2,6 +2,7 @@ import { appendFile } from "fs/promises";
 import { resolve } from "path";
 import Config from "../config.js";
 import { formatDate } from "./DateUtils.js";
+import { debugLog } from "./debugLog.js";
 
 export function createLogger(path, options) {
 	if (path.includes("..")) {
@@ -15,6 +16,7 @@ export function createLogger(path, options) {
 	options = options ?? {};
 
 	const logFilePath = resolve(Config.Paths.Logs, path);
+	debugLog(`- Creating logger for path ${logFilePath}`);
 
 	let isPendingFlush = false;
 	const appendQueue = [];
@@ -61,7 +63,7 @@ export function createLogger(path, options) {
 export const CoreLog = createLogger("core.log", {
 	write: Config.Logs?.StoreCoreLogs ?? false,
 	consoleOutput: Config.Logs?.OutputCoreLogsToConsole ?? false,
-	consoleOutputIncludeDate:false,
+	consoleOutputIncludeDate: false,
 });
 
 export const AccessLog = createLogger("access.log", {

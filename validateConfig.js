@@ -40,7 +40,6 @@ async function validateLogPaths() {
 		await fs.promises.mkdir(jobsPath);
 	} else if (!await isDirectory(jobsPath)) {
 		exit(`Config.Paths.Logs=${JSON.stringify(path)} -> "Jobs" in this path should be a directory but is a file.`);
-
 	}
 }
 

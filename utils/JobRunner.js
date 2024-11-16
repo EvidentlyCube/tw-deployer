@@ -4,11 +4,15 @@ import { resolve } from "node:path";
 import Config from "../config.js";
 import { fileExists } from "./FileUtils.js";
 import { createLogger } from "./Logger.js";
+import { debugLog } from "./debugLog.js";
 
 const jobs = new Map();
 
 export async function startJob(name, callback) {
+	debugLog(`Starting job ${name}`);
 	const jobId = generateJobId();
+	debugLog(`- ID = ${name}`);
+
 	const jobInfo = {
 		id: jobId,
 		name: name,
@@ -29,11 +33,13 @@ export async function startJob(name, callback) {
 
 	const logger = createLogger(`jobs/${jobId}.log`, { onLog });
 	const metaPath = resolve(Config.Paths.Logs, "jobs", `${jobId}.meta`);
+	debugLog(`- Meta Path = ${metaPath}`);
 
 	const saveMeta = async () => {
 		const meta = { ...jobInfo };
 		delete meta.logs;
 
+		debugLog(`Saving meta for job ${name} (${id})`);
 		return writeFile(metaPath, JSON.stringify(meta), "utf-8");
 	};
 
@@ -62,9 +68,14 @@ export async function getJobInfo(jobId) {
 }
 
 async function loadJobInfo(jobId) {
+	debugLog(`loadJobInfo(${jobId})`)
+
 	const jobLogsDirAbs = resolve(Config.Paths.Logs, "jobs");
 	const jobMetaPathAbs = resolve(jobLogsDirAbs, `${jobId}.meta`);
 	const jobLogsPathAbs = resolve(jobLogsDirAbs, `${jobId}.log`);
+
+	debugLog(`- Meta path = ${jobMetaPathAbs}`)
+	debugLog(`- Log path = ${jobLogsPathAbs}`)
 
 	if (!await fileExists(jobMetaPathAbs) || !await fileExists(jobLogsPathAbs)) {
 		return undefined;
@@ -80,6 +91,7 @@ async function loadJobInfo(jobId) {
 		return jobInfo;
 
 	} catch (e) {
+		debugLog(`- Erorr = ${String(e)}`);
 		return undefined;
 	}
 }

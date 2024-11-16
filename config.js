@@ -1,4 +1,6 @@
 const Config = {
+	DebugLogging: parseBool(process.env.TWD_DEBUG_LOGGING ?? false),
+
 	// Port used by TW Deployer
 	Port: parseInt(process.env.TWD_PORT ?? 8001),
 
@@ -98,6 +100,10 @@ function parseBool(string) {
 		default:
 			return !!string;
 	}
+}
+
+if (Config.DebugLogging) {
+	console.log(Config);
 }
 
 export default Config;
