@@ -102,7 +102,12 @@ async function storeTaskStartTimes() {
 		await unlink(".scheduler.bak");
 	}
 
-	await cp(".scheduler", ".scheduler.bak");
+	if (await fileExists(".scheduler")) {
+		await cp(".scheduler", ".scheduler.bak");
+	}
 	await writeFile(".scheduler", JSON.stringify(data), "utf-8");
-	await unlink(".scheduler.bak");
+	if (await fileExists(".scheduler.bak")) {
+		await unlink(".scheduler.bak");
+	}
+
 }
