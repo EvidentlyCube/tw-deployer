@@ -47,16 +47,16 @@ async function validateWikisPath() {
 	const wikisPath = Config.Paths.Wikis;
 
 	if (!await fileExists(wikisPath)) {
-		exit(`Config.Paths.Wiki=${JSON.stringify(wikisPath)} -> Failed to stat`);
+		exit(`Config.Paths.Wikis=${JSON.stringify(wikisPath)} -> Failed to stat`);
 
 	} else if (!await canAccessFile(wikisPath, fs.constants.R_OK)) {
-		exit(`Config.Paths.Wiki=${JSON.stringify(wikisPath)} -> Path not readable`);
+		exit(`Config.Paths.Wikis=${JSON.stringify(wikisPath)} -> Path not readable`);
 
 	} else if (!await canAccessFile(wikisPath, fs.constants.W_OK)) {
-		exit(`Config.Paths.Wiki=${JSON.stringify(wikisPath)} -> Path not writable`);
+		exit(`Config.Paths.Wikis=${JSON.stringify(wikisPath)} -> Path not writable`);
 
 	} else if (!await isDirectory(wikisPath)) {
-		exit(`Config.Paths.Wiki=${JSON.stringify(wikisPath)} -> Not a directory`);
+		exit(`Config.Paths.Wikis=${JSON.stringify(wikisPath)} -> Not a directory`);
 	}
 }
 
