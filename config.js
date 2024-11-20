@@ -30,6 +30,14 @@ const Config = {
 	// How many Job logs to keep
 	JobLogsToKeep: parseInt(process.env.TWD_JOB_LOGS_TO_KEEP ?? 30),
 
+	// Logger options
+	Logs: {
+		StoreCoreLogs: parseBool(process.env.TWD_LOGS_STORE_CORE ?? true),
+		StoreAccessLogs: parseBool(process.env.TWD_LOGS_STORE_ACCESS ?? true),
+		OutputCoreLogsToConsole: parseBool(process.env.TWD_LOGS_OUTPUT_CORE ?? false),
+		OutputAccessLogsToConsole: parseBool(process.env.TWD_LOGS_OUTPUT_ACCESS ?? false),
+	},
+
 	// Paths to various things
 	Paths: {
 		// Where the logs are stored

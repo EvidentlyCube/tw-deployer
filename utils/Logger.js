@@ -14,6 +14,7 @@ export function createLogger(path, options) {
 	}
 
 	options = options ?? {};
+	options.write = options.write ?? true; // Write to logs by default
 
 	const logFilePath = resolve(Config.Paths.Logs, path);
 	debugLog(`- Creating logger for path ${logFilePath}`);
