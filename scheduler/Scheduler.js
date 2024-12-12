@@ -1,4 +1,5 @@
 import { cp, readFile, unlink, writeFile } from "node:fs/promises";
+import Config from "../config.js";
 import { fileExists } from "../utils/FileUtils.js";
 import { startJob } from "../utils/JobRunner.js";
 import { CoreLog } from "../utils/Logger.js";
@@ -45,18 +46,23 @@ export async function initializeScheduler() {
 	const storedStartTimes = await readTaskStartTimes();
 
 	for (const task of registeredTasks) {
-		task.startTimestamp = storedStartTimes[task.name]
-			?? task.getNextExecutionTime();
+		task.startTimestamp = convertToTimestamp(
+			storedStartTimes[task.name] ?? task.getNextExecutionTime()
+		);
+
 	}
 
 	runTasks();
 }
 
 async function runTasks() {
+	if (Config.DebugLogging) {
+		console.log("Scheduler ping")
+	}
 	for (const task of registeredTasks) {
 		if (task.startTimestamp <= Date.now()) {
 			await runSchedulerTask(task.id, doNull);
-			task.startTimestamp = task.getNextExecutionTime();
+			task.startTimestamp = convertToTimestamp(task.getNextExecutionTime());
 
 			if (task.startTimestamp <= Date.now()) {
 				throw new Error(`Scheduler task ${task.name} scheduled next execution immediately or in the past, that is not allowed`);
@@ -110,4 +116,14 @@ async function storeTaskStartTimes() {
 		await unlink(".scheduler.bak");
 	}
 
+}
+
+function convertToTimestamp(date) {
+	if (date instanceof Date) {
+		return date.getTime();
+	} else if (typeof date === 'string') {
+		return (new Date(date)).getTime();
+	} else {
+		return date;
+	}
 }
